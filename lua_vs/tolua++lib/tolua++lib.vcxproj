@@ -49,7 +49,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\lua;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\lua;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -77,20 +77,20 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tolua++.h" />
-    <ClInclude Include="tolua_event.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="tolua_event.c" />
-    <ClCompile Include="tolua_is.c" />
-    <ClCompile Include="tolua_map.c" />
-    <ClCompile Include="tolua_push.c" />
-    <ClCompile Include="tolua_to.c" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\lua\lua.vcxproj">
       <Project>{1f34d268-0eb3-402d-8b78-da381ae4d780}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\tolua++lib\tolua_event.c" />
+    <ClCompile Include="..\..\src\tolua++lib\tolua_is.c" />
+    <ClCompile Include="..\..\src\tolua++lib\tolua_map.c" />
+    <ClCompile Include="..\..\src\tolua++lib\tolua_push.c" />
+    <ClCompile Include="..\..\src\tolua++lib\tolua_to.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\tolua++lib\tolua++.h" />
+    <ClInclude Include="..\..\src\tolua++lib\tolua_event.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

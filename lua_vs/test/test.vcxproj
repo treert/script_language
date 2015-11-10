@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\lua;..\tolua++lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\lua;..\..\src\tolua++lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -80,11 +80,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="hello.cpp" />
-    <ClCompile Include="test.cpp" />
-    <ClCompile Include="test_lib.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\lua\lua.vcxproj">
       <Project>{1f34d268-0eb3-402d-8b78-da381ae4d780}</Project>
       <Private>true</Private>
@@ -98,12 +93,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="hello.pkg" />
-    <None Include="my.lua" />
+    <ClCompile Include="..\..\src\test\hello.cpp" />
+    <ClCompile Include="..\..\src\test\test.cpp" />
+    <ClCompile Include="..\..\src\test\test_lib.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hello.h" />
-    <ClInclude Include="hello_tolua.h" />
+    <ClInclude Include="..\..\src\test\hello.h" />
+    <ClInclude Include="..\..\src\test\hello_tolua.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\test\hello.pkg" />
+    <None Include="..\..\src\test\my.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

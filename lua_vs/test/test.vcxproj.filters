@@ -15,33 +15,38 @@
     </Filter>
     <Filter Include="pkg">
       <UniqueIdentifier>{c0127cac-541f-4f97-b7ad-7b64adf5387b}</UniqueIdentifier>
+      <Extensions>pkg;</Extensions>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{a2a51d50-138e-44e3-9454-15f0e59d80f0}</UniqueIdentifier>
+      <Extensions>lua;</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="hello.cpp">
+    <ClCompile Include="..\..\src\test\hello.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp">
+    <ClCompile Include="..\..\src\test\test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_lib.cpp">
+    <ClCompile Include="..\..\src\test\test_lib.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="my.lua">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="hello.pkg">
+    <ClInclude Include="..\..\src\test\hello.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\hello_tolua.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\test\hello.pkg">
       <Filter>pkg</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="hello.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="hello_tolua.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <None Include="..\..\src\test\my.lua">
+      <Filter>lua</Filter>
+    </None>
   </ItemGroup>
 </Project>

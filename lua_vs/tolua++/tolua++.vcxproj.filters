@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="tolua.c">
+    <ClCompile Include="..\..\src\tolua++\tolua.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="toluabind.c">
+    <ClCompile Include="..\..\src\tolua++\toluabind.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="toluabind.h">
+    <ClInclude Include="..\..\src\tolua++\toluabind.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,28 +18,28 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tolua++.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="tolua_event.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <ClCompile Include="..\..\src\tolua++lib\tolua_event.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tolua++lib\tolua_is.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tolua++lib\tolua_map.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tolua++lib\tolua_push.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tolua++lib\tolua_to.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="tolua_event.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tolua_is.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tolua_map.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tolua_push.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tolua_to.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
+    <ClInclude Include="..\..\src\tolua++lib\tolua_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tolua++lib\tolua++.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
