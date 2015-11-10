@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpp", "cpp\cpp.vcxproj", "{FB864F01-7679-4384-8004-0BCB22B40C99}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua\lua.vcxproj", "{1F34D268-0EB3-402D-8B78-DA381AE4D780}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tolua++lib", "tolua++lib\tolua++lib.vcxproj", "{2979B308-300B-46BD-9D00-493B181E37D6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tolua++", "tolua++\tolua++.vcxproj", "{937E461C-DEF8-46BD-8EAD-C70DB58B1C44}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB864F01-7679-4384-8004-0BCB22B40C99}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FB864F01-7679-4384-8004-0BCB22B40C99}.Debug|Win32.Build.0 = Debug|Win32
+		{FB864F01-7679-4384-8004-0BCB22B40C99}.Release|Win32.ActiveCfg = Release|Win32
+		{FB864F01-7679-4384-8004-0BCB22B40C99}.Release|Win32.Build.0 = Release|Win32
+		{1F34D268-0EB3-402D-8B78-DA381AE4D780}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1F34D268-0EB3-402D-8B78-DA381AE4D780}.Debug|Win32.Build.0 = Debug|Win32
+		{1F34D268-0EB3-402D-8B78-DA381AE4D780}.Release|Win32.ActiveCfg = Release|Win32
+		{1F34D268-0EB3-402D-8B78-DA381AE4D780}.Release|Win32.Build.0 = Release|Win32
+		{2979B308-300B-46BD-9D00-493B181E37D6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2979B308-300B-46BD-9D00-493B181E37D6}.Debug|Win32.Build.0 = Debug|Win32
+		{2979B308-300B-46BD-9D00-493B181E37D6}.Release|Win32.ActiveCfg = Release|Win32
+		{2979B308-300B-46BD-9D00-493B181E37D6}.Release|Win32.Build.0 = Release|Win32
+		{937E461C-DEF8-46BD-8EAD-C70DB58B1C44}.Debug|Win32.ActiveCfg = Debug|Win32
+		{937E461C-DEF8-46BD-8EAD-C70DB58B1C44}.Debug|Win32.Build.0 = Debug|Win32
+		{937E461C-DEF8-46BD-8EAD-C70DB58B1C44}.Release|Win32.ActiveCfg = Release|Win32
+		{937E461C-DEF8-46BD-8EAD-C70DB58B1C44}.Release|Win32.Build.0 = Release|Win32
+		{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}.Debug|Win32.Build.0 = Debug|Win32
+		{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}.Release|Win32.ActiveCfg = Release|Win32
+		{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
