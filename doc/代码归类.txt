@@ -1,0 +1,28 @@
+云风的归类
+
+## 功能核心
+lapi.c c语言接口
+ldebug.c debug接口
+ldo.c 函数调用以及栈管理
+lfunc.c 函数原型
+lgc.c 垃圾回收
+lmem.c 内存管理
+lobject.c 对象操作
+lopcodes.c 字节码定义
+lstate.c 状态机
+lstring.c 字符串池
+ltable.c 表原型
+ltm.c 元表
+lvm.c 虚拟机
+lzio.c io接口
+
+## 语法解析
+lcode.c 代码生成器
+ldump.c序列化预编译的lua字节码
+llex.c 词法分析
+lparser.c 语法分析
+lundump.c 还原预编译的字节码
+
+## 内嵌库
+lauxlib.c 库编写使用的辅助函数
+lbaselib.c 基础库

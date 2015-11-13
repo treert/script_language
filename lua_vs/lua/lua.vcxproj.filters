@@ -12,21 +12,15 @@
     <Filter Include="src">
       <UniqueIdentifier>{4bb4646b-a39d-4742-902f-f9b59cd5b0b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{4346afcc-c3ae-4709-a759-d43b4e05f3ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\lua\lapi.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\lua\lauxlib.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\lbaselib.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\lcode.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\ldblib.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\lua\ldebug.c">
@@ -47,28 +41,16 @@
     <ClCompile Include="..\..\src\lua\linit.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\lua\liolib.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\llex.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\lua\lmathlib.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\lmem.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\loadlib.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\lua\lobject.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\lua\lopcodes.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\loslib.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\lua\lparser.c">
@@ -80,13 +62,7 @@
     <ClCompile Include="..\..\src\lua\lstring.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\lua\lstrlib.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\ltable.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\ltablib.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\lua\ltm.c">
@@ -110,12 +86,36 @@
     <ClCompile Include="..\..\src\lua\print.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lua\lmathlib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lstrlib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ltablib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lbaselib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\loslib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\loadlib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lauxlib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ldblib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\liolib.c">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\lua\lapi.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\lauxlib.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lcode.h">
@@ -183,6 +183,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lua.hpp">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lauxlib.h">
+      <Filter>lib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
