@@ -363,7 +363,8 @@
 ** CHANGE it to undefined as soon as you replace to 'luaL_register'
 ** your uses of 'luaL_openlib'
 */
-#define LUA_COMPAT_OPENLIB
+//om 奇怪 根本就没有luaL_openlib这个函数呀，这儿开启应该报错的
+//#define LUA_COMPAT_OPENLIB
 
 
 

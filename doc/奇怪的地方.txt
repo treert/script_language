@@ -1,0 +1,7 @@
+## LUA_COMPAT_OPENLIB
+```
+#if defined(LUA_COMPAT_OPENLIB)
+#define luaI_openlib	luaL_openlib
+#endif
+```
+但是luaL_openlib没有对应的定义，而luaI_openlib存在一个函数定义。

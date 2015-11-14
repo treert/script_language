@@ -24,5 +24,18 @@ lparser.c 语法分析
 lundump.c 还原预编译的字节码
 
 ## 内嵌库
+linit.c 内嵌库的初始化
 lauxlib.c 库编写使用的辅助函数
 lbaselib.c 基础库
+ldblib.c debug库
+loadlib.c 动态加载
+liolib.c io库
+loslib.c os库
+lmath.c 数学
+lstrlib.c 字符串
+ltablib.c 表处理
+
+## 执行文件
+lua.c 解释器
+luac.c 字节码编译器
+

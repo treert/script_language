@@ -38,9 +38,6 @@
     <ClCompile Include="..\..\src\lua\lgc.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\lua\linit.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\llex.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -113,6 +110,9 @@
     <ClCompile Include="..\..\src\lua\liolib.c">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lua\linit.c">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\lua\lapi.h">
@@ -166,12 +166,6 @@
     <ClInclude Include="..\..\src\lua\lua.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\lua\luaconf.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\lualib.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\lua\lundump.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -186,6 +180,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lauxlib.h">
       <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lualib.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\luaconf.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
