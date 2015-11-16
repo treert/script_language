@@ -1,0 +1,5 @@
+## lua_State
+这个是贯穿lib的结构。
+但是在lua.h只是简单声明`typedef struct lua_State lua_State;`。
+外面使用全部是`lua_State*`。
+只是暴露一个指针类型的感觉。
