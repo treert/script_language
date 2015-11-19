@@ -1,0 +1,4 @@
+
+blog
+
+http://www.cnblogs.com/ringofthec/archive/2010/11/04/luaapi.html
