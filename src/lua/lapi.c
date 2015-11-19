@@ -45,7 +45,7 @@ const char lua_ident[] =
 #define api_incr_top(L)   {api_check(L, L->top < L->ci->top); L->top++;}
 
 
-
+// om 根据索引取栈里的值，分三个区间段，特别的0是不能用的囧。
 static TValue *index2adr (lua_State *L, int idx) {
   if (idx > 0) {
     TValue *o = L->base + (idx - 1);
@@ -776,9 +776,9 @@ LUA_API int lua_setfenv (lua_State *L, int idx) {
 LUA_API void lua_call (lua_State *L, int nargs, int nresults) {
   StkId func;
   lua_lock(L);
-  api_checknelems(L, nargs+1);
-  checkresults(L, nargs, nresults);
-  func = L->top - (nargs+1);
+  api_checknelems(L, nargs+1);// om 加1是因为栈里面参数下面还有个函数func
+  checkresults(L, nargs, nresults);// om看看函数栈能不能放入全部返回值
+  func = L->top - (nargs+1);// om？ 为啥不处理成L->base
   luaD_call(L, func, nresults);
   adjustresults(L, nresults);
   lua_unlock(L);
