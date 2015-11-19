@@ -1,4 +1,14 @@
 
 blog
 
+api及相关结构分析
 http://www.cnblogs.com/ringofthec/archive/2010/11/04/luaapi.html
+闭包和函数
+http://www.cnblogs.com/ringofthec/archive/2010/11/05/luaClosure.html
+
+
+lua5.2的_ENV
+http://blog.codingnow.com/2011/12/lua_52_env.html
+
+lua的好与坏
+http://blog.csdn.net/xoyojank/article/details/12762909

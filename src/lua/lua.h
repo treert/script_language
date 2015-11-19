@@ -31,11 +31,15 @@
 
 
 /*
-** pseudo-indices
+** pseudo-indices   index2adr使用
 */
+//om 注册表
 #define LUA_REGISTRYINDEX	(-10000)
+//om 当前函数的环境表
 #define LUA_ENVIRONINDEX	(-10001)
+//om 全局表
 #define LUA_GLOBALSINDEX	(-10002)
+//om 闭包值
 #define lua_upvalueindex(i)	(LUA_GLOBALSINDEX-(i))
 
 

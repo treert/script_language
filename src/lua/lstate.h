@@ -48,10 +48,10 @@ typedef struct stringtable {
 typedef struct CallInfo {
   StkId base;  /* base for this function */
   StkId func;  /* function index in the stack */
-  StkId	top;  /* top for this function */
+  StkId	top;  /* top for this function */ //om stacksize = top - base 
   const Instruction *savedpc;
   int nresults;  /* expected number of results from this function */
-  int tailcalls;  /* number of tail calls lost under this entry */
+  int tailcalls;  /* number of tail calls lost under this entry */ //om? lost不懂
 } CallInfo;
 
 
@@ -106,9 +106,9 @@ struct lua_State {
   CallInfo *ci;  /* call info for current function */
   const Instruction *savedpc;  /* `savedpc' of current function */
   StkId stack_last;  /* last free slot in the stack */
-  StkId stack;  /* stack base */
+  StkId stack;  /* stack base */ //om 参数栈
   CallInfo *end_ci;  /* points after end of ci array*/
-  CallInfo *base_ci;  /* array of CallInfo's */
+  CallInfo *base_ci;  /* array of CallInfo's */ //om 函数数组
   int stacksize;
   int size_ci;  /* size of array `base_ci' */
   unsigned short nCcalls;  /* number of nested C calls */

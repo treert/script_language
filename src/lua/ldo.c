@@ -137,7 +137,7 @@ static void correctstack (lua_State *L, TValue *oldstack) {
   L->base = (L->base - oldstack) + L->stack;
 }
 
-
+//om 协程的栈是一个很长的数组呀
 void luaD_reallocstack (lua_State *L, int newsize) {
   TValue *oldstack = L->stack;
   int realsize = newsize + 1 + EXTRA_STACK;
@@ -159,7 +159,7 @@ void luaD_reallocCI (lua_State *L, int newsize) {
 
 
 void luaD_growstack (lua_State *L, int n) {
-  if (n <= L->stacksize)  /* double size is enough? */
+  if (n <= L->stacksize)  /* double size is enough? */ //om 这个注释是什么鬼
     luaD_reallocstack(L, 2*L->stacksize);
   else
     luaD_reallocstack(L, L->stacksize + n);

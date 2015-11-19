@@ -45,7 +45,9 @@ const char lua_ident[] =
 #define api_incr_top(L)   {api_check(L, L->top < L->ci->top); L->top++;}
 
 
-// om 根据索引取栈里的值，分三个区间段，特别的0是不能用的囧。
+//om ret = L->base + idx - 1    idx > 0
+//om ret = L->top + idx         LUA_REGISTRYINDEX < idx < 0
+//om ret = 全局表、闭包值等     idx <= LUA_REGISTRYINDEX
 static TValue *index2adr (lua_State *L, int idx) {
   if (idx > 0) {
     TValue *o = L->base + (idx - 1);
@@ -224,7 +226,7 @@ LUA_API void lua_replace (lua_State *L, int idx) {
   lua_unlock(L);
 }
 
-
+//om 复制s[idx] => s[top]
 LUA_API void lua_pushvalue (lua_State *L, int idx) {
   lua_lock(L);
   setobj2s(L, L->top, index2adr(L, idx));
@@ -530,7 +532,8 @@ LUA_API int lua_pushthread (lua_State *L) {
 ** get functions (Lua -> stack)
 */
 
-
+// 1. ...t... key
+// 2. ...t... val
 LUA_API void lua_gettable (lua_State *L, int idx) {
   StkId t;
   lua_lock(L);
@@ -553,7 +556,7 @@ LUA_API void lua_getfield (lua_State *L, int idx, const char *k) {
   lua_unlock(L);
 }
 
-
+//om 和lua_gettable一样，但是不查询元表，以下raw都是这类的
 LUA_API void lua_rawget (lua_State *L, int idx) {
   StkId t;
   lua_lock(L);
@@ -641,7 +644,8 @@ LUA_API void lua_getfenv (lua_State *L, int idx) {
 ** set functions (stack -> Lua)
 */
 
-
+// 1. ...t... key val
+// 2. ...t...        t[key] = val
 LUA_API void lua_settable (lua_State *L, int idx) {
   StkId t;
   lua_lock(L);
@@ -653,7 +657,8 @@ LUA_API void lua_settable (lua_State *L, int idx) {
   lua_unlock(L);
 }
 
-
+//om 1. ...t... val     t = s[idx]
+//om 2. ...t...         t[k] = val
 LUA_API void lua_setfield (lua_State *L, int idx, const char *k) {
   StkId t;
   TValue key;
@@ -778,8 +783,8 @@ LUA_API void lua_call (lua_State *L, int nargs, int nresults) {
   lua_lock(L);
   api_checknelems(L, nargs+1);// om 加1是因为栈里面参数下面还有个函数func
   checkresults(L, nargs, nresults);// om看看函数栈能不能放入全部返回值
-  func = L->top - (nargs+1);// om？ 为啥不处理成L->base
-  luaD_call(L, func, nresults);
+  func = L->top - (nargs+1);// om！ 现在L->base不对应执行环境
+  luaD_call(L, func, nresults);// om！L->base会在这个函数重新设置
   adjustresults(L, nresults);
   lua_unlock(L);
 }

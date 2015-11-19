@@ -167,7 +167,7 @@ typedef struct lua_TValue {
 /*
 ** different types of sets, according to destination
 */
-
+//om 什么鬼 都映射的同一个setobj
 /* from stack to (same) stack */
 #define setobjs2s	setobj
 /* to stack (not from same stack) */
@@ -285,7 +285,7 @@ typedef struct UpVal {
 
 
 /*
-** Closures
+** Closures 闭包
 */
 
 #define ClosureHeader \
