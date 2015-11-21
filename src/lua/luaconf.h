@@ -553,6 +553,7 @@
 ** int (with any rounding method and without throwing errors) in your
 ** system. In Pentium machines, a naive typecast from double to int
 ** in C is extremely slow, so any alternative is worth trying.
+om 这种优化至于吗
 */
 
 /* On a Pentium, resort to a trick */
@@ -593,6 +594,7 @@ union luai_Cast { double l_d; long l_l; };
 ** instance, if your system supports long doubles and they must be
 ** aligned in 16-byte boundaries, then you should add long double in the
 ** union.) Probably you do not need to change this.
+om？ 不使用会影响正确性
 */
 #define LUAI_USER_ALIGNMENT_T	union { double u; void *s; long l; }
 
@@ -721,6 +723,7 @@ union luai_Cast { double l_d; long l_l; };
 @@ luai_userstate* allow user-specific actions on threads.
 ** CHANGE them if you defined LUAI_EXTRASPACE and need to do something
 ** extra when a thread is created/deleted/resumed/yielded.
+om 不是很清楚干什么用的
 */
 #define luai_userstateopen(L)		((void)L)
 #define luai_userstateclose(L)		((void)L)

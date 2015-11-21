@@ -10,7 +10,7 @@
 
 #include "lobject.h"
 
-
+//om 这个头文件十个什么意思，兼容考虑的吗
 LUAI_FUNC void luaA_pushobject (lua_State *L, const TValue *o);
 
 #endif

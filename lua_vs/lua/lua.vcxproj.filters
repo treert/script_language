@@ -20,9 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\lua\lapi.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\lcode.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -116,11 +113,11 @@
     <ClCompile Include="..\..\src\lua\lstate.c">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lua\lapi.c">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\lua\lapi.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\lua\lcode.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -163,9 +160,6 @@
     <ClInclude Include="..\..\src\lua\ltm.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\lua\lua.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\lua\lundump.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -189,6 +183,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lstate.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lapi.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lua.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -52,7 +52,7 @@
 
 
 typedef struct lua_State lua_State;
-
+//om lua的扩展函数都是这样的
 typedef int (*lua_CFunction) (lua_State *L);
 
 
@@ -123,12 +123,17 @@ LUA_API lua_CFunction (lua_atpanic) (lua_State *L, lua_CFunction panicf);
 */
 LUA_API int   (lua_gettop) (lua_State *L);
 LUA_API void  (lua_settop) (lua_State *L, int idx);
+//om top+1
 LUA_API void  (lua_pushvalue) (lua_State *L, int idx);
+//om top-1
 LUA_API void  (lua_remove) (lua_State *L, int idx);
+//om top不变
 LUA_API void  (lua_insert) (lua_State *L, int idx);
+//om top-1
 LUA_API void  (lua_replace) (lua_State *L, int idx);
+//om state statck
 LUA_API int   (lua_checkstack) (lua_State *L, int sz);
-
+//om 协程间传递参数
 LUA_API void  (lua_xmove) (lua_State *from, lua_State *to, int n);
 
 
@@ -258,7 +263,7 @@ LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 #define lua_pop(L,n)		lua_settop(L, -(n)-1)
 
 #define lua_newtable(L)		lua_createtable(L, 0, 0)
-
+//om 这个n是个字符串
 #define lua_register(L,n,f) (lua_pushcfunction(L, (f)), lua_setglobal(L, (n)))
 
 #define lua_pushcfunction(L,f)	lua_pushcclosure(L, (f), 0)
@@ -299,6 +304,7 @@ LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 
 
 /* hack */
+//om 不明白有啥用 to->nCalls = from->nCalls
 LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
 
 
@@ -346,7 +352,7 @@ LUA_API lua_Hook lua_gethook (lua_State *L);
 LUA_API int lua_gethookmask (lua_State *L);
 LUA_API int lua_gethookcount (lua_State *L);
 
-
+//om 囧 上面有个简单声明，这儿有个定义，是个什么意思
 struct lua_Debug {
   int event;
   const char *name;	/* (n) */

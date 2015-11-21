@@ -201,7 +201,7 @@ LUA_API void lua_insert (lua_State *L, int idx) {
   lua_unlock(L);
 }
 
-
+// s[idx] = s[top-1] idx是特殊值时要特殊判断
 LUA_API void lua_replace (lua_State *L, int idx) {
   StkId o;
   lua_lock(L);
@@ -289,7 +289,7 @@ LUA_API int lua_rawequal (lua_State *L, int index1, int index2) {
 LUA_API int lua_equal (lua_State *L, int index1, int index2) {
   StkId o1, o2;
   int i;
-  lua_lock(L);  /* may call tag method */
+  lua_lock(L);  /* may call tag method */ //om userdata和table类型会通过元表比较
   o1 = index2adr(L, index1);
   o2 = index2adr(L, index2);
   i = (o1 == luaO_nilobject || o2 == luaO_nilobject) ? 0 : equalobj(L, o1, o2);
@@ -352,6 +352,7 @@ LUA_API const char *lua_tolstring (lua_State *L, int idx, size_t *len) {
       return NULL;
     }
     luaC_checkGC(L);
+    //om 这时为了处理bug吗
     o = index2adr(L, idx);  /* previous call may reallocate the stack */
     lua_unlock(L);
   }
@@ -387,7 +388,7 @@ LUA_API lua_CFunction lua_tocfunction (lua_State *L, int idx) {
 LUA_API void *lua_touserdata (lua_State *L, int idx) {
   StkId o = index2adr(L, idx);
   switch (ttype(o)) {
-    case LUA_TUSERDATA: return (rawuvalue(o) + 1);
+    case LUA_TUSERDATA: return (rawuvalue(o) + 1);//om 常见的内存使用技巧
     case LUA_TLIGHTUSERDATA: return pvalue(o);
     default: return NULL;
   }

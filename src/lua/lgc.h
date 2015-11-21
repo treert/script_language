@@ -76,7 +76,7 @@
 
 #define luaC_white(g)	cast(lu_byte, (g)->currentwhite & WHITEBITS)
 
-// 内存超过阈值
+//om 内存超过阈值
 #define luaC_checkGC(L) { \
   condhardstacktests(luaD_reallocstack(L, L->stacksize - EXTRA_STACK - 1)); \
   if (G(L)->totalbytes >= G(L)->GCthreshold) \
