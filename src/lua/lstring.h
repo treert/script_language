@@ -18,7 +18,8 @@
 #define sizeudata(u)	(sizeof(union Udata)+(u)->len)
 
 #define luaS_new(L, s)	(luaS_newlstr(L, s, strlen(s)))
-#define luaS_newliteral(L, s)	(luaS_newlstr(L, "" s, \
+//om `"" s`什么黑科技，去掉也可以呀，没什么用唉
+#define luaS_newliteral(L, s)	(luaS_newlstr(L,"" s, \
                                  (sizeof(s)/sizeof(char))-1))
 
 #define luaS_fix(s)	l_setbit((s)->tsv.marked, FIXEDBIT)

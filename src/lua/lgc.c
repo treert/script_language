@@ -441,7 +441,7 @@ static void checkSizes (lua_State *L) {
   }
 }
 
-
+//om 回收userdata
 static void GCTM (lua_State *L) {
   global_State *g = G(L);
   GCObject *o = g->tmudata->gch.next;  /* get first element */
@@ -681,7 +681,7 @@ void luaC_barrierback (lua_State *L, Table *t) {
   g->grayagain = o;
 }
 
-
+//om 初始化GCobject的commonHeader
 void luaC_link (lua_State *L, GCObject *o, lu_byte tt) {
   global_State *g = G(L);
   o->gch.next = g->rootgc;

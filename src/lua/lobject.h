@@ -157,7 +157,7 @@ typedef struct lua_TValue {
 
 
 
-
+//om 复制对象，取名copyObj不是更好
 #define setobj(L,obj1,obj2) \
   { const TValue *o2=(obj2); TValue *o1=(obj1); \
     o1->value = o2->value; o1->tt=o2->tt; \
@@ -185,11 +185,11 @@ typedef struct lua_TValue {
 
 #define setttype(obj, tt) (ttype(obj) = (tt))
 
-
+//om！醉了，这个为啥放这儿呀
 #define iscollectable(o)	(ttype(o) >= LUA_TSTRING)
 
 
-
+//om 栈里的都是TValue*
 typedef TValue *StkId;  /* index to stack elements */
 
 
@@ -200,7 +200,7 @@ typedef union TString {
   L_Umaxalign dummy;  /* ensures maximum alignment for strings */
   struct {
     CommonHeader;
-    lu_byte reserved;
+    lu_byte reserved;//om lua的语法关键字，有什么用？？
     unsigned int hash;
     size_t len;
   } tsv;
@@ -258,9 +258,9 @@ typedef struct Proto {
 #define VARARG_ISVARARG		2
 #define VARARG_NEEDSARG		4
 
-
+//om 为什么不放在Proto之前定义
 typedef struct LocVar {
-  TString *varname;
+  TString *varname;//om！局部变量真的把名字都记下来？？
   int startpc;  /* first point where variable is active */
   int endpc;    /* first point where variable is dead */
 } LocVar;
@@ -270,11 +270,11 @@ typedef struct LocVar {
 /*
 ** Upvalues
 */
-
+//om？这个结构为啥没做内存对齐的处理
 typedef struct UpVal {
   CommonHeader;
   TValue *v;  /* points to stack or to its own value */
-  union {
+  union {//om 不明结构
     TValue value;  /* the value (when closed) */
     struct {  /* double linked list (when open) */
       struct UpVal *prev;
@@ -374,6 +374,7 @@ LUAI_FUNC int luaO_str2d (const char *s, lua_Number *result);
 LUAI_FUNC const char *luaO_pushvfstring (lua_State *L, const char *fmt,
                                                        va_list argp);
 LUAI_FUNC const char *luaO_pushfstring (lua_State *L, const char *fmt, ...);
+//om？不知道干什么用的
 LUAI_FUNC void luaO_chunkid (char *out, const char *source, size_t len);
 
 

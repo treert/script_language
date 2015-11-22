@@ -12,3 +12,6 @@ http://blog.codingnow.com/2011/12/lua_52_env.html
 
 lua的好与坏
 http://blog.csdn.net/xoyojank/article/details/12762909
+
+lua垃圾回收
+http://blog.csdn.net/xuzhonghai/article/details/8465028

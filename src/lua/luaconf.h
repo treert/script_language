@@ -723,7 +723,7 @@ om？ 不使用会影响正确性
 @@ luai_userstate* allow user-specific actions on threads.
 ** CHANGE them if you defined LUAI_EXTRASPACE and need to do something
 ** extra when a thread is created/deleted/resumed/yielded.
-om 不是很清楚干什么用的
+om state创建、关闭、暂停、继续事件回调
 */
 #define luai_userstateopen(L)		((void)L)
 #define luai_userstateclose(L)		((void)L)

@@ -44,9 +44,6 @@
     <ClCompile Include="..\..\src\lua\lmem.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\lua\lobject.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\lopcodes.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -116,6 +113,9 @@
     <ClCompile Include="..\..\src\lua\lapi.c">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lua\lobject.c">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\lua\lcode.h">
@@ -140,9 +140,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lmem.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\lobject.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lopcodes.h">
@@ -189,6 +186,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lua.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lobject.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

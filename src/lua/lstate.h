@@ -14,10 +14,10 @@
 #include "lzio.h"
 
 
-
+//om？ 为什么不用typedef
 struct lua_longjmp;  /* defined in ldo.c */
 
-
+//om 这些宏定义感觉还是挺乱的
 /* table of globals */
 #define gt(L)	(&L->l_gt)
 
@@ -69,7 +69,7 @@ typedef struct global_State {
   stringtable strt;  /* hash table for strings */
   lua_Alloc frealloc;  /* function to reallocate memory */
   void *ud;         /* auxiliary data to `frealloc' */
-  lu_byte currentwhite;
+  lu_byte currentwhite;//om 垃圾回收相关，具体还不清楚
   lu_byte gcstate;  /* state of garbage collector */
   int sweepstrgc;  /* position of sweep in `strt' */
   GCObject *rootgc;  /* list of all collectable objects */

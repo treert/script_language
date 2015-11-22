@@ -80,7 +80,7 @@ static void f_luaopen (lua_State *L, void *ud) {
   g->GCthreshold = 4*g->totalbytes;
 }
 
-
+//om ÖØÖÃstate
 static void preinit_state (lua_State *L, global_State *g) {
   G(L) = g;
   L->stack = NULL;
