@@ -189,6 +189,7 @@ int luaH_next (lua_State *L, Table *t, StkId key) {
 
 //om 整数索引的至少一般在数组里
 //om？ 有漏洞把，要是整数索引元素集中在2^x+y，不是傻了吗
+//om仔细想想
 static int computesizes (int nums[], int *narray) {
   int i;
   int twotoi;  /* 2^i */
