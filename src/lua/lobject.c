@@ -50,7 +50,7 @@ int luaO_fb2int (int x) {
   else return ((x & 7)+8) << (e - 1);
 }
 
-//om 有些想笑哎，这么追求性能吗
+//om 这么追求性能吗
 int luaO_log2 (unsigned int x) {
   static const lu_byte log_2[256] = {
     0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,

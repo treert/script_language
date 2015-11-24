@@ -15,10 +15,21 @@ enum class B{
     B
 };
 
+double a, b;
+
+void f(void*xx)
+{
+    char*c = (char*)xx;
+    c[7] = 0xff;
+    c[6] = 0xff;
+    c[5] = 0x0;
+}
 
 int main(){
-    cout << (int32_t)A::A << endl;
-    cout << (int32_t)A::B << endl;
-    cout << (int32_t)A::A << endl;
-    cout << (int32_t)A::B << endl;
+    f(&a);
+    f(&b);
+
+    cout << a << endl;
+    cout << b << endl;
+    cout << (a == b) << endl;
 }

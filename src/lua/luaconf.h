@@ -542,6 +542,7 @@
 #define luai_numeq(a,b)		((a)==(b))
 #define luai_numlt(a,b)		((a)<(b))
 #define luai_numle(a,b)		((a)<=(b))
+//om 原来是这样判断NaN
 #define luai_numisnan(a)	(!luai_numeq((a), (a)))
 #endif
 

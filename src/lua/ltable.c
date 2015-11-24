@@ -133,6 +133,7 @@ static int arrayindex (const TValue *key) {
 ** returns the index of a `key' for table traversals. First goes all
 ** elements in the array part, then elements in the hash part. The
 ** beginning of a traversal is signalled by -1.
+om 找不到报错会保存的，特别给foreach用的，第一次传的nil,这个返回-1
 */
 static int findindex (lua_State *L, Table *t, StkId key) {
   int i;
@@ -158,7 +159,8 @@ static int findindex (lua_State *L, Table *t, StkId key) {
   }
 }
 
-
+//om s:.... key val 把下一个键值对压入栈
+//om！看下findindex的注释，这个于foreach有关
 int luaH_next (lua_State *L, Table *t, StkId key) {
   int i = findindex(L, t, key);  /* find original element */
   for (i++; i < t->sizearray; i++) {  /* try first array part */
@@ -185,7 +187,8 @@ int luaH_next (lua_State *L, Table *t, StkId key) {
 ** ==============================================================
 */
 
-
+//om 整数索引的至少一般在数组里
+//om？ 有漏洞把，要是整数索引元素集中在2^x+y，不是傻了吗
 static int computesizes (int nums[], int *narray) {
   int i;
   int twotoi;  /* 2^i */
@@ -259,7 +262,7 @@ static int numusehash (const Table *t, int *nums, int *pnasize) {
   return totaluse;
 }
 
-
+//om 增长数组部分，grow，旧的数据会被保留
 static void setarrayvector (lua_State *L, Table *t, int size) {
   int i;
   luaM_reallocvector(L, t->array, t->sizearray, size, TValue);
@@ -268,7 +271,7 @@ static void setarrayvector (lua_State *L, Table *t, int size) {
   t->sizearray = size;
 }
 
-
+//om hash表被清空了唉
 static void setnodevector (lua_State *L, Table *t, int size) {
   int lsize;
   if (size == 0) {  /* no elements to hash part? */
@@ -290,6 +293,7 @@ static void setnodevector (lua_State *L, Table *t, int size) {
     }
   }
   t->lsizenode = cast_byte(lsize);
+  //om 这个指针不就是个野指针了吗。使用用的-1
   t->lastfree = gnode(t, size);  /* all positions are free */
 }
 
@@ -378,7 +382,7 @@ void luaH_free (lua_State *L, Table *t) {
   luaM_free(L, t);
 }
 
-
+//om 找个空位
 static Node *getfreepos (Table *t) {
   while (t->lastfree-- > t->node) {
     if (ttisnil(gkey(t->lastfree)))
@@ -423,6 +427,7 @@ static TValue *newkey (lua_State *L, Table *t, const TValue *key) {
     }
   }
   gkey(mp)->value = key->value; gkey(mp)->tt = key->tt;
+  //om？？不懂干啥的，与垃圾回收有关，大概是标记下。
   luaC_barriert(L, t, key);
   lua_assert(ttisnil(gval(mp)));
   return gval(mp);
@@ -476,7 +481,7 @@ const TValue *luaH_get (Table *t, const TValue *key) {
       lua_number2int(k, n);
       if (luai_numeq(cast_num(k), nvalue(key))) /* index is int? */
         return luaH_getnum(t, k);  /* use specialized version */
-      /* else go through */
+      /* else go through */ //om 囧
     }
     default: {
       Node *n = mainposition(t, key);
@@ -490,7 +495,7 @@ const TValue *luaH_get (Table *t, const TValue *key) {
   }
 }
 
-
+//om key不能为nil和NAN
 TValue *luaH_set (lua_State *L, Table *t, const TValue *key) {
   const TValue *p = luaH_get(t, key);
   t->flags = 0;
@@ -556,6 +561,7 @@ static int unbound_search (Table *t, unsigned int j) {
 /*
 ** Try to find a boundary in table `t'. A `boundary' is an integer index
 ** such that t[i] is non-nil and t[i+1] is nil (and 0 if t[1] is nil).
+om！ 这个实现，诡异
 */
 int luaH_getn (Table *t) {
   unsigned int j = t->sizearray;

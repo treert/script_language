@@ -158,6 +158,7 @@ typedef struct lua_TValue {
 
 
 //om 复制对象，取名copyObj不是更好
+//om？不会有内存泄漏什么吗
 #define setobj(L,obj1,obj2) \
   { const TValue *o2=(obj2); TValue *o1=(obj1); \
     o1->value = o2->value; o1->tt=o2->tt; \
