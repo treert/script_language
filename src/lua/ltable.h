@@ -32,10 +32,11 @@ LUAI_FUNC Table *luaH_new (lua_State *L, int narray, int lnhash);
 //om 改变数组大小，hash部分重新hash了一下
 LUAI_FUNC void luaH_resizearray (lua_State *L, Table *t, int nasize);
 LUAI_FUNC void luaH_free (lua_State *L, Table *t);
+//om 这个函数很危险
 LUAI_FUNC int luaH_next (lua_State *L, Table *t, StkId key);
 //om 获取数组长度
 //om 实际它只是随便查找一个位置，满足t[n]!=nil and t[n+1] =nil
-//om 反正是有问题的
+//om 但是个严格的数组时，获取的值恰好是数组长度，黑科技。
 LUAI_FUNC int luaH_getn (Table *t);
 
 

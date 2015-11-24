@@ -17,3 +17,4 @@
 2015-11-22 看完object和state，明天看下string和tm。现在的水平写不出lua这样的脚本语言吧，阅读都吃力。
 2015-11-23 tm和string看完，比较简单；明天看table。tm定义一些元表系统属性，string是个字符串hash缓存。
 2015-11-24 table部分看完，有两个疑惑：1.luaC_barriert不知道具体意思；2.感觉computesizes有漏洞，没看到把hash表里的转移到数组里。明天试试有没有问题。
+2015-11-24【晚】 computesizes没有漏洞，它保持数组部分利用率至少50%。

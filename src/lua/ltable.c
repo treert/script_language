@@ -187,9 +187,10 @@ int luaH_next (lua_State *L, Table *t, StkId key) {
 ** ==============================================================
 */
 
-//om 整数索引的至少一般在数组里
-//om？ 有漏洞把，要是整数索引元素集中在2^x+y，不是傻了吗
-//om仔细想想
+//om 数组空间利用率至少50%
+//om 有漏洞把，要是整数索引元素集中在2^x+y，不是傻了吗
+//om 仔细想想，没有漏洞，最多分配(*narray)*2的大小，键值过大的基本用不到数组了
+//om 重点是保证数组空间利用率
 static int computesizes (int nums[], int *narray) {
   int i;
   int twotoi;  /* 2^i */
@@ -273,6 +274,7 @@ static void setarrayvector (lua_State *L, Table *t, int size) {
 }
 
 //om hash表被清空了唉
+//om 这个实现隐含了倍增算法
 static void setnodevector (lua_State *L, Table *t, int size) {
   int lsize;
   if (size == 0) {  /* no elements to hash part? */
