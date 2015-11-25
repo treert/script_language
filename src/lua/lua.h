@@ -58,6 +58,7 @@ typedef int (*lua_CFunction) (lua_State *L);
 
 /*
 ** functions that read/write blocks when loading/dumping Lua chunks
+om 只给编译部分用的吗
 */
 typedef const char * (*lua_Reader) (lua_State *L, void *ud, size_t *sz);
 

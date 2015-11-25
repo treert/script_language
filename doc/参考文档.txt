@@ -21,3 +21,6 @@ http://www.blogjava.net/killme2008/archive/2008/04/07/191324.html
 
 lua 性能优化技巧【好文章】
 http://wenku.baidu.com/view/bcc4a24ecf84b9d528ea7ae4.html
+
+JIT 动态编译【luajit用到动态编译技术】
+http://blog.csdn.net/hsuxu/article/details/9320699

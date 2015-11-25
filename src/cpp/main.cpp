@@ -2,18 +2,9 @@
 #include<cstdio>
 #include<string>
 #include<stdint.h>
+#include "A.h"
 
 using namespace std;
-
-enum class A :int32_t{
-    A=1,
-    B=2
-};
-
-enum class B{
-    A,
-    B
-};
 
 double a, b;
 
@@ -32,4 +23,9 @@ int main(){
     cout << a << endl;
     cout << b << endl;
     cout << (a == b) << endl;
+
+    A x(10);
+
+    x.f();
+
 }
