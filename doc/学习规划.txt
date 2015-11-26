@@ -19,3 +19,4 @@
 2015-11-24 table部分看完，有两个疑惑：1.luaC_barriert不知道具体意思；2.感觉computesizes有漏洞，没看到把hash表里的转移到数组里。明天试试有没有问题。
 2015-11-24【晚】 computesizes没有漏洞，它保持数组部分利用率至少50%。
 2015-11-25 zio 几个函数看了下。
+2015-11-26 print和func看完，温习opcodes。

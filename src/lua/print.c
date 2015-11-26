@@ -162,7 +162,7 @@ static void PrintCode(const Proto* f)
 static void PrintHeader(const Proto* f)
 {
  const char* s=getstr(f->source);
- //om？这个就没个说明吗
+ //om？随便硬编码？
  if (*s=='@' || *s=='=')
   s++;
  else if (*s==LUA_SIGNATURE[0])

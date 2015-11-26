@@ -40,7 +40,7 @@ Closure *luaF_newLclosure (lua_State *L, int nelems, Table *e) {
   return c;
 }
 
-
+//om 新建upval 开始是close的
 UpVal *luaF_newupval (lua_State *L) {
   UpVal *uv = luaM_new(L, UpVal);
   luaC_link(L, obj2gco(uv), LUA_TUPVAL);
@@ -92,10 +92,11 @@ void luaF_freeupval (lua_State *L, UpVal *uv) {
   luaM_free(L, uv);  /* free upvalue */
 }
 
-
+//om 关闭upval
 void luaF_close (lua_State *L, StkId level) {
   UpVal *uv;
   global_State *g = G(L);
+  //om！这儿判断闭包变量是否超出作用域的方法依赖线性的栈了
   while (L->openupval != NULL && (uv = ngcotouv(L->openupval))->v >= level) {
     GCObject *o = obj2gco(uv);
     lua_assert(!isblack(o) && uv->v != &uv->u.value);
@@ -103,6 +104,7 @@ void luaF_close (lua_State *L, StkId level) {
     if (isdead(g, o))
       luaF_freeupval(L, uv);  /* free upvalue */
     else {
+      //om close upval
       unlinkupval(uv);
       setobj(L, &uv->u.value, uv->v);
       uv->v = &uv->u.value;  /* now current value lives here */

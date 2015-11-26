@@ -218,6 +218,7 @@ void luaU_header (char* h)
  h+=sizeof(LUA_SIGNATURE)-1;
  *h++=(char)LUAC_VERSION;
  *h++=(char)LUAC_FORMAT;
+ //om ×Ö½ÚÐòÅÐ¶Ï
  *h++=(char)*(char*)&x;				/* endianness */
  *h++=(char)sizeof(int);
  *h++=(char)sizeof(size_t);
