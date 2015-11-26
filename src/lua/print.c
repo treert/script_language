@@ -42,6 +42,7 @@ static void PrintString(const TString* ts)
    default:	if (isprint((unsigned char)c))
    			putchar(c);
 		else
+            //om 不是用%03o更好吗,x%02x也行呀
 			printf("\\%03u",(unsigned char)c);
   }
  }
@@ -161,6 +162,7 @@ static void PrintCode(const Proto* f)
 static void PrintHeader(const Proto* f)
 {
  const char* s=getstr(f->source);
+ //om？这个就没个说明吗
  if (*s=='@' || *s=='=')
   s++;
  else if (*s==LUA_SIGNATURE[0])

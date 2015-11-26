@@ -16,7 +16,7 @@ http://blog.csdn.net/xoyojank/article/details/12762909
 lua垃圾回收
 http://blog.csdn.net/xuzhonghai/article/details/8465028
 
-lua的table，hash碰撞处理用的Brent's variation。吊桶改良版
+lua的table，闭包
 http://www.blogjava.net/killme2008/archive/2008/04/07/191324.html
 
 lua 性能优化技巧【好文章】

@@ -43,6 +43,7 @@ enum OpMode {iABC, iABx, iAsBx};  /* basic instruction format */
 
 #define POS_OP		0
 #define POS_A		(POS_OP + SIZE_OP)
+//om？为啥C在B前面
 #define POS_C		(POS_A + SIZE_A)
 #define POS_B		(POS_C + SIZE_C)
 #define POS_Bx		POS_C
@@ -52,6 +53,7 @@ enum OpMode {iABC, iABx, iAsBx};  /* basic instruction format */
 ** limits for opcode arguments.
 ** we use (signed) int to manipulate most arguments,
 ** so they must fit in LUAI_BITSINT-1 bits (-1 for sign)
+om 难道说还支持指令超过32bit，后面的MAX_INT不管怎么样也是错的呀
 */
 #if SIZE_Bx < LUAI_BITSINT-1
 #define MAXARG_Bx        ((1<<SIZE_Bx)-1)
@@ -260,7 +262,7 @@ LUAI_DATA const lu_byte luaP_opmodes[NUM_OPCODES];
 
 LUAI_DATA const char *const luaP_opnames[NUM_OPCODES+1];  /* opcode names */
 
-
+//om？干什么用的？
 /* number of list items to accumulate before a SETLIST instruction */
 #define LFIELDS_PER_FLUSH	50
 
