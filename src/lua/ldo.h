@@ -21,6 +21,7 @@
 
 #define incr_top(L) {luaD_checkstack(L,1); L->top++;}
 
+//om Õâ¸öÃû×Ö£¡£¡
 #define savestack(L,p)		((char *)(p) - (char *)L->stack)
 #define restorestack(L,n)	((TValue *)((char *)L->stack + (n)))
 
