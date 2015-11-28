@@ -466,7 +466,7 @@
 @@ LUAI_MAXCCALLS is the maximum depth for nested C calls (short) and
 @* syntactical nested non-terminals in a program.
 */
-//om 最大递归深度
+//om 最大递归深度,针对C的
 #define LUAI_MAXCCALLS		200
 
 

@@ -355,6 +355,7 @@ LUA_API int lua_gethookmask (lua_State *L);
 LUA_API int lua_gethookcount (lua_State *L);
 
 //om 囧 上面有个简单声明，这儿有个定义，是个什么意思
+//om do里面有用到这个结构
 struct lua_Debug {
   int event;
   const char *name;	/* (n) */

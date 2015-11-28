@@ -34,6 +34,14 @@
 #define PCRC		1	/* did a call to a C function */
 #define PCRYIELD	2	/* C funtion yielded */
 
+/*om
+1.  luaD_pcall
+2.  luaD_rawrunprotected
+3.  luaD_call
+3.  luaD_precall
+4.  luaD_poscall
+*/
+
 
 /* type of protected functions, to be ran by `runprotected' */
 typedef void (*Pfunc) (lua_State *L, void *ud);

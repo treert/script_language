@@ -103,6 +103,7 @@ void luaD_throw (lua_State *L, int errcode) {
       lua_unlock(L);
       G(L)->panic(L);
     }
+    //om 这儿强制终止了程序也
     exit(EXIT_FAILURE);
   }
 }
@@ -204,7 +205,7 @@ void luaD_callhook (lua_State *L, int event, int line) {
   }
 }
 
-
+// 为变参数函数调整
 static StkId adjust_varargs (lua_State *L, Proto *p, int actual) {
   int i;
   int nfixargs = p->numparams;
@@ -240,7 +241,7 @@ static StkId adjust_varargs (lua_State *L, Proto *p, int actual) {
   return base;
 }
 
-
+//om 从元表里找__call
 static StkId tryfuncTM (lua_State *L, StkId func) {
   const TValue *tm = luaT_gettmbyobj(L, func, TM_CALL);
   StkId p;
@@ -328,7 +329,7 @@ int luaD_precall (lua_State *L, StkId func, int nresults) {
   }
 }
 
-
+//om 这儿有处理尾调用
 static StkId callrethooks (lua_State *L, StkId firstResult) {
   ptrdiff_t fr = savestack(L, firstResult);  /* next call may change stack */
   luaD_callhook(L, LUA_HOOKRET, -1);
@@ -464,6 +465,7 @@ int luaD_pcall (lua_State *L, Pfunc func, void *u,
   status = luaD_rawrunprotected(L, func, u);
   if (status != 0) {  /* an error occurred? */
     StkId oldtop = restorestack(L, old_top);
+    //om close upvals
     luaF_close(L, oldtop);  /* close eventual pending closures */
     luaD_seterrorobj(L, status, oldtop);
     L->nCcalls = oldnCcalls;
