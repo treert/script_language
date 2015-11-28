@@ -275,11 +275,16 @@ LUA_API int lua_getinfo (lua_State *L, const char *what, lua_Debug *ar) {
 
 static int precheck (const Proto *pt) {
   check(pt->maxstacksize <= MAXSTACK);
+  //om 会把固定参数往后复制，为了兼容可能还会加上个arg参数。
+  //om 从这儿大致可看出，实参不占用新的闭包的栈空间份额
   check(pt->numparams+(pt->is_vararg & VARARG_HASARG) <= pt->maxstacksize);
+  //om 这两个都不支持，那定义了干什么
   check(!(pt->is_vararg & VARARG_NEEDSARG) ||
               (pt->is_vararg & VARARG_HASARG));
+  //om 这么看sizeupvalues是这个闭包自己产生的个数，nups是使用的个数
   check(pt->sizeupvalues <= pt->nups);
   check(pt->sizelineinfo == pt->sizecode || pt->sizelineinfo == 0);
+  //om 最后一条指令是ret
   check(pt->sizecode > 0 && GET_OPCODE(pt->code[pt->sizecode-1]) == OP_RETURN);
   return 1;
 }

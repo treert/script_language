@@ -238,7 +238,7 @@ typedef struct Proto {
   struct LocVar *locvars;  /* information about local variables */
   TString **upvalues;  /* upvalue names */
   TString  *source;
-  int sizeupvalues;
+  int sizeupvalues;//om？这个和下面的nups有啥关系呢
   int sizek;  /* size of `k' */
   int sizecode;
   int sizelineinfo;

@@ -77,6 +77,7 @@ static void DumpString(const TString* s, DumpState* D)
 
 static void DumpFunction(const Proto* f, const TString* p, DumpState* D);
 
+//om！包含了内部闭包
 static void DumpConstants(const Proto* f, DumpState* D)
 {
  int i,n=f->sizek;
@@ -105,9 +106,11 @@ static void DumpConstants(const Proto* f, DumpState* D)
  }
  n=f->sizep;
  DumpInt(n,D);
+ //om？！简直无语，这个地方打印内嵌函数
  for (i=0; i<n; i++) DumpFunction(f->p[i],f->source,D);
 }
 
+//om！包含了局部变量、upval
 static void DumpDebug(const Proto* f, DumpState* D)
 {
  int i,n;
@@ -128,6 +131,7 @@ static void DumpDebug(const Proto* f, DumpState* D)
 
 static void DumpFunction(const Proto* f, const TString* p, DumpState* D)
 {
+//om？下面这个是为什么呢，也不可能出现递归循环呀，内嵌函数还会等于自己吗？？
  DumpString((f->source==p || D->strip) ? NULL : f->source,D);
  DumpInt(f->linedefined,D);
  DumpInt(f->lastlinedefined,D);

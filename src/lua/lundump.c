@@ -62,6 +62,7 @@ static int LoadInt(LoadState* S)
 {
  int x;
  LoadVar(S,x);
+ //om！这？！
  IF (x<0, "bad integer");
  return x;
 }
@@ -163,6 +164,7 @@ static Proto* LoadFunction(LoadState* S, TString* p)
  Proto* f;
  if (++S->L->nCcalls > LUAI_MAXCCALLS) error(S,"code too deep");
  f=luaF_newproto(S->L);
+ //om？！这种代码为啥把incr_top放在后面不是可能报错吗？
  setptvalue2s(S->L,S->L->top,f); incr_top(S->L);
  f->source=LoadString(S); if (f->source==NULL) f->source=p;
  f->linedefined=LoadInt(S);
