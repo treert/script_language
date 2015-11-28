@@ -352,6 +352,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
           check(0 <= dest && dest < pt->sizecode);
           if (dest > 0) {
             int j;
+            //om？这个不懂
             /* check that it does not jump to a setlist count; this
                is tricky, because the count from a previous setlist may
                have the same value of an invalid setlist; so, we must
@@ -368,6 +369,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         break;
       }
     }
+    //om 原来是这样的
     if (testAMode(op)) {
       if (a == reg) last = pc;  /* change register `a' */
     }
