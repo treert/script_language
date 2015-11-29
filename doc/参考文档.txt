@@ -39,3 +39,6 @@ http://blog.sina.com.cn/s/blog_75ad10100101iv1s.html
 
 lua的内部比较字符串用到strcoll，这个函数比较中文可能会按拼音来
 http://www.cnblogs.com/gakusei/articles/1585216.html
+
+lua的迭代器
+http://www.cnblogs.com/stephen-liu74/archive/2012/06/20/2413799.html
