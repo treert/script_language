@@ -12,7 +12,7 @@
 #include "lobject.h"
 #include "ltm.h"
 
-
+//om    这几个宏定义放这儿，用到元表了把
 #define tostring(L,o) ((ttype(o) == LUA_TSTRING) || (luaV_tostring(L, o)))
 
 #define tonumber(o,n)	(ttype(o) == LUA_TNUMBER || \

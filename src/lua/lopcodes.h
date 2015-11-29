@@ -54,6 +54,7 @@ enum OpMode {iABC, iABx, iAsBx};  /* basic instruction format */
 ** we use (signed) int to manipulate most arguments,
 ** so they must fit in LUAI_BITSINT-1 bits (-1 for sign)
 om 难道说还支持指令超过32bit，后面的MAX_INT不管怎么样也是错的呀
+om 如果机器字长为16bit,指令用的unsigned long类型
 */
 #if SIZE_Bx < LUAI_BITSINT-1
 #define MAXARG_Bx        ((1<<SIZE_Bx)-1)

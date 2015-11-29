@@ -36,6 +36,7 @@ static void DumpBlock(const void* b, size_t size, DumpState* D)
  }
 }
 
+//om？奇怪了，这个把参数类型变成char更方便
 static void DumpChar(int y, DumpState* D)
 {
  char x=(char)y;
