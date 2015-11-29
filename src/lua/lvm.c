@@ -43,7 +43,7 @@ const TValue *luaV_tonumber (const TValue *obj, TValue *n) {
     return NULL;
 }
 
-
+//om 只接受数字，这个可以不放在VM里的
 int luaV_tostring (lua_State *L, StkId obj) {
   if (!ttisnumber(obj))
     return 0;
@@ -56,7 +56,7 @@ int luaV_tostring (lua_State *L, StkId obj) {
   }
 }
 
-
+//om 调试回调
 static void traceexec (lua_State *L, const Instruction *pc) {
   lu_byte mask = L->hookmask;
   const Instruction *oldpc = L->savedpc;
@@ -99,6 +99,7 @@ static void callTM (lua_State *L, const TValue *f, const TValue *p1,
   setobj2s(L, L->top+1, p1);  /* 1st argument */
   setobj2s(L, L->top+2, p2);  /* 2nd argument */
   setobj2s(L, L->top+3, p3);  /* 3th argument */
+  //om 又来了，这个不是应该放上面吗？
   luaD_checkstack(L, 4);
   L->top += 4;
   luaD_call(L, L->top - 4, 0);
@@ -155,13 +156,14 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       return;
     }
     /* else repeat with `tm' */
+    //om 这个是不是出过bug,
     setobj(L, &temp, tm);  /* avoid pointing inside table (may rehash) */
     t = &temp;
   }
   luaG_runerror(L, "loop in settable");
 }
 
-
+//om 元表细节
 static int call_binTM (lua_State *L, const TValue *p1, const TValue *p2,
                        StkId res, TMS event) {
   const TValue *tm = luaT_gettmbyobj(L, p1, event);  /* try first operand */
@@ -186,7 +188,7 @@ static const TValue *get_compTM (lua_State *L, Table *mt1, Table *mt2,
   return NULL;
 }
 
-
+//om 比较的元表值要一样
 static int call_orderTM (lua_State *L, const TValue *p1, const TValue *p2,
                          TMS event) {
   const TValue *tm1 = luaT_gettmbyobj(L, p1, event);
@@ -199,7 +201,7 @@ static int call_orderTM (lua_State *L, const TValue *p1, const TValue *p2,
   return !l_isfalse(L->top);
 }
 
-
+// 为什么要使用strcoll呢，直接for循环比较也行呀
 static int l_strcmp (const TString *ls, const TString *rs) {
   const char *l = getstr(ls);
   size_t ll = ls->tsv.len;
@@ -354,10 +356,10 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
 	ISK(GETARG_C(i)) ? k+INDEXK(GETARG_C(i)) : base+GETARG_C(i))
 #define KBx(i)	check_exp(getBMode(GET_OPCODE(i)) == OpArgK, k+GETARG_Bx(i))
 
-
+//om？后面为什么加上yield
 #define dojump(L,pc,i)	{(pc) += (i); luai_threadyield(L);}
 
-
+//om 一些调用会重新分配栈。调用时得先保存下现场，就是个执行到哪一条了
 #define Protect(x)	{ L->savedpc = pc; {x;}; base = L->base; }
 
 
@@ -373,7 +375,7 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
       }
 
 
-
+//om 特别长的单一函数
 void luaV_execute (lua_State *L, int nexeccalls) {
   LClosure *cl;
   StkId base;
@@ -388,7 +390,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
   /* main loop of interpreter */
   for (;;) {
     const Instruction i = *pc++;
-    StkId ra;
+    StkId ra;//om 定义在下面更好把
     if ((L->hookmask & (LUA_MASKLINE | LUA_MASKCOUNT)) &&
         (--L->hookcount == 0 || L->hookmask & LUA_MASKLINE)) {
       traceexec(L, pc);
@@ -396,7 +398,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         L->savedpc = pc - 1;
         return;
       }
-      base = L->base;
+      base = L->base;//om 这个是？
     }
     /* warning!! several calls may realloc the stack and invalidate `ra' */
     ra = RA(i);
@@ -414,6 +416,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
       }
       case OP_LOADBOOL: {
         setbvalue(ra, GETARG_B(i));
+        //om？ 下面这句奇怪呀
         if (GETARG_C(i)) pc++;  /* skip next instruction (if C) */
         continue;
       }
@@ -465,8 +468,10 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         Protect(luaC_checkGC(L));
         continue;
       }
+      //om？不懂
       case OP_SELF: {
         StkId rb = RB(i);
+        //om？避免ra == rb吗
         setobjs2s(L, ra+1, rb);
         Protect(luaV_gettable(L, rb, RKC(i), ra));
         continue;
@@ -495,6 +500,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         arith_op(luai_numpow, TM_POW);
         continue;
       }
+      //om？不懂
       case OP_UNM: {
         TValue *rb = RB(i);
         if (ttisnumber(rb)) {
@@ -535,6 +541,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         int b = GETARG_B(i);
         int c = GETARG_C(i);
         Protect(luaV_concat(L, c-b+1, c); luaC_checkGC(L));
+        //om 这儿不用ra吗，栈可能重新分配了
         setobjs2s(L, RA(i), base+b);
         continue;
       }
@@ -542,6 +549,8 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         dojump(L, pc, GETARG_sBx(i));
         continue;
       }
+      // 下面几个指令都和描述的不一样呀
+      // 判断分支的下一条是跳转命令，这儿提前执行了
       case OP_EQ: {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
@@ -646,11 +655,13 @@ void luaV_execute (lua_State *L, int nexeccalls) {
           return;  /* no: return */
         else {  /* yes: continue its execution */
           if (b) L->top = L->ci->top;
+          //om 只有OP_CALL命令会增加它
           lua_assert(isLua(L->ci));
           lua_assert(GET_OPCODE(*((L->ci)->savedpc - 1)) == OP_CALL);
           goto reentry;
         }
       }
+      //om for循环，判断部分
       case OP_FORLOOP: {
         lua_Number step = nvalue(ra+2);
         lua_Number idx = luai_numadd(nvalue(ra), step); /* increment index */
@@ -659,10 +670,12 @@ void luaV_execute (lua_State *L, int nexeccalls) {
                                 : luai_numle(limit, idx)) {
           dojump(L, pc, GETARG_sBx(i));  /* jump back */
           setnvalue(ra, idx);  /* update internal index... */
+          //om？这个是为啥
           setnvalue(ra+3, idx);  /* ...and external index */
         }
         continue;
       }
+      //om for循环，初始化部分，也可以不用的
       case OP_FORPREP: {
         const TValue *init = ra;
         const TValue *plimit = ra+1;
@@ -678,12 +691,14 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         dojump(L, pc, GETARG_sBx(i));
         continue;
       }
+      //om for in 迭代器【如pairs】
       case OP_TFORLOOP: {
         StkId cb = ra + 3;  /* call base */
         setobjs2s(L, cb+2, ra+2);
         setobjs2s(L, cb+1, ra+1);
         setobjs2s(L, cb, ra);
         L->top = cb+3;  /* func. + 2 args (state and index) */
+        //om 迭代器执行 其中的next
         Protect(luaD_call(L, cb, GETARG_C(i)));
         L->top = L->ci->top;
         cb = RA(i) + 3;  /* previous call may change the stack */
@@ -694,6 +709,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         pc++;
         continue;
       }
+      //om？初始化一个数组吗，里面那个c十个什么鬼
       case OP_SETLIST: {
         int n = GETARG_B(i);
         int c = GETARG_C(i);
@@ -701,7 +717,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         Table *h;
         if (n == 0) {
           n = cast_int(L->top - ra) - 1;
-          L->top = L->ci->top;
+          L->top = L->ci->top;//om 这句话是啥意思,top又没有变化
         }
         if (c == 0) c = cast_int(*pc++);
         runtime_check(L, ttistable(ra));
@@ -729,6 +745,8 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         ncl = luaF_newLclosure(L, nup, cl->env);
         ncl->l.p = p;
         for (j=0; j<nup; j++, pc++) {
+            //om 这儿是不是可以理解成继承一部分祖先的
+            //om 然后加上一些父亲的
           if (GET_OPCODE(*pc) == OP_GETUPVAL)
             ncl->l.upvals[j] = cl->upvals[GETARG_B(*pc)];
           else {
@@ -740,6 +758,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         Protect(luaC_checkGC(L));
         continue;
       }
+      //om 处理函数参数...的
       case OP_VARARG: {
         int b = GETARG_B(i) - 1;
         int j;

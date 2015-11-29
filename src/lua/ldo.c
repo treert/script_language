@@ -340,7 +340,7 @@ static StkId callrethooks (lua_State *L, StkId firstResult) {
   return restorestack(L, fr);
 }
 
-
+//om 调用结束，返回值填充...
 int luaD_poscall (lua_State *L, StkId firstResult) {
   StkId res;
   int wanted, i;

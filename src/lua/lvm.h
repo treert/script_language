@@ -12,7 +12,6 @@
 #include "lobject.h"
 #include "ltm.h"
 
-//om    这几个宏定义放这儿，用到元表了把
 #define tostring(L,o) ((ttype(o) == LUA_TSTRING) || (luaV_tostring(L, o)))
 
 #define tonumber(o,n)	(ttype(o) == LUA_TNUMBER || \
@@ -21,16 +20,21 @@
 #define equalobj(L,o1,o2) \
 	(ttype(o1) == ttype(o2) && luaV_equalval(L, o1, o2))
 
-
+//om 不同类型会报错
 LUAI_FUNC int luaV_lessthan (lua_State *L, const TValue *l, const TValue *r);
 LUAI_FUNC int luaV_equalval (lua_State *L, const TValue *t1, const TValue *t2);
+
 LUAI_FUNC const TValue *luaV_tonumber (const TValue *obj, TValue *n);
 LUAI_FUNC int luaV_tostring (lua_State *L, StkId obj);
+
+// 两个table的操作函数
 LUAI_FUNC void luaV_gettable (lua_State *L, const TValue *t, TValue *key,
                                             StkId val);
 LUAI_FUNC void luaV_settable (lua_State *L, const TValue *t, TValue *key,
                                             StkId val);
+//om 执行execute
 LUAI_FUNC void luaV_execute (lua_State *L, int nexeccalls);
+//om 链接生成字符串
 LUAI_FUNC void luaV_concat (lua_State *L, int total, int last);
 
 #endif

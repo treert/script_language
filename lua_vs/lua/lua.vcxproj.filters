@@ -41,9 +41,6 @@
     <ClCompile Include="..\..\src\lua\luac.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\lua\lvm.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\lmathlib.c">
       <Filter>lib</Filter>
     </ClCompile>
@@ -116,6 +113,9 @@
     <ClCompile Include="..\..\src\lua\ldump.c">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lua\lvm.c">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\lua\lcode.h">
@@ -131,9 +131,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lparser.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\lvm.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lua.hpp">
@@ -188,6 +185,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lundump.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lvm.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

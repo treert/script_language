@@ -292,6 +292,7 @@ static int precheck (const Proto *pt) {
 
 #define checkopenop(pt,pc)	luaG_checkopenop((pt)->code[(pc)+1])
 
+//om 一些指令比较特别，参数个数与top有关，
 int luaG_checkopenop (Instruction i) {
   switch (GET_OPCODE(i)) {
     case OP_CALL:
@@ -318,7 +319,7 @@ static int checkArgMode (const Proto *pt, int r, enum OpArgMask mode) {
   return 1;
 }
 
-
+//om 这个函数加VM的execute加opcodes可以知道每条指令的作用
 static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
   int pc;
   int last;  /* stores position of last instruction that changed `reg' */
@@ -341,18 +342,21 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         break;
       }
       case iABx: {
+        //om Bx都是用来执行常量的，只有OP_CLOSURE用来索引内嵌闭包
         b = GETARG_Bx(i);
         if (getBMode(op) == OpArgK) check(b < pt->sizek);
         break;
       }
       case iAsBx: {
+        //om sBx都是用于跳转的
         b = GETARG_sBx(i);
         if (getBMode(op) == OpArgR) {
           int dest = pc+1+b;
           check(0 <= dest && dest < pt->sizecode);
           if (dest > 0) {
             int j;
-            //om？这个不懂
+            //om setlist的下一条命令可能是个数字C，而不是命令
+            //om 检查用了小技巧，因为可能数字C恰好和setList[C=1]值一样
             /* check that it does not jump to a setlist count; this
                is tricky, because the count from a previous setlist may
                have the same value of an invalid setlist; so, we must
@@ -369,7 +373,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         break;
       }
     }
-    //om 原来是这样的
+    //om 指令会修改寄存器
     if (testAMode(op)) {
       if (a == reg) last = pc;  /* change register `a' */
     }
@@ -380,6 +384,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
     switch (op) {
       case OP_LOADBOOL: {
         if (c == 1) {  /* does it jump? */
+          //om 这个情况会跳过下一条指令，果然OP_SETLIST坑啊
           check(pc+2 < pt->sizecode);  /* check its jump */
           check(GET_OPCODE(pt->code[pc+1]) != OP_SETLIST ||
                 GETARG_C(pt->code[pc+1]) != 0);
@@ -463,6 +468,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
           OpCode op1 = GET_OPCODE(pt->code[pc + j]);
           check(op1 == OP_GETUPVAL || op1 == OP_MOVE);
         }
+        //om ?为啥要有这个判断呢
         if (reg != NO_REG)  /* tracing? */
           pc += nup;  /* do not 'execute' these pseudo-instructions */
         break;

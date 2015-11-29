@@ -238,7 +238,7 @@ typedef struct Proto {
   struct LocVar *locvars;  /* information about local variables */
   TString **upvalues;  /* upvalue names */
   TString  *source;
-  int sizeupvalues;//om？这个和下面的nups有啥关系呢
+  int sizeupvalues;//om 这个小于nups
   int sizek;  /* size of `k' */
   int sizecode;
   int sizelineinfo;
@@ -375,7 +375,7 @@ LUAI_FUNC int luaO_str2d (const char *s, lua_Number *result);
 LUAI_FUNC const char *luaO_pushvfstring (lua_State *L, const char *fmt,
                                                        va_list argp);
 LUAI_FUNC const char *luaO_pushfstring (lua_State *L, const char *fmt, ...);
-//om？不知道干什么用的
+
 LUAI_FUNC void luaO_chunkid (char *out, const char *source, size_t len);
 
 

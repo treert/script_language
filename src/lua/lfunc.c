@@ -49,7 +49,8 @@ UpVal *luaF_newupval (lua_State *L) {
   return uv;
 }
 
-
+//om 初始化闭包时搜索
+//om？这儿有复用闭包的，可以节省点闭包结构吗，还要有对呀的luaF_close，也可以不用呀
 UpVal *luaF_findupval (lua_State *L, StkId level) {
   global_State *g = G(L);
   GCObject **pp = &L->openupval;
@@ -96,7 +97,6 @@ void luaF_freeupval (lua_State *L, UpVal *uv) {
 void luaF_close (lua_State *L, StkId level) {
   UpVal *uv;
   global_State *g = G(L);
-  //om！这儿判断闭包变量是否超出作用域的方法依赖线性的栈了
   while (L->openupval != NULL && (uv = ngcotouv(L->openupval))->v >= level) {
     GCObject *o = obj2gco(uv);
     lua_assert(!isblack(o) && uv->v != &uv->u.value);
