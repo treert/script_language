@@ -42,3 +42,6 @@ http://www.cnblogs.com/gakusei/articles/1585216.html
 
 lua的迭代器
 http://www.cnblogs.com/stephen-liu74/archive/2012/06/20/2413799.html
+
+lua的垃圾回收【这是第五篇】
+http://blog.codingnow.com/2011/03/lua_gc_5.html

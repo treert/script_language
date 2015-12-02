@@ -67,7 +67,7 @@
 #define isgray(x)	(!isblack(x) && !iswhite(x))
 
 #define otherwhite(g)	(g->currentwhite ^ WHITEBITS)
-//om？不明白啊
+//om 校验下一轮颜色
 #define isdead(g,v)	((v)->gch.marked & otherwhite(g) & WHITEBITS)
 
 #define changewhite(x)	((x)->gch.marked ^= WHITEBITS)

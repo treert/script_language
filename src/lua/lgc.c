@@ -123,7 +123,7 @@ static void marktmu (global_State *g) {
   }
 }
 
-
+//om 将有gc方法的uData放到tmudata里成为循环链表
 /* move `dead' udata that need finalization to list `tmudata' */
 size_t luaC_separateudata (lua_State *L, int all) {
   global_State *g = G(L);
@@ -237,7 +237,7 @@ static void traverseclosure (global_State *g, Closure *cl) {
   }
 }
 
-
+//om 判断缩减一半空间
 static void checkstacksizes (lua_State *L, StkId max) {
   int ci_used = cast_int(L->ci - L->base_ci);  /* number of `ci' in use */
   int s_used = cast_int(max - L->stack);  /* part of stack in use */

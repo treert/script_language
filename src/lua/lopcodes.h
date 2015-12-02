@@ -118,6 +118,7 @@ om 如果机器字长为16bit,指令用的unsigned long类型
 ** Macros to operate RK indices
 */
 
+//om？不明白，为啥用个专门的bit位区分
 /* this bit 1 means constant (0 means register) */
 #define BITRK		(1 << (SIZE_B - 1))
 

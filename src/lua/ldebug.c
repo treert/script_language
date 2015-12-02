@@ -134,7 +134,7 @@ LUA_API const char *lua_getlocal (lua_State *L, const lua_Debug *ar, int n) {
   return name;
 }
 
-
+//om？调试时可以修改局部变量值？
 LUA_API const char *lua_setlocal (lua_State *L, const lua_Debug *ar, int n) {
   CallInfo *ci = L->base_ci + ar->i_ci;
   const char *name = findlocal(L, ci, n);
@@ -319,6 +319,7 @@ static int checkArgMode (const Proto *pt, int r, enum OpArgMask mode) {
   return 1;
 }
 
+//om 函数校验code,并返回最后修改reg的指令，但是没怎么明白
 //om 这个函数加VM的execute加opcodes可以知道每条指令的作用
 static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
   int pc;
@@ -498,7 +499,7 @@ int luaG_checkcode (const Proto *pt) {
   return (symbexec(pt, pt->sizecode, NO_REG) != 0);
 }
 
-
+//om 常量名
 static const char *kname (Proto *p, int c) {
   if (ISK(c) && ttisstring(&p->k[INDEXK(c)]))
     return svalue(&p->k[INDEXK(c)]);
@@ -506,7 +507,7 @@ static const char *kname (Proto *p, int c) {
     return "?";
 }
 
-
+//om 获取变量名
 static const char *getobjname (lua_State *L, CallInfo *ci, int stackpos,
                                const char **name) {
   if (isLua(ci)) {  /* a Lua function? */
@@ -553,7 +554,7 @@ static const char *getobjname (lua_State *L, CallInfo *ci, int stackpos,
   return NULL;  /* no useful name found */
 }
 
-
+//om 获取函数名，名字是由调用者决定的
 static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name) {
   Instruction i;
   if ((isLua(ci) && ci->tailcalls > 0) || !isLua(ci - 1))
@@ -605,7 +606,7 @@ void luaG_aritherror (lua_State *L, const TValue *p1, const TValue *p2) {
   luaG_typeerror(L, p2, "perform arithmetic on");
 }
 
-
+//om 类型不支持比较
 int luaG_ordererror (lua_State *L, const TValue *p1, const TValue *p2) {
   const char *t1 = luaT_typenames[ttype(p1)];
   const char *t2 = luaT_typenames[ttype(p2)];

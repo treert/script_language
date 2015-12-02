@@ -179,7 +179,7 @@ const char *luaO_pushfstring (lua_State *L, const char *fmt, ...) {
   return msg;
 }
 
-
+//om？不太明白的函数，获取proto源代码的标识，类似文件名啥的
 void luaO_chunkid (char *out, const char *source, size_t bufflen) {
   if (*source == '=') {
     strncpy(out, source+1, bufflen);  /* remove first char */
@@ -191,7 +191,7 @@ void luaO_chunkid (char *out, const char *source, size_t bufflen) {
       source++;  /* skip the `@' */
       bufflen -= sizeof(" '...' ");
       l = strlen(source);
-      strcpy(out, "");//om 囧
+      strcpy(out, "");//om 直接out[0]='\0'不就好了
       if (l > bufflen) {
         source += (l-bufflen);  /* get last part of file name */
         strcat(out, "...");

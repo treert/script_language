@@ -18,23 +18,14 @@
     <Filter Include="core">
       <UniqueIdentifier>{ab5fc77d-f897-4efb-9081-20900478c300}</UniqueIdentifier>
     </Filter>
+    <Filter Include="parser">
+      <UniqueIdentifier>{8449b01c-06d7-4f06-8f71-e40653538702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bad">
+      <UniqueIdentifier>{8a11832b-ff10-4b8d-9959-c0cc222f01f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\lua\lcode.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\ldebug.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\lgc.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\llex.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lua\lparser.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\lua\lua.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -116,23 +107,23 @@
     <ClCompile Include="..\..\src\lua\lvm.c">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lua\lparser.c">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\llex.c">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lcode.c">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\ldebug.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lua\lgc.c">
+      <Filter>bad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\lua\lcode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\ldebug.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\lgc.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\llex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\lua\lparser.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\lua\lua.hpp">
       <Filter>src</Filter>
     </ClInclude>
@@ -189,6 +180,21 @@
     </ClInclude>
     <ClInclude Include="..\..\src\lua\lvm.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\llex.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lparser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lcode.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\ldebug.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lua\lgc.h">
+      <Filter>bad</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

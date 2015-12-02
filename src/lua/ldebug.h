@@ -10,7 +10,7 @@
 
 #include "lstate.h"
 
-
+//om 前一条执行的指令index
 #define pcRel(pc, p)	(cast(int, (pc) - (p)->code) - 1)
 
 #define getline(f,pc)	(((f)->lineinfo) ? (f)->lineinfo[pc] : 0)
@@ -25,8 +25,13 @@ LUAI_FUNC void luaG_aritherror (lua_State *L, const TValue *p1,
                                               const TValue *p2);
 LUAI_FUNC int luaG_ordererror (lua_State *L, const TValue *p1,
                                              const TValue *p2);
+
 LUAI_FUNC void luaG_runerror (lua_State *L, const char *fmt, ...);
+
+//om 栈顶是出错信息,如果有错误处理函数就调用
+//om 最终调用luaD_throw
 LUAI_FUNC void luaG_errormsg (lua_State *L);
+
 LUAI_FUNC int luaG_checkcode (const Proto *pt);
 LUAI_FUNC int luaG_checkopenop (Instruction i);
 
