@@ -198,6 +198,7 @@ static void read_numeral (LexState *ls, SemInfo *seminfo) {
   } while (isdigit(ls->current) || ls->current == '.');
   if (check_next(ls, "Ee"))  /* `E'? */
     check_next(ls, "+-");  /* optional exponent sign */
+  //om？这个'_'是什么回事，不对把
   while (isalnum(ls->current) || ls->current == '_')
     save_and_next(ls);
   save(ls, '\0');
@@ -222,7 +223,7 @@ static int skip_sep (LexState *ls) {
 
 static void read_long_string (LexState *ls, SemInfo *seminfo, int sep) {
   int cont = 0;
-  (void)(cont);  /* avoid warnings when `cont' is not used */
+  (void)(cont);  /* avoid warnings when `cont' is not used */ //om 这也行
   save_and_next(ls);  /* skip 2nd `[' */
   if (currIsNewline(ls))  /* string starts with a newline? */
     inclinenumber(ls);  /* skip it */
@@ -284,6 +285,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
         continue;  /* to avoid warnings */
       case '\n':
       case '\r':
+          //om 这个不支持换行的
         luaX_lexerror(ls, "unfinished string", TK_STRING);
         continue;  /* to avoid warnings */
       case '\\': {

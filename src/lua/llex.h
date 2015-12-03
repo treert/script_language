@@ -13,6 +13,7 @@
 
 #define FIRST_RESERVED	257
 
+//om 有些奇怪，为什么定义这个
 /* maximum length of a reserved word */
 #define TOKEN_LEN	(sizeof("function")/sizeof(char))
 
@@ -71,10 +72,13 @@ LUAI_FUNC void luaX_init (lua_State *L);
 LUAI_FUNC void luaX_setinput (lua_State *L, LexState *ls, ZIO *z,
                               TString *source);
 LUAI_FUNC TString *luaX_newstring (LexState *ls, const char *str, size_t l);
+
 LUAI_FUNC void luaX_next (LexState *ls);
 LUAI_FUNC void luaX_lookahead (LexState *ls);
+
 LUAI_FUNC void luaX_lexerror (LexState *ls, const char *msg, int token);
 LUAI_FUNC void luaX_syntaxerror (LexState *ls, const char *s);
+
 LUAI_FUNC const char *luaX_token2str (LexState *ls, int token);
 
 

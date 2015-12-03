@@ -45,3 +45,9 @@ http://www.cnblogs.com/stephen-liu74/archive/2012/06/20/2413799.html
 
 lua的垃圾回收【这是第五篇】
 http://blog.codingnow.com/2011/03/lua_gc_5.html
+
+lua的语法解析【这个作者写了个类似lua的语言(https://github.com/airtrack/luna)】
+http://www.cppblog.com/airtrack/archive/2012/08/12/186998.aspx
+
+从lex&yacc介绍到编译器
+http://www.cppblog.com/woaidongmao/archive/2008/09/20/62354.aspx
