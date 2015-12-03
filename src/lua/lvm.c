@@ -709,7 +709,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         pc++;
         continue;
       }
-      //om？初始化一个数组吗，里面那个c十个什么鬼
+      //om 初始化数组时，快速填充元素
       case OP_SETLIST: {
         int n = GETARG_B(i);
         int c = GETARG_C(i);
