@@ -264,8 +264,9 @@ LUAI_DATA const lu_byte luaP_opmodes[NUM_OPCODES];
 
 LUAI_DATA const char *const luaP_opnames[NUM_OPCODES+1];  /* opcode names */
 
-//om？干什么用的？
+//om 干什么用的？
 //om SETLIST好像是初始化数组用的
+//om 初始化数组时，以50个为一组进行赋值。这个值不能大于255，栈空间不够。
 /* number of list items to accumulate before a SETLIST instruction */
 #define LFIELDS_PER_FLUSH	50
 
