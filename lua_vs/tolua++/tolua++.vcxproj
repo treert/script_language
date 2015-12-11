@@ -90,6 +90,32 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\tolua++\toluabind.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\tolua++\lua\all.lua" />
+    <None Include="..\..\src\tolua++\lua\array.lua" />
+    <None Include="..\..\src\tolua++\lua\basic.lua" />
+    <None Include="..\..\src\tolua++\lua\class.lua" />
+    <None Include="..\..\src\tolua++\lua\clean.lua" />
+    <None Include="..\..\src\tolua++\lua\code.lua" />
+    <None Include="..\..\src\tolua++\lua\compat-5.1.lua" />
+    <None Include="..\..\src\tolua++\lua\compat.lua" />
+    <None Include="..\..\src\tolua++\lua\container.lua" />
+    <None Include="..\..\src\tolua++\lua\custom.lua" />
+    <None Include="..\..\src\tolua++\lua\declaration.lua" />
+    <None Include="..\..\src\tolua++\lua\define.lua" />
+    <None Include="..\..\src\tolua++\lua\doit.lua" />
+    <None Include="..\..\src\tolua++\lua\enumerate.lua" />
+    <None Include="..\..\src\tolua++\lua\feature.lua" />
+    <None Include="..\..\src\tolua++\lua\function.lua" />
+    <None Include="..\..\src\tolua++\lua\module.lua" />
+    <None Include="..\..\src\tolua++\lua\namespace.lua" />
+    <None Include="..\..\src\tolua++\lua\operator.lua" />
+    <None Include="..\..\src\tolua++\lua\package.lua" />
+    <None Include="..\..\src\tolua++\lua\template_class.lua" />
+    <None Include="..\..\src\tolua++\lua\typedef.lua" />
+    <None Include="..\..\src\tolua++\lua\variable.lua" />
+    <None Include="..\..\src\tolua++\lua\verbatim.lua" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

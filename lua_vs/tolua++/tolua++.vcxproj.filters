@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{d1168524-e7ee-4fd8-8917-9712fff70b8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\tolua++\tolua.c">
@@ -26,5 +29,79 @@
     <ClInclude Include="..\..\src\tolua++\toluabind.h">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\tolua++\lua\all.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\array.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\basic.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\class.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\clean.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\code.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\compat.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\compat-5.1.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\container.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\custom.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\declaration.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\define.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\doit.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\enumerate.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\feature.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\function.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\module.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\namespace.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\operator.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\package.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\template_class.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\typedef.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\variable.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\src\tolua++\lua\verbatim.lua">
+      <Filter>lua</Filter>
+    </None>
   </ItemGroup>
 </Project>

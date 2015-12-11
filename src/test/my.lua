@@ -8,6 +8,15 @@ test.hello()
 
 hello.show()
 
+a = {}
+
+setmetatable(a,{__newindex=function() print "__newindex" end})
+
+a.xx = "xx"
+a.yy = yy
+
+--[[
+
 a = function()
 
 local t = {
@@ -29,3 +38,4 @@ local t = {
 }
 
 end
+]]
