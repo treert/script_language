@@ -1,16 +1,16 @@
 #include <iostream>
 #include <cstdint>
-#include "A.h"
+//#include "A.h"
 
-//class A{
-//public:
-//    virtual void f();
-//    A(int32_t a);
-//private:
-//    int32_t a;
-//    void g();
-//};
-
+class A{
+public:
+    static const int32_t c = 123;
+    virtual void f();
+    A(int32_t a);
+private:
+    int32_t a = 1;
+    void g();
+};
 A::A(int32_t a){
     this->a = a;
 }
@@ -22,5 +22,8 @@ void A::f(){
 
 void A::g(){
     a += 1;
-    std::cout << a << std::endl;
+    std::cout << c << std::endl;
+    
 }
+
+//const int32_t A::c = 12;
