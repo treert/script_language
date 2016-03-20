@@ -34,7 +34,7 @@ http://www.oschina.net/translate/know-your-closures-blocks-procs-and-lambdas
 ruby的module和class
 http://www.cnblogs.com/wangkangluo1/archive/2011/07/24/2115538.html
 
-php的借口 c# as 也是类似的 主要用于多继承把
+php的接口 c# as 也是类似的 主要用于多继承把
 http://blog.sina.com.cn/s/blog_75ad10100101iv1s.html
 
 lua的内部比较字符串用到strcoll，这个函数比较中文可能会按拼音来

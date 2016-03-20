@@ -1,6 +1,0 @@
-tolua++
-
-## 文档
-
-toluabind.c的由来，以及相关的介绍
-http://blog.csdn.net/qq276592716/article/details/24675091
