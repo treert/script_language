@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpp", "cpp\cpp.vcxproj", "{FB864F01-7679-4384-8004-0BCB22B40C99}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tolua++", "tolua++\tolua++.vcxproj", "{937E461C-DEF8-46BD-8EAD-C70DB58B1C44}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "onemore", "onemore\onemore.vcxproj", "{671072F4-11F7-4898-91B2-4284B09FD82E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}.Debug|Win32.Build.0 = Debug|Win32
 		{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}.Release|Win32.ActiveCfg = Release|Win32
 		{D3D570E6-26D2-4E3C-8A5E-5FA56B2AFAA9}.Release|Win32.Build.0 = Release|Win32
+		{671072F4-11F7-4898-91B2-4284B09FD82E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{671072F4-11F7-4898-91B2-4284B09FD82E}.Debug|Win32.Build.0 = Debug|Win32
+		{671072F4-11F7-4898-91B2-4284B09FD82E}.Release|Win32.ActiveCfg = Release|Win32
+		{671072F4-11F7-4898-91B2-4284B09FD82E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
