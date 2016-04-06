@@ -19,4 +19,4 @@ namespace oms{
         uint32_t _length;
         char *str;
     };
-}
+} // oms

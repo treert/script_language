@@ -1,4 +1,8 @@
 #pragma once
+#include<functional>
+#include<cstdint>
+
+#include "mcommon.h"
 
 namespace oms{
     class String;
@@ -10,7 +14,7 @@ namespace oms{
         Return, Then, True, Until, While,
         Id, String, Number,
         Equal, NotEqual, LessEqual, GreaterEqual,
-        Concat, VarArg, EOF,
+        Concat, VarArg, Eof,
     };
 
     struct TokenDetail
@@ -27,14 +31,20 @@ namespace oms{
             str(nullptr),
             line(0),
             column(0),
-            token(Token::EOF)
+            token(Token::Eof)
         {}
     };
 
     class Lexer
     {
+    public:
+        typedef std::function<int32_t()> CharInStream;
+
+        Lexer(CharInStream in);
+
+        DISABLE_DEFALT_COPY_AND_ASSIGN(Lexer);
 
     };
-}
+} // oms
 
 
