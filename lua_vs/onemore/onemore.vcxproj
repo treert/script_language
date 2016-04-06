@@ -83,6 +83,7 @@
     <ClCompile Include="..\..\src\onemore\mstring.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\onemore\mcommon.h" />
     <ClInclude Include="..\..\src\onemore\mlex.h" />
     <ClInclude Include="..\..\src\onemore\mstring.h" />
   </ItemGroup>

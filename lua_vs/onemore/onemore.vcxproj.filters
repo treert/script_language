@@ -32,5 +32,8 @@
     <ClInclude Include="..\..\src\onemore\mstring.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mcommon.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
