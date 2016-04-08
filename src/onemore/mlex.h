@@ -6,7 +6,7 @@
 
 namespace oms{
     class String;
-    enum class Token
+    enum class Token:int32_t
     {
         And = 256, Break, Do, Else, Elseif, End,
         False, For, Function, If, In,
@@ -22,7 +22,7 @@ namespace oms{
         union
         {
             double number;
-            String *str;
+            char *str;
         };
         int line;
         int column;
@@ -40,9 +40,39 @@ namespace oms{
     public:
         typedef std::function<int32_t()> CharInStream;
 
-        Lexer(CharInStream in);
+        Lexer(CharInStream in)
+           :_inStream(in),
+           _line(0),
+           _column(1)
+        {}
 
         DISABLE_DEFALT_COPY_AND_ASSIGN(Lexer);
+
+        int32_t GetToken(TokenDetail *detail);
+
+    private:
+        int32_t _NextChar()
+        {
+            auto c = _inStream();
+            if (EOF != c) ++_column;
+            return c;
+        }
+
+        void _NewLine();
+        void _Comment();
+        void _MultiLineComment();
+        void _SingleLineComment();
+
+        int32_t _Number(TokenDetail *detail);
+
+
+        CharInStream _inStream;
+        int32_t _current;
+
+        int32_t _line;
+        int32_t _column;
+
+
 
     };
 } // oms
