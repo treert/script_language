@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="unit_tests">
+      <UniqueIdentifier>{37e014be-e110-48aa-9591-e7cd0d57b6f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\onemore\main.cpp">
@@ -24,6 +27,12 @@
     <ClCompile Include="..\..\src\onemore\mstring.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\onemore\unittests\test_test.cpp">
+      <Filter>unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\unittests\unit_test.cpp">
+      <Filter>unit_tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\onemore\mlex.h">
@@ -34,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\onemore\mcommon.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\unittests\unit_test.h">
+      <Filter>unit_tests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

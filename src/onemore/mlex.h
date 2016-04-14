@@ -48,6 +48,7 @@ namespace oms{
 
         DISABLE_DEFALT_COPY_AND_ASSIGN(Lexer);
 
+        // 获取下一个token
         int32_t GetToken(TokenDetail *detail);
 
     private:
@@ -71,9 +72,6 @@ namespace oms{
 
         int32_t _line;
         int32_t _column;
-
-
-
     };
 } // oms
 

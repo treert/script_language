@@ -81,11 +81,14 @@
     <ClCompile Include="..\..\src\onemore\main.cpp" />
     <ClCompile Include="..\..\src\onemore\mlex.cpp" />
     <ClCompile Include="..\..\src\onemore\mstring.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\test_test.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\unit_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\onemore\mcommon.h" />
     <ClInclude Include="..\..\src\onemore\mlex.h" />
     <ClInclude Include="..\..\src\onemore\mstring.h" />
+    <ClInclude Include="..\..\src\onemore\unittests\unit_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

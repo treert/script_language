@@ -51,6 +51,28 @@ namespace oms{
             case ' ':case '\t':case '\v':case '\f':
                 _current = _NextChar();
                 break;
+            case '\n':case '\r':
+                break;
+            case '-':
+                break;
+            case '[':
+                break;
+            case '=':
+                break;
+            case '<':
+                break;
+            case '>':
+                break;
+            case '~':
+                break;
+            case '"':
+                break;
+            case '\'':
+                break;
+            case '.':
+                break;
+            case EOF:
+                break;
             default:
                 break;
             }
