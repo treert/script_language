@@ -26,7 +26,7 @@ namespace{
         if (result.first == result.second) 
             return false;
         
-        *token = result.first - keyword + static_cast<int32_t>(oms::Token::And);
+        *token = result.first - keyword + static_cast<int32_t>(oms::Token_And);
         return true;
     }
 

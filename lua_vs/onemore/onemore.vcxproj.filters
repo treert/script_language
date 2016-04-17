@@ -33,6 +33,12 @@
     <ClCompile Include="..\..\src\onemore\unittests\unit_test.cpp">
       <Filter>unit_tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\onemore\unittests\test_lex.cpp">
+      <Filter>unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mvalue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\onemore\mlex.h">
@@ -46,6 +52,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\onemore\unittests\unit_test.h">
       <Filter>unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mexception.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mvalue.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

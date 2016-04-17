@@ -6,15 +6,15 @@
 
 namespace oms{
     class String;
-    enum class Token:int32_t
+    enum Token:int32_t
     {
-        And = 256, Break, Do, Else, Elseif, End,
-        False, For, Function, If, In,
-        Local, Nil, Not, Or, Repeat,
-        Return, Then, True, Until, While,
-        Id, String, Number,
-        Equal, NotEqual, LessEqual, GreaterEqual,
-        Concat, VarArg, Eof,
+        Token_And = 256, Token_Break, Token_Do, Token_Else, Token_Elseif, Token_End,
+        Token_False, Token_For, Token_Function, Token_If, Token_In,
+        Token_Local, Token_Nil, Token_Not, Token_Or, Token_Repeat,
+        Token_Return, Token_Then, Token_True, Token_Until, Token_While,
+        Token_Id, Token_String, Token_Number,
+        Token_Equal, Token_NotEqual, Token_LessEqual, Token_GreaterEqual,
+        Token_Concat, Token_VarArg, Token_EOF,
     };
 
     struct TokenDetail
@@ -26,12 +26,12 @@ namespace oms{
         };
         int line;
         int column;
-        Token token;
+        int32_t token;
         TokenDetail() :
             str(nullptr),
             line(0),
             column(0),
-            token(Token::Eof)
+            token(Token_EOF)
         {}
     };
 
