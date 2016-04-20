@@ -1,11 +1,11 @@
 #pragma once
-#include<functional>
-#include<cstdint>
+#include <functional>
+#include <cstdint>
+#include <string>
 
 #include "mcommon.h"
 
 namespace oms{
-    class String;
     enum Token:int32_t
     {
         Token_And = 256, Token_Break, Token_Do, Token_Else, Token_Elseif, Token_End,
@@ -21,29 +21,32 @@ namespace oms{
     {
         union
         {
-            double number;
-            char *str;
+            double m_number;
+            char *m_str;
         };
-        int line;
-        int column;
-        int32_t token;
+        int m_line;
+        int m_column;
+        int32_t m_token;
         TokenDetail() :
-            str(nullptr),
-            line(0),
-            column(0),
-            token(Token_EOF)
+            m_str(nullptr),
+            m_line(0),
+            m_column(0),
+            m_token(Token_EOF)
         {}
     };
+
+    std::string GetTokenStr(const TokenDetail &tokenDetail);
 
     class Lexer
     {
     public:
         typedef std::function<int32_t()> CharInStream;
 
-        Lexer(CharInStream in)
-           :_inStream(in),
-           _line(0),
-           _column(1)
+        Lexer(CharInStream in):
+            _inStream(in),
+            _line(0),
+            _column(1),
+            _current(EOF)
         {}
 
         DISABLE_DEFALT_COPY_AND_ASSIGN(Lexer);
@@ -60,9 +63,13 @@ namespace oms{
         }
 
         void _NewLine();
+
         void _Comment();
         void _MultiLineComment();
         void _SingleLineComment();
+
+        int32_t _MultiLineString(TokenDetail *detail);
+        int32_t _SingleLineString(TokenDetail *detail);
 
         int32_t _Number(TokenDetail *detail);
 
@@ -72,6 +79,8 @@ namespace oms{
 
         int32_t _line;
         int32_t _column;
+
+        std::string _tokenBuffer;
     };
 } // oms
 

@@ -28,6 +28,18 @@ private:
 
 int main(){
     //A a;
-    B b;
-    b.~B();
+    //B b;
+    //b.~B();
+    int i = 2;
+    switch (i)
+    {
+    case 1:
+        int a = 2;
+        break;
+    case 2:
+        int a = 3;
+        break;
+    default:
+        break;
+    }
 }
