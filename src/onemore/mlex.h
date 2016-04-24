@@ -72,6 +72,21 @@ namespace oms{
         int32_t _SingleLineString(TokenDetail *detail);
 
         int32_t _Number(TokenDetail *detail);
+        int32_t _NumberX(TokenDetail *detail, bool integer_part,
+            const std::function<bool(int)> &is_number_char,
+            const std::function<bool(int)> &is_exponent);
+        int32_t _NumberXFractional(TokenDetail *detail,
+            bool integer_part, bool point,
+            const std::function<bool(int)> &is_number_char,
+            const std::function<bool(int)> &is_exponent);
+
+        int32_t _XEqual(TokenDetail *detail, int equal_token);
+
+        int32_t _MultiLineString(TokenDetail *detail);
+        int32_t _SingleLineString(TokenDetail *detail);
+        void _StringChar();
+
+        int32_t _Id(TokenDetail *detail);
 
 
         CharInStream _inStream;
