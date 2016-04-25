@@ -52,14 +52,14 @@ namespace oms{
 
     std::string GetTokenStr(const TokenDetail &tokenDetail)
     {
-        int32_t token = tokenDetail.token;
+        int32_t token = tokenDetail.m_token;
         switch (token)
         {
         case Token_Number:
-            return std::to_string(tokenDetail.number);
+            return std::to_string(tokenDetail.m_number);
             break;
         case Token_Id:case Token_String:
-            return tokenDetail.str;
+            return tokenDetail.m_str;
             break;
         default:
             if (token >= Token_And && token <= Token_EOF)
