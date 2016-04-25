@@ -3,6 +3,8 @@
 #include<algorithm>
 #include<string.h>
 
+#include "mexception.h"
+
 namespace{
     const char *keyword[] = {
         "and", "break", "do", "else", "elseif", "end",
@@ -165,7 +167,7 @@ namespace oms{
                     int32_t next = _NextChar();
                     if ('=' != next)
                     {
-                        throw "todo";
+                        throw Exception("expect '=' after '~'");
                     }
                     _current = _NextChar();
                     RETURN_NORMAL_TOKEN_DETAIL(detail, Token_NotEqual);
@@ -271,7 +273,7 @@ namespace oms{
             }
             else if (EOF == _current)
             {
-                throw "todo";
+                throw Exception("expect complete multi - line comment before <eof>.");
             }
             else if ('\r' == _current || '\n' == _current)
             {
@@ -355,9 +357,9 @@ namespace oms{
         }
 
         if (point && !integer_part && !fractional_part)
-            throw "todo";
+            throw Exception("unexpect '.'");
         else if (!point && !integer_part && !fractional_part)
-            throw "todo";
+            throw Exception("unexpect incomplete number ");
 
         if (is_exponent(_current))
         {
@@ -370,7 +372,7 @@ namespace oms{
             }
 
             if (!isdigit(_current))
-                throw "todo";
+                throw Exception("expect exponent after ");
 
             while (isdigit(_current))
             {
@@ -410,7 +412,7 @@ namespace oms{
         }
 
         if (_current != '[')
-            throw "todo";
+            throw Exception("incomplete multi-line string at");
 
         _current = _NextChar();
         _tokenBuffer.clear();
@@ -457,7 +459,7 @@ namespace oms{
             }
         }
 
-        throw "todo";
+        throw Exception("incomplete multi-line string at <eof>");
     }
 
     int Lexer::_SingleLineString(TokenDetail *detail)
@@ -469,10 +471,10 @@ namespace oms{
         while (_current != quote)
         {
             if (_current == EOF)
-                throw "incomplete string at <eof>";
+                throw Exception("incomplete string at <eof>");
 
             if (_current == '\r' || _current == '\n')
-                throw "incomplete string at this line";
+                throw Exception("incomplete string at this line");
 
             _StringChar();
         }
@@ -514,7 +516,7 @@ namespace oms{
                 for (; i < 2 && IsHexChar(_current); ++i, _current = _NextChar())
                     hex[i] = _current;
                 if (i == 0)
-                    throw "unexpect character after '\\x'";
+                    throw Exception("unexpect character after '\\x'");
                 _tokenBuffer.push_back(static_cast<char>(strtoul(hex, 0, 16)));
                 return;
             }
@@ -527,7 +529,7 @@ namespace oms{
                 return;
             }
             else
-                throw "unexpect character after '\\'";
+                throw Exception("unexpect character after '\\'");
         }
         else
         {
@@ -540,7 +542,7 @@ namespace oms{
     int Lexer::_Id(TokenDetail *detail)
     {
         if (!isalpha(_current) && _current != '_')
-            throw "unexpect character";
+            throw Exception("unexpect character");
 
         _tokenBuffer.clear();
         _tokenBuffer.push_back(_current);
