@@ -11,7 +11,7 @@ namespace oms
     {
     public:
         const std::string& What() const { return what_; }
-        Exception() = default;
+        //Exception() = default;
         template<typename... Args>
         Exception(Args&&... args)
         {

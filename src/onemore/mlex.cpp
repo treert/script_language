@@ -95,13 +95,12 @@ namespace oms{
 
 #define RETURN_TOKEN_DETAIL(detail, string, token)              \
     do {                                                        \
-    detail->m_str = "todo";                    \
+    detail->m_str = string;                    \
     RETURN_NORMAL_TOKEN_DETAIL(detail, token);                  \
     } while (0)
 
 #define SET_EOF_TOKEN_DETAIL(detail)                            \
     do {                                                        \
-        detail->m_str = nullptr;                                 \
         detail->m_token = Token_EOF;                             \
         detail->m_line = _line;                                  \
         detail->m_column = _column;                              \
@@ -116,7 +115,7 @@ namespace oms{
             _current = _NextChar();
         }
 
-        for (;;)
+        while (EOF != _current)
         {
             switch (_current)
             {
@@ -156,10 +155,10 @@ namespace oms{
             case '=':
                 return _XEqual(detail,Token_Equal);
                 break;
-            case '<':
+            case '>':
                 return _XEqual(detail, Token_GreaterEqual);
                 break;
-            case '>':
+            case '<':
                 return _XEqual(detail, Token_LessEqual);
                 break;
             case '~':
@@ -227,8 +226,8 @@ namespace oms{
                 return _Id(detail);
                 break;
             }
-            return Token_EOF;
         }
+        return Token_EOF;
     }
 
     void Lexer::_NewLine()
@@ -255,6 +254,12 @@ namespace oms{
         }
         else
             _SingleLineComment();
+    }
+
+    void Lexer::_SingleLineComment()
+    {
+        while (_current != '\r' && _current != '\n' && _current != EOF)
+            _current = _NextChar();
     }
 
     void Lexer::_MultiLineComment()

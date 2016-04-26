@@ -19,16 +19,12 @@ namespace oms{
 
     struct TokenDetail
     {
-        union
-        {
-            double m_number;
-            char *m_str;
-        };
+        double m_number;
+        std::string m_str;
         int m_line;
         int m_column;
         int32_t m_token;
         TokenDetail() :
-            m_str(nullptr),
             m_line(0),
             m_column(0),
             m_token(Token_EOF)
@@ -67,9 +63,6 @@ namespace oms{
         void _Comment();
         void _MultiLineComment();
         void _SingleLineComment();
-
-        int32_t _MultiLineString(TokenDetail *detail);
-        int32_t _SingleLineString(TokenDetail *detail);
 
         int32_t _Number(TokenDetail *detail);
         int32_t _NumberX(TokenDetail *detail, bool integer_part,
