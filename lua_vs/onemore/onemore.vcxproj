@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\onemore\main.cpp" />
     <ClCompile Include="..\..\src\onemore\mlex.cpp" />
+    <ClCompile Include="..\..\src\onemore\mparser.cpp" />
     <ClCompile Include="..\..\src\onemore\mstring.cpp" />
     <ClCompile Include="..\..\src\onemore\mvalue.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\test_lex.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="..\..\src\onemore\mcommon.h" />
     <ClInclude Include="..\..\src\onemore\mexception.h" />
     <ClInclude Include="..\..\src\onemore\mlex.h" />
+    <ClInclude Include="..\..\src\onemore\mparser.h" />
     <ClInclude Include="..\..\src\onemore\mstring.h" />
     <ClInclude Include="..\..\src\onemore\mvalue.h" />
     <ClInclude Include="..\..\src\onemore\unittests\unit_test.h" />

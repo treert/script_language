@@ -39,6 +39,9 @@
     <ClCompile Include="..\..\src\onemore\mvalue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mparser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\onemore\mlex.h">
@@ -57,6 +60,9 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\onemore\mvalue.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mparser.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
