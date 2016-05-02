@@ -71,5 +71,8 @@
     <ClInclude Include="..\..\src\onemore\msyntax_tree.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mvisitor.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

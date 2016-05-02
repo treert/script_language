@@ -1,12 +1,12 @@
-#include "Parser.h"
-#include "Lex.h"
+#include "mparser.h"
+#include "mlex.h"
 #include "State.h"
-#include "Exception.h"
+#include "mexception.h"
 #include <assert.h>
 
 namespace
 {
-    using namespace luna;
+    using namespace oms;
 
     enum PrefixExpType
     {
@@ -907,11 +907,11 @@ namespace
     };
 } // namespace
 
-namespace luna
+namespace oms
 {
     std::unique_ptr<SyntaxTree> Parse(Lexer *lexer)
     {
         ParserImpl impl(lexer);
         return impl.Parse();
     }
-} // namespace luna
+} // namespace oms

@@ -1,15 +1,12 @@
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 
-#include "SyntaxTree.h"
+#include "msyntax_tree.h"
 #include <memory>
 
-namespace luna
+namespace oms
 {
     class Lexer;
     class State;
 
     std::unique_ptr<SyntaxTree> Parse(Lexer *lexer);
-} // namespace luna
-
-#endif // PARSER_H
+} // namespace oms

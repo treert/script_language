@@ -96,6 +96,7 @@
     <ClInclude Include="..\..\src\onemore\mstring.h" />
     <ClInclude Include="..\..\src\onemore\msyntax_tree.h" />
     <ClInclude Include="..\..\src\onemore\mvalue.h" />
+    <ClInclude Include="..\..\src\onemore\mvisitor.h" />
     <ClInclude Include="..\..\src\onemore\unittests\unit_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
