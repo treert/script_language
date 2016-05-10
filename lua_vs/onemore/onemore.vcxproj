@@ -85,6 +85,7 @@
     <ClCompile Include="..\..\src\onemore\msyntax_tree.cpp" />
     <ClCompile Include="..\..\src\onemore\mvalue.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\test_lex.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\test_parser.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\test_test.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\unit_test.cpp" />
   </ItemGroup>
@@ -97,6 +98,7 @@
     <ClInclude Include="..\..\src\onemore\msyntax_tree.h" />
     <ClInclude Include="..\..\src\onemore\mvalue.h" />
     <ClInclude Include="..\..\src\onemore\mvisitor.h" />
+    <ClInclude Include="..\..\src\onemore\unittests\test_common.h" />
     <ClInclude Include="..\..\src\onemore\unittests\unit_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

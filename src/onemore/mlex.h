@@ -47,6 +47,13 @@ namespace oms{
 
         DISABLE_DEFALT_COPY_AND_ASSIGN(Lexer);
 
+        void SetInStream(CharInStream in){
+            _inStream = in;
+            _line = 0;
+            _column = 1;
+            _current = EOF;
+        }
+
         // 获取下一个token
         int32_t GetToken(TokenDetail *detail);
 
