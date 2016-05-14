@@ -9,7 +9,6 @@
 
 namespace
 {
-
     class LexerGetChar
     {
     public:
@@ -389,7 +388,7 @@ struct FindName
     bool operator () (const oms::Terminator *term) const
     {
         if (term->token_.m_token == oms::Token_Id)
-            return term->token_.str_->GetStdString() == name_;
+            return term->token_.m_str == name_;
         else
             return false;
     }

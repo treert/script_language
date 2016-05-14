@@ -8,19 +8,21 @@ using namespace std;
 
 class D
 {
+private:
+    D() { cout << __FUNCTION__ << endl; };
 public:
-    D(int a){ cout << __FUNCTION__ << a << endl; };
     ~D(){ cout << __FUNCTION__ << endl; };
+protected:
+    static void xxx(){ cout << __FUNCTION__ << endl; };
 
 private:
 
 };
 
-class B:D
+class B:public D
 {
 public:
-    B():D(2){ cout << __FUNCTION__ << endl; };
-    ~B(){ cout << __FUNCTION__ << endl; };
+    static void abc(){ cout << __FUNCTION__ << endl; }
 
 private:
 
@@ -28,6 +30,6 @@ private:
 
 int main(){
     //A a;
-    //B b;
+    B::abc();
     //b.~B();
 }

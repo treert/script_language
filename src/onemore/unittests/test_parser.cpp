@@ -14,7 +14,7 @@ namespace
     {
         return g_parser.IsEOF();
     }
-} // namespace
+}
 
 TEST_CASE(parser_exp1)
 {
@@ -24,13 +24,13 @@ TEST_CASE(parser_exp1)
     auto &exp = exp_list->exp_list_[0];
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
+    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 
     // 1 + 2
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
+    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 }
@@ -43,19 +43,19 @@ TEST_CASE(parser_exp2)
     auto &exp = exp_list->exp_list_[0];
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
+    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
 
     // 1 + 2
     auto left = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.token_ == '+');
+    EXPECT_TRUE(left->op_token_.m_token == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->right_.get()));
 
     // 3 * 4
     auto right = dynamic_cast<oms::BinaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(right);
-    EXPECT_TRUE(right->op_token_.token_ == '*');
+    EXPECT_TRUE(right->op_token_.m_token == '*');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->right_.get()));
 }
@@ -68,29 +68,29 @@ TEST_CASE(parser_exp3)
     auto &exp = exp_list->exp_list_[0];
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
+    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
 
     // -1
     auto left = dynamic_cast<oms::UnaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.token_ == '-');
+    EXPECT_TRUE(left->op_token_.m_token == '-');
 
     // -(1 ^ 2 ^ 2)
     auto right = dynamic_cast<oms::UnaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(right);
-    EXPECT_TRUE(right->op_token_.token_ == '-');
+    EXPECT_TRUE(right->op_token_.m_token == '-');
 
     bin_exp = dynamic_cast<oms::BinaryExpression *>(right->exp_.get());
     EXPECT_TRUE(bin_exp);
 
     // 1 ^
-    EXPECT_TRUE(bin_exp->op_token_.token_ == '^');
+    EXPECT_TRUE(bin_exp->op_token_.m_token == '^');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->left_.get()));
 
     // 2 ^ 2
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.token_ == '^');
+    EXPECT_TRUE(bin_exp->op_token_.m_token == '^');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 }
@@ -105,41 +105,41 @@ TEST_CASE(parser_exp4)
     // or
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.token_ == oms::Token_Or);
+    EXPECT_TRUE(bin_exp->op_token_.m_token == oms::Token_Or);
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 
     // and
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.token_ == oms::Token_And);
+    EXPECT_TRUE(bin_exp->op_token_.m_token == oms::Token_And);
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 
     // (-1 + 1) * 2 / 1 ^ 2
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
-    EXPECT_TRUE(bin_exp->op_token_.token_ == '/');
+    EXPECT_TRUE(bin_exp->op_token_.m_token == '/');
 
     // *
     auto left = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.token_ == '*');
+    EXPECT_TRUE(left->op_token_.m_token == '*');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->right_.get()));
 
     // (-1 + 1)
     left = dynamic_cast<oms::BinaryExpression *>(left->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.token_ == '+');
+    EXPECT_TRUE(left->op_token_.m_token == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->right_.get()));
 
     // -1
     auto unary = dynamic_cast<oms::UnaryExpression *>(left->left_.get());
     EXPECT_TRUE(unary);
-    EXPECT_TRUE(unary->op_token_.token_ == '-');
+    EXPECT_TRUE(unary->op_token_.m_token == '-');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(unary->exp_.get()));
 
     // 1 ^ 2
     auto right = dynamic_cast<oms::BinaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(right);
-    EXPECT_TRUE(right->op_token_.token_ == '^');
+    EXPECT_TRUE(right->op_token_.m_token == '^');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->right_.get()));
 }
@@ -260,7 +260,7 @@ TEST_CASE(parser19)
 
 TEST_CASE(parser20)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("return return");
     });
@@ -268,7 +268,7 @@ TEST_CASE(parser20)
 
 TEST_CASE(parser21)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("t = {} t.a = ");
     });
@@ -276,7 +276,7 @@ TEST_CASE(parser21)
 
 TEST_CASE(parser22)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("f().m():m().m");
     });
@@ -284,7 +284,7 @@ TEST_CASE(parser22)
 
 TEST_CASE(parser23)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("do end end");
     });
@@ -292,7 +292,7 @@ TEST_CASE(parser23)
 
 TEST_CASE(parser24)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("while true, false do end");
     });
@@ -300,7 +300,7 @@ TEST_CASE(parser24)
 
 TEST_CASE(parser25)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("repeat until;");
     });
@@ -308,7 +308,7 @@ TEST_CASE(parser25)
 
 TEST_CASE(parser26)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("if true false then end");
     });
@@ -316,7 +316,7 @@ TEST_CASE(parser26)
 
 TEST_CASE(parser27)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("if true then elseif false then else");
     });
@@ -324,7 +324,7 @@ TEST_CASE(parser27)
 
 TEST_CASE(parser28)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("for a.b = 1, 2 do end");
     });
@@ -332,7 +332,7 @@ TEST_CASE(parser28)
 
 TEST_CASE(parser29)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("for a = 1, 2, 3, 4 do end");
     });
@@ -340,7 +340,7 @@ TEST_CASE(parser29)
 
 TEST_CASE(parser30)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("for a.b in pairs(t) do end");
     });
@@ -348,7 +348,7 @@ TEST_CASE(parser30)
 
 TEST_CASE(parser31)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("function a.b.c:m.c() end");
     });
@@ -356,7 +356,7 @@ TEST_CASE(parser31)
 
 TEST_CASE(parser32)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("local function a.b() end");
     });
@@ -364,7 +364,7 @@ TEST_CASE(parser32)
 
 TEST_CASE(parser33)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("local function a(m, ..., n) end");
     });
@@ -372,7 +372,7 @@ TEST_CASE(parser33)
 
 TEST_CASE(parser34)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("local a = 1, 2,");
     });
@@ -380,7 +380,7 @@ TEST_CASE(parser34)
 
 TEST_CASE(parser35)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("t = {a.b = 1}");
     });
@@ -388,7 +388,7 @@ TEST_CASE(parser35)
 
 TEST_CASE(parser36)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("local a end");
     });
@@ -396,7 +396,7 @@ TEST_CASE(parser36)
 
 TEST_CASE(parser37)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
+    EXPECT_EXCEPTION(oms::Exception,
     {
         Parse("f 1");
     });
