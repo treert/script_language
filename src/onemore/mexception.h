@@ -40,4 +40,14 @@ namespace oms
     private:
         std::string what_;
     };
+
+    class ParseException : public Exception
+    {
+    public:
+        ParseException(const char *str, const TokenDetail &t)
+        {
+            SetWhat( t.m_line, ':', t.m_column, " '",
+                GetTokenStr(t), "' ", str);
+        }
+    };
 } // namespace oms

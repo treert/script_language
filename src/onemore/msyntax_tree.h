@@ -29,7 +29,6 @@ namespace oms
         LexicalScoping_Local,           // Expression or variable in current function
     };
 
-    class String;
     class Visitor;
 
     // AST base class, all AST node derived from this class and
@@ -45,12 +44,9 @@ namespace oms
     {
     public:
         std::unique_ptr<SyntaxTree> block_;
-        String *module_;
 
-        Chunk(std::unique_ptr<SyntaxTree> block,
-            String *module)
-            : block_(std::move(block)),
-            module_(module)
+        Chunk(std::unique_ptr<SyntaxTree> block)
+            : block_(std::move(block))
         {
         }
 
