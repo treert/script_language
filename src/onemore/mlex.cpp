@@ -54,14 +54,14 @@ namespace oms{
 
     std::string GetTokenStr(const TokenDetail &tokenDetail)
     {
-        int32_t token = tokenDetail.m_token;
+        int32_t token = tokenDetail.token_;
         switch (token)
         {
         case Token_Number:
-            return std::to_string(tokenDetail.m_number);
+            return std::to_string(tokenDetail.number_);
             break;
         case Token_Id:case Token_String:
-            return tokenDetail.m_str;
+            return tokenDetail.str_;
             break;
         default:
             if (token >= Token_And && token <= Token_EOF)
@@ -80,47 +80,47 @@ namespace oms{
 
 #define RETURN_NORMAL_TOKEN_DETAIL(detail, token)               \
     do {                                                        \
-        detail->m_token = token;                                 \
-        detail->m_line = _line;                                  \
-        detail->m_column = _column;                              \
+        detail->token_ = token;                                 \
+        detail->line_ = line_;                                  \
+        detail->column_ = column_;                              \
         return token;                                           \
     } while (0)
 
 
 #define RETURN_NUMBER_TOKEN_DETAIL(detail, number)              \
     do {                                                        \
-    detail->m_number = number;                                  \
+    detail->number_ = number;                                  \
     RETURN_NORMAL_TOKEN_DETAIL(detail, Token_Number);           \
     } while (0)
 
 #define RETURN_TOKEN_DETAIL(detail, string, token)              \
     do {                                                        \
-    detail->m_str = string;                    \
+    detail->str_ = string;                    \
     RETURN_NORMAL_TOKEN_DETAIL(detail, token);                  \
     } while (0)
 
 #define SET_EOF_TOKEN_DETAIL(detail)                            \
     do {                                                        \
-        detail->m_token = Token_EOF;                             \
-        detail->m_line = _line;                                  \
-        detail->m_column = _column;                              \
+        detail->token_ = Token_EOF;                             \
+        detail->line_ = line_;                                  \
+        detail->column_ = column_;                              \
     } while (0)
 
     int32_t Lexer::GetToken(TokenDetail *detail)
     {
         assert(detail);
         SET_EOF_TOKEN_DETAIL(detail);
-        if (EOF == _current)
+        if (EOF == current_)
         {
-            _current = _NextChar();
+            current_ = _NextChar();
         }
 
-        while (EOF != _current)
+        while (EOF != current_)
         {
-            switch (_current)
+            switch (current_)
             {
             case ' ':case '\t':case '\v':case '\f':
-                _current = _NextChar();
+                current_ = _NextChar();
                 break;
             case '\n':case '\r':
                 _NewLine();
@@ -134,15 +134,15 @@ namespace oms{
                     }
                     else
                     {
-                        _current = next;
+                        current_ = next;
                         RETURN_NORMAL_TOKEN_DETAIL(detail, '-');
                     }
                 }
                 break;
             case '[':
                 {
-                    _current = _NextChar();
-                    if ('[' == _current || '=' == _current)
+                    current_ = _NextChar();
+                    if ('[' == current_ || '=' == current_)
                     {
                         return _MultiLineString(detail);
                     }
@@ -168,7 +168,7 @@ namespace oms{
                     {
                         throw Exception("expect '=' after '~'");
                     }
-                    _current = _NextChar();
+                    current_ = _NextChar();
                     RETURN_NORMAL_TOKEN_DETAIL(detail, Token_NotEqual);
                 }
                 break;
@@ -183,20 +183,20 @@ namespace oms{
                         int32_t pre_next = _NextChar();
                         if ('.' == pre_next)
                         {
-                            _current = _NextChar();
+                            current_ = _NextChar();
                             RETURN_NORMAL_TOKEN_DETAIL(detail, Token_VarArg);
                         }
                         else
                         {
-                            _current = pre_next;
+                            current_ = pre_next;
                             RETURN_NORMAL_TOKEN_DETAIL(detail, Token_Concat);
                         }
                     }
                     else if (isdigit(next))
                     {
-                        _tokenBuffer.clear();
-                        _tokenBuffer.push_back(_current);
-                        _current = next;
+                        token_buffer_.clear();
+                        token_buffer_.push_back(current_);
+                        current_ = next;
                         return _NumberXFractional(
                             detail, false, true,
                             [](int c){ return isdigit(c) != 0; },
@@ -205,7 +205,7 @@ namespace oms{
                     }
                     else
                     {
-                        _current = next;
+                        current_ = next;
                         RETURN_NORMAL_TOKEN_DETAIL(detail, '.');
                     }
                 }
@@ -217,8 +217,8 @@ namespace oms{
             case '#': case '(': case ')': case '{': case '}':
             case ']': case ';': case ':': case ',':
                 {
-                    int token = _current;
-                    _current = _NextChar();
+                    int token = current_;
+                    current_ = _NextChar();
                     RETURN_NORMAL_TOKEN_DETAIL(detail, token);
                 }
                 break;
@@ -233,21 +233,21 @@ namespace oms{
     void Lexer::_NewLine()
     {
         int next = _NextChar();
-        if (('\n' == next || '\r' == next) && next != _current)
-            _current = _NextChar();
+        if (('\n' == next || '\r' == next) && next != current_)
+            current_ = _NextChar();
         else
-            _current = next;
-        ++_line;
-        _column = 0;
+            current_ = next;
+        ++line_;
+        column_ = 0;
     }
 
     void Lexer::_Comment()
     {
-        _current = _NextChar();
-        if ('[' == _current)
+        current_ = _NextChar();
+        if ('[' == current_)
         {
-            _current = _NextChar();
-            if ('[' == _current)
+            current_ = _NextChar();
+            if ('[' == current_)
                 _MultiLineComment();
             else
                 _SingleLineComment();
@@ -258,8 +258,8 @@ namespace oms{
 
     void Lexer::_SingleLineComment()
     {
-        while (_current != '\r' && _current != '\n' && _current != EOF)
-            _current = _NextChar();
+        while (current_ != '\r' && current_ != '\n' && current_ != EOF)
+            current_ = _NextChar();
     }
 
     void Lexer::_MultiLineComment()
@@ -267,26 +267,26 @@ namespace oms{
         bool is_comment_end = false;
         while (!is_comment_end)
         {
-            if (']' == _current)
+            if (']' == current_)
             {
-                _current = _NextChar();
-                if (']' == _current)
+                current_ = _NextChar();
+                if (']' == current_)
                 {
                     is_comment_end = true;
-                    _current = _NextChar();
+                    current_ = _NextChar();
                 }
             }
-            else if (EOF == _current)
+            else if (EOF == current_)
             {
                 throw Exception("expect complete multi - line comment before <eof>.");
             }
-            else if ('\r' == _current || '\n' == _current)
+            else if ('\r' == current_ || '\n' == current_)
             {
                 _NewLine();
             }
             else
             {
-                _current = _NextChar();
+                current_ = _NextChar();
             }
         }
     }
@@ -294,15 +294,15 @@ namespace oms{
     int32_t Lexer::_Number(TokenDetail *detail)
     {
         bool integer_part = false;
-        _tokenBuffer.clear();
-        if ('0' == _current)
+        token_buffer_.clear();
+        if ('0' == current_)
         {
             int32_t next = _NextChar();
             if ('x' == next || 'X' == next)
             {
-                _tokenBuffer.push_back(_current);
-                _tokenBuffer.push_back(next);
-                _current = _NextChar();
+                token_buffer_.push_back(current_);
+                token_buffer_.push_back(next);
+                current_ = _NextChar();
                 return _NumberX(
                     detail, false, IsHexChar,
                     [](int c) { return c == 'p' || c == 'P'; }
@@ -310,8 +310,8 @@ namespace oms{
             }
             else
             {
-                _tokenBuffer.push_back(_current);
-                _current = next;
+                token_buffer_.push_back(current_);
+                current_ = next;
                 integer_part = true;
             }
         }
@@ -328,17 +328,17 @@ namespace oms{
         const std::function<bool(int)> &is_exponent
         )
     {
-        while (is_number_char(_current))
+        while (is_number_char(current_))
         {
-            _tokenBuffer.push_back(_current);
-            _current = _NextChar();
+            token_buffer_.push_back(current_);
+            current_ = _NextChar();
             integer_part = true;
         }
         bool point = false;
-        if ('.' == _current)
+        if ('.' == current_)
         {
-            _tokenBuffer.push_back(_current);
-            _current = _NextChar();
+            token_buffer_.push_back(current_);
+            current_ = _NextChar();
             point = true;
         }
 
@@ -354,10 +354,10 @@ namespace oms{
         const std::function<bool(int)> &is_exponent)
     {
         bool fractional_part = false;
-        while (is_number_char(_current))
+        while (is_number_char(current_))
         {
-            _tokenBuffer.push_back(_current);
-            _current = _NextChar();
+            token_buffer_.push_back(current_);
+            current_ = _NextChar();
             fractional_part = true;
         }
 
@@ -366,43 +366,43 @@ namespace oms{
         else if (!point && !integer_part && !fractional_part)
             throw Exception("unexpect incomplete number ");
 
-        if (is_exponent(_current))
+        if (is_exponent(current_))
         {
-            _tokenBuffer.push_back(_current);
-            _current = _NextChar();
-            if (_current == '-' || _current == '+')
+            token_buffer_.push_back(current_);
+            current_ = _NextChar();
+            if (current_ == '-' || current_ == '+')
             {
-                _tokenBuffer.push_back(_current);
-                _current = _NextChar();
+                token_buffer_.push_back(current_);
+                current_ = _NextChar();
             }
 
-            if (!isdigit(_current))
+            if (!isdigit(current_))
                 throw Exception("expect exponent after ");
 
-            while (isdigit(_current))
+            while (isdigit(current_))
             {
-                _tokenBuffer.push_back(_current);
-                _current = _NextChar();
+                token_buffer_.push_back(current_);
+                current_ = _NextChar();
             }
         }
 
-        double number = strtod(_tokenBuffer.c_str(), nullptr);
+        double number = strtod(token_buffer_.c_str(), nullptr);
         RETURN_NUMBER_TOKEN_DETAIL(detail, number);
     }
 
     int Lexer::_XEqual(TokenDetail *detail, int equal_token)
     {
-        int token = _current;
+        int token = current_;
 
         int next = _NextChar();
         if (next == '=')
         {
-            _current = _NextChar();
+            current_ = _NextChar();
             RETURN_NORMAL_TOKEN_DETAIL(detail, equal_token);
         }
         else
         {
-            _current = next;
+            current_ = next;
             RETURN_NORMAL_TOKEN_DETAIL(detail, token);
         }
     }
@@ -410,57 +410,57 @@ namespace oms{
     int Lexer::_MultiLineString(TokenDetail *detail)
     {
         int equals = 0;
-        while (_current == '=')
+        while (current_ == '=')
         {
             ++equals;
-            _current = _NextChar();
+            current_ = _NextChar();
         }
 
-        if (_current != '[')
+        if (current_ != '[')
             throw Exception("incomplete multi-line string at");
 
-        _current = _NextChar();
-        _tokenBuffer.clear();
+        current_ = _NextChar();
+        token_buffer_.clear();
 
-        if (_current == '\r' || _current == '\n')
+        if (current_ == '\r' || current_ == '\n')
         {
             _NewLine();
             if (equals == 0)    // "[[]]" keeps first '\n'
-                _tokenBuffer.push_back('\n');
+                token_buffer_.push_back('\n');
         }
 
-        while (_current != EOF)
+        while (current_ != EOF)
         {
-            if (_current == ']')
+            if (current_ == ']')
             {
-                _current = _NextChar();
+                current_ = _NextChar();
                 int i = 0;
-                for (; i < equals; ++i, _current = _NextChar())
+                for (; i < equals; ++i, current_ = _NextChar())
                 {
-                    if (_current != '=')
+                    if (current_ != '=')
                         break;
                 }
 
-                if (i == equals && _current == ']')
+                if (i == equals && current_ == ']')
                 {
-                    _current = _NextChar();
-                    RETURN_TOKEN_DETAIL(detail, _tokenBuffer, Token_String);
+                    current_ = _NextChar();
+                    RETURN_TOKEN_DETAIL(detail, token_buffer_, Token_String);
                 }
                 else
                 {
-                    _tokenBuffer.push_back(']');
-                    _tokenBuffer.append(i, '=');
+                    token_buffer_.push_back(']');
+                    token_buffer_.append(i, '=');
                 }
             }
-            else if (_current == '\r' || _current == '\n')
+            else if (current_ == '\r' || current_ == '\n')
             {
                 _NewLine();
-                _tokenBuffer.push_back('\n');
+                token_buffer_.push_back('\n');
             }
             else
             {
-                _tokenBuffer.push_back(_current);
-                _current = _NextChar();
+                token_buffer_.push_back(current_);
+                current_ = _NextChar();
             }
         }
 
@@ -469,68 +469,68 @@ namespace oms{
 
     int Lexer::_SingleLineString(TokenDetail *detail)
     {
-        int quote = _current;
-        _current = _NextChar();
-        _tokenBuffer.clear();
+        int quote = current_;
+        current_ = _NextChar();
+        token_buffer_.clear();
 
-        while (_current != quote)
+        while (current_ != quote)
         {
-            if (_current == EOF)
+            if (current_ == EOF)
                 throw Exception("incomplete string at <eof>");
 
-            if (_current == '\r' || _current == '\n')
+            if (current_ == '\r' || current_ == '\n')
                 throw Exception("incomplete string at this line");
 
             _StringChar();
         }
 
-        _current = _NextChar();
-        RETURN_TOKEN_DETAIL(detail, _tokenBuffer, Token_String);
+        current_ = _NextChar();
+        RETURN_TOKEN_DETAIL(detail, token_buffer_, Token_String);
     }
 
     void Lexer::_StringChar()
     {
-        if (_current == '\\')
+        if (current_ == '\\')
         {
-            _current = _NextChar();
-            if (_current == 'a')
-                _tokenBuffer.push_back('\a');
-            else if (_current == 'b')
-                _tokenBuffer.push_back('\b');
-            else if (_current == 'f')
-                _tokenBuffer.push_back('\f');
-            else if (_current == 'n')
-                _tokenBuffer.push_back('\n');
-            else if (_current == 'r')
-                _tokenBuffer.push_back('\r');
-            else if (_current == 't')
-                _tokenBuffer.push_back('\t');
-            else if (_current == 'v')
-                _tokenBuffer.push_back('\v');
-            else if (_current == '\\')
-                _tokenBuffer.push_back('\\');
-            else if (_current == '"')
-                _tokenBuffer.push_back('"');
-            else if (_current == '\'')
-                _tokenBuffer.push_back('\'');
-            else if (_current == 'x')
+            current_ = _NextChar();
+            if (current_ == 'a')
+                token_buffer_.push_back('\a');
+            else if (current_ == 'b')
+                token_buffer_.push_back('\b');
+            else if (current_ == 'f')
+                token_buffer_.push_back('\f');
+            else if (current_ == 'n')
+                token_buffer_.push_back('\n');
+            else if (current_ == 'r')
+                token_buffer_.push_back('\r');
+            else if (current_ == 't')
+                token_buffer_.push_back('\t');
+            else if (current_ == 'v')
+                token_buffer_.push_back('\v');
+            else if (current_ == '\\')
+                token_buffer_.push_back('\\');
+            else if (current_ == '"')
+                token_buffer_.push_back('"');
+            else if (current_ == '\'')
+                token_buffer_.push_back('\'');
+            else if (current_ == 'x')
             {
-                _current = _NextChar();
+                current_ = _NextChar();
                 char hex[3] = { 0 };
                 int i = 0;
-                for (; i < 2 && IsHexChar(_current); ++i, _current = _NextChar())
-                    hex[i] = _current;
+                for (; i < 2 && IsHexChar(current_); ++i, current_ = _NextChar())
+                    hex[i] = current_;
                 if (i == 0)
                     throw Exception("unexpect character after '\\x'");
-                _tokenBuffer.push_back(static_cast<char>(strtoul(hex, 0, 16)));
+                token_buffer_.push_back(static_cast<char>(strtoul(hex, 0, 16)));
                 return;
             }
-            else if (isdigit(_current))
+            else if (isdigit(current_))
             {
                 char oct[4] = { 0 };
-                for (int i = 0; i < 3 && isdigit(_current); ++i, _current = _NextChar())
-                    oct[i] = _current;
-                _tokenBuffer.push_back(static_cast<char>(strtoul(oct, 0, 8)));
+                for (int i = 0; i < 3 && isdigit(current_); ++i, current_ = _NextChar())
+                    oct[i] = current_;
+                token_buffer_.push_back(static_cast<char>(strtoul(oct, 0, 8)));
                 return;
             }
             else
@@ -538,30 +538,30 @@ namespace oms{
         }
         else
         {
-            _tokenBuffer.push_back(_current);
+            token_buffer_.push_back(current_);
         }
 
-        _current = _NextChar();
+        current_ = _NextChar();
     }
 
     int Lexer::_Id(TokenDetail *detail)
     {
-        if (!isalpha(_current) && _current != '_')
+        if (!isalpha(current_) && current_ != '_')
             throw Exception("unexpect character");
 
-        _tokenBuffer.clear();
-        _tokenBuffer.push_back(_current);
-        _current = _NextChar();
+        token_buffer_.clear();
+        token_buffer_.push_back(current_);
+        current_ = _NextChar();
 
-        while (isalnum(_current) || _current == '_')
+        while (isalnum(current_) || current_ == '_')
         {
-            _tokenBuffer.push_back(_current);
-            _current = _NextChar();
+            token_buffer_.push_back(current_);
+            current_ = _NextChar();
         }
 
         int token = 0;
-        if (!IsKeyWord(_tokenBuffer, &token))
+        if (!IsKeyWord(token_buffer_, &token))
             token = Token_Id;
-        RETURN_TOKEN_DETAIL(detail, _tokenBuffer, token);
+        RETURN_TOKEN_DETAIL(detail, token_buffer_, token);
     }
 } // namespace oms

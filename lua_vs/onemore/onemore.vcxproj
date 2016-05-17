@@ -81,6 +81,7 @@
     <ClCompile Include="..\..\src\onemore\main.cpp" />
     <ClCompile Include="..\..\src\onemore\mlex.cpp" />
     <ClCompile Include="..\..\src\onemore\mparser.cpp" />
+    <ClCompile Include="..\..\src\onemore\msemantic_analysis.cpp" />
     <ClCompile Include="..\..\src\onemore\mstring.cpp" />
     <ClCompile Include="..\..\src\onemore\msyntax_tree.cpp" />
     <ClCompile Include="..\..\src\onemore\mvalue.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="..\..\src\onemore\mexception.h" />
     <ClInclude Include="..\..\src\onemore\mlex.h" />
     <ClInclude Include="..\..\src\onemore\mparser.h" />
+    <ClInclude Include="..\..\src\onemore\msemantic_analysis.h" />
     <ClInclude Include="..\..\src\onemore\mstring.h" />
     <ClInclude Include="..\..\src\onemore\msyntax_tree.h" />
     <ClInclude Include="..\..\src\onemore\mvalue.h" />

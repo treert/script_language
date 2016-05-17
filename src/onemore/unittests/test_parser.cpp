@@ -24,13 +24,13 @@ TEST_CASE(parser_exp1)
     auto &exp = exp_list->exp_list_[0];
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
+    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 
     // 1 + 2
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
+    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 }
@@ -43,19 +43,19 @@ TEST_CASE(parser_exp2)
     auto &exp = exp_list->exp_list_[0];
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
+    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
 
     // 1 + 2
     auto left = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.m_token == '+');
+    EXPECT_TRUE(left->op_token_.token_ == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->right_.get()));
 
     // 3 * 4
     auto right = dynamic_cast<oms::BinaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(right);
-    EXPECT_TRUE(right->op_token_.m_token == '*');
+    EXPECT_TRUE(right->op_token_.token_ == '*');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->right_.get()));
 }
@@ -68,29 +68,29 @@ TEST_CASE(parser_exp3)
     auto &exp = exp_list->exp_list_[0];
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.m_token == '+');
+    EXPECT_TRUE(bin_exp->op_token_.token_ == '+');
 
     // -1
     auto left = dynamic_cast<oms::UnaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.m_token == '-');
+    EXPECT_TRUE(left->op_token_.token_ == '-');
 
     // -(1 ^ 2 ^ 2)
     auto right = dynamic_cast<oms::UnaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(right);
-    EXPECT_TRUE(right->op_token_.m_token == '-');
+    EXPECT_TRUE(right->op_token_.token_ == '-');
 
     bin_exp = dynamic_cast<oms::BinaryExpression *>(right->exp_.get());
     EXPECT_TRUE(bin_exp);
 
     // 1 ^
-    EXPECT_TRUE(bin_exp->op_token_.m_token == '^');
+    EXPECT_TRUE(bin_exp->op_token_.token_ == '^');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->left_.get()));
 
     // 2 ^ 2
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.m_token == '^');
+    EXPECT_TRUE(bin_exp->op_token_.token_ == '^');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 }
@@ -105,41 +105,41 @@ TEST_CASE(parser_exp4)
     // or
     auto bin_exp = dynamic_cast<oms::BinaryExpression *>(exp.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.m_token == oms::Token_Or);
+    EXPECT_TRUE(bin_exp->op_token_.token_ == oms::Token_Or);
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 
     // and
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(bin_exp);
-    EXPECT_TRUE(bin_exp->op_token_.m_token == oms::Token_And);
+    EXPECT_TRUE(bin_exp->op_token_.token_ == oms::Token_And);
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(bin_exp->right_.get()));
 
     // (-1 + 1) * 2 / 1 ^ 2
     bin_exp = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
-    EXPECT_TRUE(bin_exp->op_token_.m_token == '/');
+    EXPECT_TRUE(bin_exp->op_token_.token_ == '/');
 
     // *
     auto left = dynamic_cast<oms::BinaryExpression *>(bin_exp->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.m_token == '*');
+    EXPECT_TRUE(left->op_token_.token_ == '*');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->right_.get()));
 
     // (-1 + 1)
     left = dynamic_cast<oms::BinaryExpression *>(left->left_.get());
     EXPECT_TRUE(left);
-    EXPECT_TRUE(left->op_token_.m_token == '+');
+    EXPECT_TRUE(left->op_token_.token_ == '+');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(left->right_.get()));
 
     // -1
     auto unary = dynamic_cast<oms::UnaryExpression *>(left->left_.get());
     EXPECT_TRUE(unary);
-    EXPECT_TRUE(unary->op_token_.m_token == '-');
+    EXPECT_TRUE(unary->op_token_.token_ == '-');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(unary->exp_.get()));
 
     // 1 ^ 2
     auto right = dynamic_cast<oms::BinaryExpression *>(bin_exp->right_.get());
     EXPECT_TRUE(right);
-    EXPECT_TRUE(right->op_token_.m_token == '^');
+    EXPECT_TRUE(right->op_token_.token_ == '^');
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->left_.get()));
     EXPECT_TRUE(dynamic_cast<oms::Terminator *>(right->right_.get()));
 }

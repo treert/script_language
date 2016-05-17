@@ -387,8 +387,8 @@ struct FindName
 
     bool operator () (const oms::Terminator *term) const
     {
-        if (term->token_.m_token == oms::Token_Id)
-            return term->token_.m_str == name_;
+        if (term->token_.token_ == oms::Token_Id)
+            return term->token_.str_ == name_;
         else
             return false;
     }

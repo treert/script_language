@@ -19,15 +19,15 @@ namespace oms{
 
     struct TokenDetail
     {
-        double m_number;
-        std::string m_str;
-        int m_line;
-        int m_column;
-        int32_t m_token;
+        double number_;
+        std::string str_;
+        int line_;
+        int column_;
+        int32_t token_;
         TokenDetail() :
-            m_line(0),
-            m_column(0),
-            m_token(Token_EOF)
+            line_(0),
+            column_(0),
+            token_(Token_EOF)
         {}
     };
 
@@ -39,19 +39,19 @@ namespace oms{
         typedef std::function<int32_t()> CharInStream;
 
         Lexer(CharInStream in):
-            _inStream(in),
-            _line(0),
-            _column(1),
-            _current(EOF)
+            in_stream_(in),
+            line_(0),
+            column_(1),
+            current_(EOF)
         {}
 
         DISABLE_DEFALT_COPY_AND_ASSIGN(Lexer);
 
         void SetInStream(CharInStream in){
-            _inStream = in;
-            _line = 0;
-            _column = 1;
-            _current = EOF;
+            in_stream_ = in;
+            line_ = 0;
+            column_ = 1;
+            current_ = EOF;
         }
 
         // 获取下一个token
@@ -60,8 +60,8 @@ namespace oms{
     private:
         int32_t _NextChar()
         {
-            auto c = _inStream();
-            if (EOF != c) ++_column;
+            auto c = in_stream_();
+            if (EOF != c) ++column_;
             return c;
         }
 
@@ -89,13 +89,13 @@ namespace oms{
         int32_t _Id(TokenDetail *detail);
 
 
-        CharInStream _inStream;
-        int32_t _current;
+        CharInStream in_stream_;
+        int32_t current_;
 
-        int32_t _line;
-        int32_t _column;
+        int32_t line_;
+        int32_t column_;
 
-        std::string _tokenBuffer;
+        std::string token_buffer_;
     };
 } // oms
 

@@ -48,6 +48,9 @@
     <ClCompile Include="..\..\src\onemore\unittests\test_parser.cpp">
       <Filter>unit_tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\onemore\msemantic_analysis.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\onemore\mlex.h">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\onemore\unittests\test_common.h">
       <Filter>unit_tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\msemantic_analysis.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

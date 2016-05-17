@@ -46,7 +46,17 @@ namespace oms
     public:
         ParseException(const char *str, const TokenDetail &t)
         {
-            SetWhat( t.m_line, ':', t.m_column, " '",
+            SetWhat( t.line_, ':', t.column_, " '",
+                GetTokenStr(t), "' ", str);
+        }
+    };
+
+    class SemanticException : public Exception
+    {
+    public:
+        SemanticException(const char *str, const TokenDetail &t)
+        {
+            SetWhat(t.line_, ':', t.column_, " '",
                 GetTokenStr(t), "' ", str);
         }
     };
