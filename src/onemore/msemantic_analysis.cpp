@@ -741,7 +741,7 @@ namespace oms
 
     void SemanticAnalysis(SyntaxTree *root, State *state)
     {
-        assert(root && state);
+        assert(root);
         SemanticAnalysisVisitor semantic_analysis(state);
         root->Accept(&semantic_analysis, nullptr);
     }

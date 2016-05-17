@@ -87,6 +87,7 @@
     <ClCompile Include="..\..\src\onemore\mvalue.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\test_lex.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\test_parser.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\test_semantic.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\test_test.cpp" />
     <ClCompile Include="..\..\src\onemore\unittests\unit_test.cpp" />
   </ItemGroup>

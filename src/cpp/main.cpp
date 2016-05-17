@@ -1,6 +1,7 @@
 #include<iostream>
 #include<cstdio>
 #include<string>
+#include<vector>
 #include<stdint.h>
 #include "windows.h"
 
@@ -8,28 +9,15 @@ using namespace std;
 
 class D
 {
-private:
-    D() { cout << __FUNCTION__ << endl; };
 public:
-    ~D(){ cout << __FUNCTION__ << endl; };
-protected:
-    static void xxx(){ cout << __FUNCTION__ << endl; };
-
-private:
-
+    D(int a,float b=8.1){ cout << __FUNCTION__ << a << b<< endl; }
 };
 
-class B:public D
-{
-public:
-    static void abc(){ cout << __FUNCTION__ << endl; }
 
-private:
-
-};
 
 int main(){
-    //A a;
-    B::abc();
-    //b.~B();
+    D a(1);
+    D aa(1, 2);
+    D aaa{ 1};
+    D aaaa{ 1, 2 };
 }

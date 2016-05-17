@@ -51,6 +51,9 @@
     <ClCompile Include="..\..\src\onemore\msemantic_analysis.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\onemore\unittests\test_semantic.cpp">
+      <Filter>unit_tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\onemore\mlex.h">
