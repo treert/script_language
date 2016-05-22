@@ -1,4 +1,9 @@
-#pragma once
+#ifndef EXCEPTION_H
+#define EXCEPTION_H
+
+#include "mToken.h"
+#include "mValue.h"
+#include "mString.h"
 #include <string>
 #include <sstream>
 #include <utility>
@@ -11,12 +16,6 @@ namespace oms
     {
     public:
         const std::string& What() const { return what_; }
-        //Exception() = default;
-        template<typename... Args>
-        Exception(Args&&... args)
-        {
-            SetWhat(std::forward<Args>(args)...);
-        }
 
     protected:
         // Helper functions for format string of exception
@@ -41,23 +40,105 @@ namespace oms
         std::string what_;
     };
 
+    // Module file open failed, this exception will be throwed
+    class OpenFileFail : public Exception
+    {
+    public:
+        explicit OpenFileFail(const std::string &file)
+        {
+            SetWhat(file);
+        }
+    };
+
+    // For lexer report error of token
+    class LexException : public Exception
+    {
+    public:
+        template<typename... Args>
+        LexException(const char *module, int line, int column, Args&&... args)
+        {
+            SetWhat(module, ':', line, ':', column, ' ',
+                    std::forward<Args>(args)...);
+        }
+    };
+
+    // For parser report grammer error
     class ParseException : public Exception
     {
     public:
         ParseException(const char *str, const TokenDetail &t)
         {
-            SetWhat( t.line_, ':', t.column_, " '",
-                GetTokenStr(t), "' ", str);
+            SetWhat(t.module_->GetCStr(), ':', t.line_, ':', t.column_, " '",
+                    GetTokenStr(t), "' ", str);
         }
     };
 
+    // For semantic analysor report semantic error
     class SemanticException : public Exception
     {
     public:
         SemanticException(const char *str, const TokenDetail &t)
         {
-            SetWhat(t.line_, ':', t.column_, " '",
-                GetTokenStr(t), "' ", str);
+            SetWhat(t.module_->GetCStr(), ':', t.line_, ':', t.column_, " '",
+                    GetTokenStr(t), "' ", str);
+        }
+    };
+
+    // For code generator report error
+    class CodeGenerateException : public Exception
+    {
+    public:
+        template<typename... Args>
+        CodeGenerateException(const char *module, int line, Args&&... args)
+        {
+            SetWhat(module, ':', line, ' ', std::forward<Args>(args)...);
+        }
+    };
+
+    // Report error of call c function
+    class CallCFuncException : public Exception
+    {
+    public:
+        template<typename... Args>
+        CallCFuncException(Args&&... args)
+        {
+            SetWhat(std::forward<Args>(args)...);
+        }
+    };
+
+    // For VM report runtime error
+    class RuntimeException : public Exception
+    {
+    public:
+        RuntimeException(const char *module, int line, const char *desc)
+        {
+            SetWhat(module, ':', line, ' ', desc);
+        }
+
+        RuntimeException(const char *module, int line,
+                         const Value *v, const char *v_name,
+                         const char *expect_type)
+        {
+            SetWhat(module, ':', line, ' ', v_name, " is a ",
+                    v->TypeName(), " value, expect a ", expect_type, " value");
+        }
+
+        RuntimeException(const char *module, int line,
+                         const Value *v, const char *v_name,
+                         const char *v_scope, const char *op)
+        {
+            SetWhat(module, ':', line, " attempt to ", op, ' ',
+                    v_scope, " '", v_name, "' (a ", v->TypeName(), " value)");
+        }
+
+        RuntimeException(const char *module, int line,
+                         const Value *v1, const Value *v2,
+                         const char *op)
+        {
+            SetWhat(module, ':', line, " attempt to ", op, ' ',
+                    v1->TypeName(), " with ", v2->TypeName());
         }
     };
 } // namespace oms
+
+#endif // EXCEPTION_H

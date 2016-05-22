@@ -1,6 +1,6 @@
-#include "unit_test.h"
-#include "test_common.h"
-#include "../msemantic_analysis.h"
+#include "mUnitTest.h"
+#include "mTestCommon.h"
+#include "../mSemanticAnalysis.h"
 
 namespace
 {
@@ -9,7 +9,7 @@ namespace
     {
         g_parser.SetInput(s);
         auto ast = g_parser.Parse();
-        oms::SemanticAnalysis(ast.get(), nullptr);
+        oms::SemanticAnalysis(ast.get(), g_parser.GetState());
         return std::move(ast);
     }
 } // namespace
@@ -53,10 +53,10 @@ TEST_CASE(semantic4)
 {
     auto ast = Semantic("t.m.n = a");
     auto t_m_n = ASTFind<oms::MemberAccessor>(ast, [](oms::MemberAccessor *ma) {
-        return ma->member_.str_ == "n";
+        return ma->member_.str_->GetStdString() == "n";
     });
     auto t_m = ASTFind<oms::MemberAccessor>(ast, [](oms::MemberAccessor *ma) {
-        return ma->member_.str_ == "m";
+        return ma->member_.str_->GetStdString() == "m";
     });
     auto t = ASTFind<oms::Terminator>(ast, FindName("t"));
     auto a = ASTFind<oms::Terminator>(ast, FindName("a"));
@@ -87,10 +87,10 @@ TEST_CASE(semantic6)
 {
     auto ast = Semantic("a = t.m.n");
     auto t_m_n = ASTFind<oms::MemberAccessor>(ast, [](oms::MemberAccessor *ma) {
-        return ma->member_.str_ == "n";
+        return ma->member_.str_->GetStdString() == "n";
     });
     auto t_m = ASTFind<oms::MemberAccessor>(ast, [](oms::MemberAccessor *ma) {
-        return ma->member_.str_ == "m";
+        return ma->member_.str_->GetStdString() == "m";
     });
     auto t = ASTFind<oms::Terminator>(ast, FindName("t"));
     auto a = ASTFind<oms::Terminator>(ast, FindName("a"));
@@ -211,10 +211,10 @@ TEST_CASE(semantic13)
 TEST_CASE(semantic14)
 {
     auto ast = Semantic("function test() "
-        "    local a = 1 "
-        "    a = f() "
-        "    return function() return a end "
-        "end");
+                        "    local a = 1 "
+                        "    a = f() "
+                        "    return function() return a end "
+                        "end");
 
     auto a = ASTFind<oms::Terminator>(ast, FindName("a"));
     auto f = ASTFind<oms::Terminator>(ast, FindName("f"));

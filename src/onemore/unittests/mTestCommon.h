@@ -1,68 +1,51 @@
-#pragma once
+#ifndef TEST_COMMON_H
+#define TEST_COMMON_H
 
-#include "../mlex.h"
-#include "../mparser.h"
-#include "../mexception.h"
-#include "../mvisitor.h"
+#include "../mLex.h"
+#include "../mParser.h"
+#include "../mState.h"
+#include "../mString.h"
+#include "../mTextInStream.h"
+#include "../mException.h"
+#include "../mVisitor.h"
 #include <functional>
 #include <type_traits>
-
-namespace
-{
-    class LexerGetChar
-    {
-    public:
-        LexerGetChar(const std::string &str) :_iss(str), _pos(0){}
-
-        int32_t operator() (){
-            if (_pos < _iss.size())
-            {
-                return static_cast<int32_t>(_iss[_pos++]);
-            }
-            else
-            {
-                return EOF;
-            }
-        }
-
-        void setInput(const std::string &str)
-        {
-            _pos = 0;
-            _iss = str;
-        }
-    private:
-        std::string _iss;
-        std::size_t _pos;
-    };
-}
 
 class ParserWrapper
 {
 public:
-    explicit ParserWrapper(const std::string &str = ""):
-        _lexer(LexerGetChar(str))
+    explicit ParserWrapper(const std::string &str = "")
+        : iss_(str), state_(), name_("parser"),
+          lexer_(&state_, &name_, std::bind(&io::text::InStringStream::GetChar, &iss_))
     {
     }
 
     void SetInput(const std::string &input)
     {
-        _lexer.SetInStream(LexerGetChar(input));
+        iss_.SetInputString(input);
     }
 
     bool IsEOF()
     {
         oms::TokenDetail detail;
-        return _lexer.GetToken(&detail) == oms::Token_EOF;
+        return lexer_.GetToken(&detail) == oms::Token_EOF;
     }
 
     std::unique_ptr<oms::SyntaxTree> Parse()
     {
-        return oms::Parse(&_lexer);
+        return oms::Parse(&lexer_);
     }
 
+    oms::State * GetState()
+    {
+        return &state_;
+    }
 
 private:
-    oms::Lexer _lexer;
+    io::text::InStringStream iss_;
+    oms::State state_;
+    oms::String name_;
+    oms::Lexer lexer_;
 };
 
 #define MATCH_AST_TYPE(ast, not_match_stmt)                             \
@@ -74,7 +57,6 @@ private:
                          ASTType>::value,                               \
             std::true_type, std::false_type>::type(), ast, f);          \
     }
-
 
 template<typename ASTType, typename FinderType>
 class ASTFinder : public oms::Visitor
@@ -99,7 +81,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             for (auto &stmt : ast->statements_)
-            stmt->Accept(this, nullptr);
+                stmt->Accept(this, nullptr);
             if (ast->return_stmt_)
                 ast->return_stmt_->Accept(this, nullptr);
         })
@@ -109,7 +91,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             if (ast->exp_list_)
-            ast->exp_list_->Accept(this, nullptr);
+                ast->exp_list_->Accept(this, nullptr);
         })
     }
 
@@ -229,7 +211,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             for (auto &var : ast->var_list_)
-            var->Accept(this, nullptr);
+                var->Accept(this, nullptr);
         })
     }
 
@@ -257,7 +239,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             if (ast->param_list_)
-            ast->param_list_->Accept(this, nullptr);
+                ast->param_list_->Accept(this, nullptr);
             ast->block_->Accept(this, nullptr);
         })
     }
@@ -266,7 +248,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             if (ast->name_list_)
-            ast->name_list_->Accept(this, nullptr);
+                ast->name_list_->Accept(this, nullptr);
         })
     }
 
@@ -279,7 +261,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             for (auto &field : ast->fields_)
-            field->Accept(this, nullptr);
+                field->Accept(this, nullptr);
         })
     }
 
@@ -340,7 +322,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             if (ast->arg_)
-            ast->arg_->Accept(this, nullptr);
+                ast->arg_->Accept(this, nullptr);
         })
     }
 
@@ -348,7 +330,7 @@ public:
     {
         MATCH_AST_TYPE(ast, {
             for (auto &exp : ast->exp_list_)
-            exp->Accept(this, nullptr);
+                exp->Accept(this, nullptr);
         })
     }
 
@@ -374,7 +356,7 @@ private:
 
 template<typename ASTType, typename FinderType>
 ASTType * ASTFind(const std::unique_ptr<oms::SyntaxTree> &root,
-    const FinderType &finder)
+                  const FinderType &finder)
 {
     ASTFinder<ASTType, FinderType> ast_finder(finder);
     root->Accept(&ast_finder, nullptr);
@@ -388,7 +370,7 @@ struct FindName
     bool operator () (const oms::Terminator *term) const
     {
         if (term->token_.token_ == oms::Token_Id)
-            return term->token_.str_ == name_;
+            return term->token_.str_->GetStdString() == name_;
         else
             return false;
     }
@@ -399,7 +381,7 @@ struct FindName
 struct AcceptAST
 {
     bool operator () (const oms::SyntaxTree *) const
-    {
-        return true;
-    }
+    { return true; }
 };
+
+#endif // TEST_COMMON_H

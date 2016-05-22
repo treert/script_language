@@ -1,4 +1,7 @@
-#pragma once
+#ifndef VALUE_H
+#define VALUE_H
+
+#include "mGC.h"
 #include <functional>
 
 namespace oms
@@ -11,10 +14,8 @@ namespace oms
     class Table;
     class UserData;
     class State;
-    class GCObject;
-    class GCObjectVisitor;
 
-    typedef int(*CFunctionType)(State *);
+    typedef int (*CFunctionType)(State *);
 
     enum ValueT
     {
@@ -59,24 +60,16 @@ namespace oms
         explicit Value(CFunctionType cfunc) : cfunc_(cfunc), type_(ValueT_CFunction) { }
 
         void SetNil()
-        {
-            obj_ = nullptr; type_ = ValueT_Nil;
-        }
+        { obj_ = nullptr; type_ = ValueT_Nil; }
 
         void SetBool(bool bvalue)
-        {
-            bvalue_ = bvalue; type_ = ValueT_Bool;
-        }
+        { bvalue_ = bvalue; type_ = ValueT_Bool; }
 
         bool IsNil() const
-        {
-            return type_ == ValueT_Nil;
-        }
+        { return type_ == ValueT_Nil; }
 
         bool IsFalse() const
-        {
-            return type_ == ValueT_Nil || (type_ == ValueT_Bool && !bvalue_);
-        }
+        { return type_ == ValueT_Nil || (type_ == ValueT_Bool && !bvalue_); }
 
         void Accept(GCObjectVisitor *v) const;
         const char * TypeName() const;
@@ -91,16 +84,17 @@ namespace oms
 
         switch (left.type_)
         {
-        case ValueT_Nil: return true;
-        case ValueT_Bool: return left.bvalue_ == right.bvalue_;
-        case ValueT_Number: return left.num_ == right.num_;
-        case ValueT_Obj: return left.obj_ == right.obj_;
-        case ValueT_String: return left.str_ == right.str_;
-        case ValueT_Closure: return left.closure_ == right.closure_;
-        case ValueT_Upvalue: return left.upvalue_ == right.upvalue_;
-        case ValueT_Table: return left.table_ == right.table_;
-        case ValueT_UserData: return left.user_data_ == right.user_data_;
-        case ValueT_CFunction: return left.cfunc_ == right.cfunc_;
+            case ValueT_Nil: return true;
+            case ValueT_Bool: return left.bvalue_ == right.bvalue_;
+            case ValueT_Number: return left.num_ == right.num_;
+            case ValueT_Obj: return left.obj_ == right.obj_;
+            case ValueT_String: return left.str_ == right.str_;
+            case ValueT_Closure: return left.closure_ == right.closure_;
+            case ValueT_Upvalue: return left.upvalue_ == right.upvalue_;
+            case ValueT_Table: return left.table_ == right.table_;
+            case ValueT_UserData: return left.user_data_ == right.user_data_;
+            case ValueT_CFunction: return left.cfunc_ == right.cfunc_;
+            default: return false;
         }
     }
 
@@ -119,27 +113,29 @@ namespace std
         {
             switch (t.type_)
             {
-            case oms::ValueT_Nil:
-                return hash<int>()(0);
-            case oms::ValueT_Bool:
-                return hash<bool>()(t.bvalue_);
-            case oms::ValueT_Number:
-                return hash<double>()(t.num_);
-            case oms::ValueT_String:
-                return hash<void *>()(t.str_);
-            case oms::ValueT_Closure:
-                return hash<void *>()(t.closure_);
-            case oms::ValueT_Upvalue:
-                return hash<void *>()(t.upvalue_);
-            case oms::ValueT_Table:
-                return hash<void *>()(t.table_);
-            case oms::ValueT_UserData:
-                return hash<void *>()(t.user_data_);
-            case oms::ValueT_CFunction:
-                return hash<void *>()(reinterpret_cast<void *>(t.cfunc_));
-            default:
-                return hash<void *>()(t.obj_);
+                case oms::ValueT_Nil:
+                    return hash<int>()(0);
+                case oms::ValueT_Bool:
+                    return hash<bool>()(t.bvalue_);
+                case oms::ValueT_Number:
+                    return hash<double>()(t.num_);
+                case oms::ValueT_String:
+                    return hash<void *>()(t.str_);
+                case oms::ValueT_Closure:
+                    return hash<void *>()(t.closure_);
+                case oms::ValueT_Upvalue:
+                    return hash<void *>()(t.upvalue_);
+                case oms::ValueT_Table:
+                    return hash<void *>()(t.table_);
+                case oms::ValueT_UserData:
+                    return hash<void *>()(t.user_data_);
+                case oms::ValueT_CFunction:
+                    return hash<void *>()(reinterpret_cast<void *>(t.cfunc_));
+                default:
+                    return hash<void *>()(t.obj_);
             }
         }
     };
 } // namespace std
+
+#endif // VALUE_H

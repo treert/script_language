@@ -10,6 +10,74 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\onemore\mCodeGenerate.cpp" />
+    <ClCompile Include="..\..\src\onemore\mFunction.cpp" />
+    <ClCompile Include="..\..\src\onemore\mGC.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLex.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLibAPI.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLibBase.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLibIO.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLibMath.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLibString.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLibTable.cpp" />
+    <ClCompile Include="..\..\src\onemore\mLuna.cpp" />
+    <ClCompile Include="..\..\src\onemore\mModuleManager.cpp" />
+    <ClCompile Include="..\..\src\onemore\mParser.cpp" />
+    <ClCompile Include="..\..\src\onemore\mRuntime.cpp" />
+    <ClCompile Include="..\..\src\onemore\mSemanticAnalysis.cpp" />
+    <ClCompile Include="..\..\src\onemore\mState.cpp" />
+    <ClCompile Include="..\..\src\onemore\mString.cpp" />
+    <ClCompile Include="..\..\src\onemore\mStringPool.cpp" />
+    <ClCompile Include="..\..\src\onemore\mSyntaxTree.cpp" />
+    <ClCompile Include="..\..\src\onemore\mTable.cpp" />
+    <ClCompile Include="..\..\src\onemore\mTextInStream.cpp" />
+    <ClCompile Include="..\..\src\onemore\mToken.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\mGCTest.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\mTestLex.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\mTestParser.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\mTestSemantic.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\mTestString.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\mTestTable.cpp" />
+    <ClCompile Include="..\..\src\onemore\unittests\mUnitTest.cpp" />
+    <ClCompile Include="..\..\src\onemore\mUpvalue.cpp" />
+    <ClCompile Include="..\..\src\onemore\mUserData.cpp" />
+    <ClCompile Include="..\..\src\onemore\mValue.cpp" />
+    <ClCompile Include="..\..\src\onemore\mVM.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\onemore\mCodeGenerate.h" />
+    <ClInclude Include="..\..\src\onemore\mException.h" />
+    <ClInclude Include="..\..\src\onemore\mFunction.h" />
+    <ClInclude Include="..\..\src\onemore\mGC.h" />
+    <ClInclude Include="..\..\src\onemore\mGuard.h" />
+    <ClInclude Include="..\..\src\onemore\mLex.h" />
+    <ClInclude Include="..\..\src\onemore\mLibAPI.h" />
+    <ClInclude Include="..\..\src\onemore\mLibBase.h" />
+    <ClInclude Include="..\..\src\onemore\mLibIO.h" />
+    <ClInclude Include="..\..\src\onemore\mLibMath.h" />
+    <ClInclude Include="..\..\src\onemore\mLibString.h" />
+    <ClInclude Include="..\..\src\onemore\mLibTable.h" />
+    <ClInclude Include="..\..\src\onemore\mModuleManager.h" />
+    <ClInclude Include="..\..\src\onemore\mOpCode.h" />
+    <ClInclude Include="..\..\src\onemore\mParser.h" />
+    <ClInclude Include="..\..\src\onemore\mRuntime.h" />
+    <ClInclude Include="..\..\src\onemore\mSemanticAnalysis.h" />
+    <ClInclude Include="..\..\src\onemore\mState.h" />
+    <ClInclude Include="..\..\src\onemore\mString.h" />
+    <ClInclude Include="..\..\src\onemore\mStringPool.h" />
+    <ClInclude Include="..\..\src\onemore\mSyntaxTree.h" />
+    <ClInclude Include="..\..\src\onemore\mTable.h" />
+    <ClInclude Include="..\..\src\onemore\mTextInStream.h" />
+    <ClInclude Include="..\..\src\onemore\mToken.h" />
+    <ClInclude Include="..\..\src\onemore\unittests\mTestCommon.h" />
+    <ClInclude Include="..\..\src\onemore\unittests\mUnitTest.h" />
+    <ClInclude Include="..\..\src\onemore\mUpvalue.h" />
+    <ClInclude Include="..\..\src\onemore\mUserData.h" />
+    <ClInclude Include="..\..\src\onemore\mValue.h" />
+    <ClInclude Include="..\..\src\onemore\mVisitor.h" />
+    <ClInclude Include="..\..\src\onemore\mVM.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{671072F4-11F7-4898-91B2-4284B09FD82E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -51,7 +119,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -77,33 +145,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\onemore\main.cpp" />
-    <ClCompile Include="..\..\src\onemore\mlex.cpp" />
-    <ClCompile Include="..\..\src\onemore\mparser.cpp" />
-    <ClCompile Include="..\..\src\onemore\msemantic_analysis.cpp" />
-    <ClCompile Include="..\..\src\onemore\mstring.cpp" />
-    <ClCompile Include="..\..\src\onemore\msyntax_tree.cpp" />
-    <ClCompile Include="..\..\src\onemore\mvalue.cpp" />
-    <ClCompile Include="..\..\src\onemore\unittests\test_lex.cpp" />
-    <ClCompile Include="..\..\src\onemore\unittests\test_parser.cpp" />
-    <ClCompile Include="..\..\src\onemore\unittests\test_semantic.cpp" />
-    <ClCompile Include="..\..\src\onemore\unittests\test_test.cpp" />
-    <ClCompile Include="..\..\src\onemore\unittests\unit_test.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\src\onemore\mcommon.h" />
-    <ClInclude Include="..\..\src\onemore\mexception.h" />
-    <ClInclude Include="..\..\src\onemore\mlex.h" />
-    <ClInclude Include="..\..\src\onemore\mparser.h" />
-    <ClInclude Include="..\..\src\onemore\msemantic_analysis.h" />
-    <ClInclude Include="..\..\src\onemore\mstring.h" />
-    <ClInclude Include="..\..\src\onemore\msyntax_tree.h" />
-    <ClInclude Include="..\..\src\onemore\mvalue.h" />
-    <ClInclude Include="..\..\src\onemore\mvisitor.h" />
-    <ClInclude Include="..\..\src\onemore\unittests\test_common.h" />
-    <ClInclude Include="..\..\src\onemore\unittests\unit_test.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

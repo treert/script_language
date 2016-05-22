@@ -18,75 +18,198 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\onemore\main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mlex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mstring.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\unittests\test_test.cpp">
+    <ClCompile Include="..\..\src\onemore\unittests\mUnitTest.cpp">
       <Filter>unit_tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\unittests\unit_test.cpp">
+    <ClCompile Include="..\..\src\onemore\unittests\mTestTable.cpp">
       <Filter>unit_tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\unittests\test_lex.cpp">
+    <ClCompile Include="..\..\src\onemore\unittests\mTestString.cpp">
       <Filter>unit_tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mvalue.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mparser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\msyntax_tree.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\unittests\test_parser.cpp">
+    <ClCompile Include="..\..\src\onemore\unittests\mTestSemantic.cpp">
       <Filter>unit_tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\msemantic_analysis.cpp">
+    <ClCompile Include="..\..\src\onemore\unittests\mTestParser.cpp">
+      <Filter>unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\unittests\mTestLex.cpp">
+      <Filter>unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\unittests\mGCTest.cpp">
+      <Filter>unit_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mVM.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\unittests\test_semantic.cpp">
-      <Filter>unit_tests</Filter>
+    <ClCompile Include="..\..\src\onemore\mValue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mUserData.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mUpvalue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mToken.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mTextInStream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mSyntaxTree.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mStringPool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mString.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mState.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mSemanticAnalysis.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mRuntime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mParser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mModuleManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLuna.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLibTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLibString.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLibMath.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLibIO.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLibBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLibAPI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mLex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mGC.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mFunction.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\mCodeGenerate.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\onemore\mlex.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mstring.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mcommon.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\unittests\unit_test.h">
+    <ClInclude Include="..\..\src\onemore\unittests\mUnitTest.h">
       <Filter>unit_tests</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mexception.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mvalue.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mparser.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\msyntax_tree.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mvisitor.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\unittests\test_common.h">
+    <ClInclude Include="..\..\src\onemore\unittests\mTestCommon.h">
       <Filter>unit_tests</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\msemantic_analysis.h">
+    <ClInclude Include="..\..\src\onemore\mVM.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mVisitor.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mValue.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mUserData.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mUpvalue.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mToken.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mTextInStream.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mTable.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mSyntaxTree.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mStringPool.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mString.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mState.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mSemanticAnalysis.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mRuntime.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mParser.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mOpCode.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mModuleManager.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mLibTable.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mLibString.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mLibMath.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mLibIO.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mLibBase.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mLibAPI.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mLex.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mGuard.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mGC.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mFunction.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mException.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\mCodeGenerate.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

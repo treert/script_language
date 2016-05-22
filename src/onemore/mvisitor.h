@@ -1,6 +1,7 @@
-#pragma once
+#ifndef VISITOR_H
+#define VISITOR_H
 
-#include "msyntax_tree.h"
+#include "mSyntaxTree.h"
 
 namespace oms
 {
@@ -43,4 +44,6 @@ namespace oms
         virtual void Visit(FuncCallArgs *, void *) = 0;
         virtual void Visit(ExpressionList *, void *) = 0;
     };
-} // namespace luna
+} // namespace oms
+
+#endif // VISITOR_H

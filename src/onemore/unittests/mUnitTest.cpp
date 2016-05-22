@@ -1,4 +1,4 @@
-#include "unit_test.h"
+#include "mUnitTest.h"
 #include <stdio.h>
 
 class UnitTestManager
@@ -37,6 +37,7 @@ public:
                 else
                 {
                     ++failed;
+                    //printf("\033[31m[%s] failed:\n", test->GetTestName().c_str());
                     printf("[%s] failed:\n", test->GetTestName().c_str());
 
                     auto errors = test->GetErrors();
@@ -44,15 +45,18 @@ public:
                     {
                         printf("\t%s\n", error.c_str());
                     }
+
+                    //printf("\033[0m");
                 }
             }
             catch (...)
             {
                 ++failed;
-                printf("catch exception\n", test->GetTestName().c_str());
+                //printf("\033[31m[%s] catch exception\033[0m\n", test->GetTestName().c_str());
+                printf("[%s] catch exception\n", test->GetTestName().c_str());
             }
         }
-        printf("\n");
+
         printf("%d cases: %d passed, %d failed\n", pass + failed, pass, failed);
         return failed;
     }

@@ -1,6 +1,7 @@
-#include "mparser.h"
-#include "mlex.h"
-#include "mexception.h"
+#include "mParser.h"
+#include "mLex.h"
+#include "mState.h"
+#include "mException.h"
 #include <assert.h>
 
 namespace
@@ -33,7 +34,160 @@ namespace
             if (NextToken().token_ != Token_EOF)
                 throw ParseException("expect <eof>", current_);
 
-            return std::unique_ptr<SyntaxTree>(new Chunk(std::move(block)));
+            return std::unique_ptr<SyntaxTree>(new Chunk(std::move(block),
+                                                         lexer_->GetLexModule()));
+        }
+
+        std::unique_ptr<SyntaxTree> ParseExp(std::unique_ptr<SyntaxTree> left = std::unique_ptr<SyntaxTree>(),
+                                             TokenDetail op = TokenDetail(),
+                                             int left_priority = 0)
+        {
+            std::unique_ptr<SyntaxTree> exp;
+            LookAhead();
+
+            if (look_ahead_.token_ == '-' || look_ahead_.token_ == '#' || look_ahead_.token_ == Token_Not)
+            {
+                NextToken();
+                std::unique_ptr<UnaryExpression> unexp(new UnaryExpression);
+                unexp->op_token_ = current_;
+                unexp->exp_ = ParseExp(std::unique_ptr<SyntaxTree>(), TokenDetail(), 90);
+                exp = std::move(unexp);
+            }
+            else if (IsMainExp(look_ahead_))
+                exp = ParseMainExp();
+            else
+                throw ParseException("unexpect token for exp.", look_ahead_);
+
+            while (true)
+            {
+                int right_priority = GetOpPriority(LookAhead());
+                if (left_priority < right_priority ||
+                    (left_priority == right_priority && IsRightAssociation(LookAhead())))
+                {
+                    exp = ParseExp(std::move(exp), NextToken(), right_priority);
+                }
+                else if (left_priority == right_priority)
+                {
+                    if (left_priority == 0)
+                        return exp;
+                    assert(left);
+                    exp = std::unique_ptr<BinaryExpression>(
+                        new BinaryExpression(std::move(left), std::move(exp), op));
+                    op = TokenDetail();
+                    left_priority = 0;
+                    exp = ParseExp(std::move(exp), NextToken(), right_priority);
+                }
+                else
+                {
+                    if (left)
+                        exp = std::unique_ptr<BinaryExpression>(
+                            new BinaryExpression(std::move(left), std::move(exp), op));
+                    return exp;
+                }
+            }
+        }
+
+        std::unique_ptr<SyntaxTree> ParseMainExp()
+        {
+            std::unique_ptr<SyntaxTree> exp;
+
+            switch (LookAhead().token_)
+            {
+                case Token_Nil:
+                case Token_False:
+                case Token_True:
+                case Token_Number:
+                case Token_String:
+                case Token_VarArg:
+                    exp.reset(new Terminator(NextToken()));
+                    break;
+
+                case Token_Function:
+                    exp = ParseFunctionDef();
+                    break;
+
+                case Token_Id:
+                case '(':
+                    exp = ParsePrefixExp();
+                    break;
+
+                case '{':
+                    exp = ParseTableConstructor();
+                    break;
+
+                default:
+                    throw ParseException("unexpect token for exp.", look_ahead_);
+            }
+
+            return exp;
+        }
+
+        std::unique_ptr<SyntaxTree> ParseFunctionDef()
+        {
+            NextToken();
+            assert(current_.token_ == Token_Function);
+            return ParseFunctionBody();
+        }
+
+        std::unique_ptr<SyntaxTree> ParseFunctionBody()
+        {
+            int line = LookAhead().line_;
+            if (NextToken().token_ != '(')
+                throw ParseException("unexpect token after 'function', expect '('", current_);
+
+            std::unique_ptr<SyntaxTree> param_list;
+
+            if (LookAhead().token_ != ')')
+                param_list = ParseParamList();
+
+            if (NextToken().token_ != ')')
+                throw ParseException("unexpect token after param list, expect ')'", current_);
+
+            std::unique_ptr<SyntaxTree> block = ParseBlock();
+
+            if (NextToken().token_ != Token_End)
+                throw ParseException("unexpect token after function body, expect 'end'", current_);
+
+            return std::unique_ptr<SyntaxTree>(new FunctionBody(std::move(param_list),
+                                                                std::move(block), line));
+        }
+
+        std::unique_ptr<SyntaxTree> ParseParamList()
+        {
+            bool vararg = false;
+            std::unique_ptr<SyntaxTree> name_list;
+
+            if (LookAhead().token_ == Token_Id)
+            {
+                std::unique_ptr<NameList> names(new NameList);
+                names->names_.push_back(NextToken());
+
+                while (LookAhead().token_ == ',')
+                {
+                    NextToken();        // skip ','
+                    if (LookAhead().token_ == Token_Id)
+                        names->names_.push_back(NextToken());
+                    else if (LookAhead().token_ == Token_VarArg)
+                    {
+                        NextToken();    // skip Token_VarArg
+                        vararg = true;
+                        break;
+                    }
+                    else
+                        throw ParseException("unexpect token in param list", look_ahead_);
+                }
+
+                name_list = std::move(names);
+            }
+            else if (LookAhead().token_ == Token_VarArg)
+            {
+                NextToken();            // skip Token_VarArg
+                vararg = true;
+            }
+            else
+                throw ParseException("unexpect token in param list", look_ahead_);
+
+            return std::unique_ptr<SyntaxTree>(new ParamList(std::move(name_list), vararg));
         }
 
         std::unique_ptr<SyntaxTree> ParseBlock()
@@ -42,10 +196,10 @@ namespace
 
             bool has_return = false;
             while (LookAhead().token_ != Token_EOF &&
-                LookAhead().token_ != Token_End &&
-                LookAhead().token_ != Token_Until &&
-                LookAhead().token_ != Token_Elseif &&
-                LookAhead().token_ != Token_Else)
+                   LookAhead().token_ != Token_End &&
+                   LookAhead().token_ != Token_Until &&
+                   LookAhead().token_ != Token_Elseif &&
+                   LookAhead().token_ != Token_Else)
             {
                 if (has_return)
                     throw ParseException("unexpect statement after return statement", look_ahead_);
@@ -95,27 +249,27 @@ namespace
         {
             switch (LookAhead().token_)
             {
-            case ';':
-                NextToken();
-                break;
-            case Token_Break:
-                return ParseBreakStatement();
-            case Token_Do:
-                return ParseDoStatement();
-            case Token_While:
-                return ParseWhileStatement();
-            case Token_Repeat:
-                return ParseRepeatStatement();
-            case Token_If:
-                return ParseIfStatement();
-            case Token_Function:
-                return ParseFunctionStatement();
-            case Token_For:
-                return ParseForStatement();
-            case Token_Local:
-                return ParseLocalStatement();
-            default:
-                return ParseOtherStatement();
+                case ';':
+                    NextToken();
+                    break;
+                case Token_Break:
+                    return ParseBreakStatement();
+                case Token_Do:
+                    return ParseDoStatement();
+                case Token_While:
+                    return ParseWhileStatement();
+                case Token_Repeat:
+                    return ParseRepeatStatement();
+                case Token_If:
+                    return ParseIfStatement();
+                case Token_Function:
+                    return ParseFunctionStatement();
+                case Token_For:
+                    return ParseForStatement();
+                case Token_Local:
+                    return ParseLocalStatement();
+                default:
+                    return ParseOtherStatement();
             }
 
             return std::unique_ptr<SyntaxTree>();
@@ -158,7 +312,7 @@ namespace
             int last_line = current_.line_;
 
             return std::unique_ptr<SyntaxTree>(new WhileStatement(std::move(exp), std::move(block),
-                first_line, last_line));
+                                                                  first_line, last_line));
         }
 
         std::unique_ptr<SyntaxTree> ParseRepeatStatement()
@@ -175,8 +329,8 @@ namespace
             std::unique_ptr<SyntaxTree> exp = ParseExp();
 
             return std::unique_ptr<SyntaxTree>(new RepeatStatement(std::move(block),
-                std::move(exp),
-                line));
+                                                                   std::move(exp),
+                                                                   line));
         }
 
         std::unique_ptr<SyntaxTree> ParseIfStatement()
@@ -195,9 +349,9 @@ namespace
             std::unique_ptr<SyntaxTree> false_branch = ParseFalseBranchStatement();
 
             return std::unique_ptr<SyntaxTree>(new IfStatement(std::move(exp),
-                std::move(true_branch),
-                std::move(false_branch),
-                line, block_end_line));
+                                                               std::move(true_branch),
+                                                               std::move(false_branch),
+                                                               line, block_end_line));
         }
 
         std::unique_ptr<SyntaxTree> ParseElseIfStatement()
@@ -216,9 +370,9 @@ namespace
             std::unique_ptr<SyntaxTree> false_branch = ParseFalseBranchStatement();
 
             return std::unique_ptr<SyntaxTree>(new ElseIfStatement(std::move(exp),
-                std::move(true_branch),
-                std::move(false_branch),
-                line, block_end_line));
+                                                                   std::move(true_branch),
+                                                                   std::move(false_branch),
+                                                                   line, block_end_line));
         }
 
         std::unique_ptr<SyntaxTree> ParseFalseBranchStatement()
@@ -255,7 +409,7 @@ namespace
             std::unique_ptr<SyntaxTree> func_name = ParseFunctionName();
             std::unique_ptr<SyntaxTree> func_body = ParseFunctionBody();
             return std::unique_ptr<SyntaxTree>(new FunctionStatement(std::move(func_name),
-                std::move(func_body)));
+                                                                     std::move(func_body)));
         }
 
         std::unique_ptr<SyntaxTree> ParseFunctionName()
@@ -284,75 +438,6 @@ namespace
 
             return std::move(func_name);
         }
-
-        std::unique_ptr<SyntaxTree> ParseFunctionDef()
-        {
-            NextToken();
-            assert(current_.token_ == Token_Function);
-            return ParseFunctionBody();
-        }
-
-        std::unique_ptr<SyntaxTree> ParseFunctionBody()
-        {
-            int line = LookAhead().line_;
-            if (NextToken().token_ != '(')
-                throw ParseException("unexpect token after 'function', expect '('", current_);
-
-            std::unique_ptr<SyntaxTree> param_list;
-
-            if (LookAhead().token_ != ')')
-                param_list = ParseParamList();
-
-            if (NextToken().token_ != ')')
-                throw ParseException("unexpect token after param list, expect ')'", current_);
-
-            std::unique_ptr<SyntaxTree> block = ParseBlock();
-
-            if (NextToken().token_ != Token_End)
-                throw ParseException("unexpect token after function body, expect 'end'", current_);
-
-            return std::unique_ptr<SyntaxTree>(new FunctionBody(std::move(param_list),
-                std::move(block), line));
-        }
-
-        std::unique_ptr<SyntaxTree> ParseParamList()
-        {
-            bool vararg = false;
-            std::unique_ptr<SyntaxTree> name_list;
-
-            if (LookAhead().token_ == Token_Id)
-            {
-                std::unique_ptr<NameList> names(new NameList);
-                names->names_.push_back(NextToken());
-
-                while (LookAhead().token_ == ',')
-                {
-                    NextToken();        // skip ','
-                    if (LookAhead().token_ == Token_Id)
-                        names->names_.push_back(NextToken());
-                    else if (LookAhead().token_ == Token_VarArg)
-                    {
-                        NextToken();    // skip Token_VarArg
-                        vararg = true;
-                        break;
-                    }
-                    else
-                        throw ParseException("unexpect token in param list", look_ahead_);
-                }
-
-                name_list = std::move(names);
-            }
-            else if (LookAhead().token_ == Token_VarArg)
-            {
-                NextToken();            // skip Token_VarArg
-                vararg = true;
-            }
-            else
-                throw ParseException("unexpect token in param list", look_ahead_);
-
-            return std::unique_ptr<SyntaxTree>(new ParamList(std::move(name_list), vararg));
-        }
-
 
         std::unique_ptr<SyntaxTree> ParseForStatement()
         {
@@ -396,8 +481,8 @@ namespace
             if (NextToken().token_ != Token_End)
                 throw ParseException("expect 'end' to complete numeric-for", current_);
             return std::unique_ptr<SyntaxTree>(new NumericForStatement(name,
-                std::move(exp1), std::move(exp2),
-                std::move(exp3), std::move(block)));
+                                                                       std::move(exp1), std::move(exp2),
+                                                                       std::move(exp3), std::move(block)));
         }
 
         std::unique_ptr<SyntaxTree> ParseGenericForStatement()
@@ -419,8 +504,8 @@ namespace
                 throw ParseException("expect 'end' to complete generic-for", current_);
 
             return std::unique_ptr<SyntaxTree>(new GenericForStatement(std::move(name_list),
-                std::move(exp_list),
-                std::move(block), line));
+                                                                       std::move(exp_list),
+                                                                       std::move(block), line));
         }
 
         std::unique_ptr<SyntaxTree> ParseLocalStatement()
@@ -466,8 +551,8 @@ namespace
             }
 
             return std::unique_ptr<SyntaxTree>(new LocalNameListStatement(std::move(name_list),
-                std::move(exp_list),
-                start_line));
+                                                                          std::move(exp_list),
+                                                                          start_line));
         }
 
         std::unique_ptr<SyntaxTree> ParseNameList()
@@ -514,8 +599,8 @@ namespace
                 NextToken();            // skip '='
                 std::unique_ptr<SyntaxTree> exp_list = ParseExpList();
                 return std::unique_ptr<SyntaxTree>(new AssignmentStatement(std::move(var_list),
-                    std::move(exp_list),
-                    start_line));
+                                                                           std::move(exp_list),
+                                                                           start_line));
             }
             else if (type == PrefixExpType_Functioncall)
                 return exp;
@@ -551,7 +636,7 @@ namespace
         }
 
         std::unique_ptr<SyntaxTree> ParsePrefixExpTail(std::unique_ptr<SyntaxTree> exp,
-            PrefixExpType *type)
+                                                       PrefixExpType *type)
         {
             if (LookAhead().token_ == '[' || LookAhead().token_ == '.')
             {
@@ -560,7 +645,7 @@ namespace
                 return ParsePrefixExpTail(std::move(exp), type);
             }
             else if (LookAhead().token_ == ':' || LookAhead().token_ == '(' ||
-                LookAhead().token_ == '{' || LookAhead().token_ == Token_String)
+                     LookAhead().token_ == '{' || LookAhead().token_ == Token_String)
             {
                 if (type) *type = PrefixExpType_Functioncall;
                 exp = ParseFunctionCall(std::move(exp));
@@ -584,8 +669,8 @@ namespace
                 if (NextToken().token_ != ']')
                     throw ParseException("expect ']'", current_);
                 return std::unique_ptr<SyntaxTree>(new IndexAccessor(std::move(table),
-                    std::move(exp),
-                    line));
+                                                                     std::move(exp),
+                                                                     line));
             }
             else
             {
@@ -607,22 +692,22 @@ namespace
                 int line = LookAhead().line_;
                 std::unique_ptr<SyntaxTree> args = ParseArgs();
                 return std::unique_ptr<SyntaxTree>(new MemberFuncCall(std::move(caller), member,
-                    std::move(args), line));
+                                                                      std::move(args), line));
             }
             else
             {
                 int line = LookAhead().line_;
                 std::unique_ptr<SyntaxTree> args = ParseArgs();
                 return std::unique_ptr<SyntaxTree>(new NormalFuncCall(std::move(caller),
-                    std::move(args), line));
+                                                                      std::move(args), line));
             }
         }
 
         std::unique_ptr<SyntaxTree> ParseArgs()
         {
             assert(LookAhead().token_ == Token_String ||
-                LookAhead().token_ == '{' ||
-                LookAhead().token_ == '(');
+                   LookAhead().token_ == '{' ||
+                   LookAhead().token_ == '(');
 
             std::unique_ptr<SyntaxTree> arg;
             FuncCallArgs::ArgType type;
@@ -715,8 +800,8 @@ namespace
             std::unique_ptr<SyntaxTree> value = ParseExp();
 
             return std::unique_ptr<SyntaxTree>(new TableIndexField(std::move(index),
-                std::move(value),
-                line));
+                                                                   std::move(value),
+                                                                   line));
         }
 
         std::unique_ptr<SyntaxTree> ParseTableNameField()
@@ -736,90 +821,6 @@ namespace
             int line = LookAhead().line_;
             std::unique_ptr<SyntaxTree> value = ParseExp();
             return std::unique_ptr<SyntaxTree>(new TableArrayField(std::move(value), line));
-        }
-
-        std::unique_ptr<SyntaxTree> ParseExp(std::unique_ptr<SyntaxTree> left = std::unique_ptr<SyntaxTree>(),
-            TokenDetail op = TokenDetail(),
-            int left_priority = 0)
-        {
-            std::unique_ptr<SyntaxTree> exp;
-            LookAhead();
-
-            if (look_ahead_.token_ == '-' || look_ahead_.token_ == '#' || look_ahead_.token_ == Token_Not)
-            {
-                NextToken();
-                std::unique_ptr<UnaryExpression> unexp(new UnaryExpression);
-                unexp->op_token_ = current_;
-                unexp->exp_ = ParseExp(std::unique_ptr<SyntaxTree>(), TokenDetail(), 90);
-                exp = std::move(unexp);
-            }
-            else if (IsMainExp(look_ahead_))
-                exp = ParseMainExp();
-            else
-                throw ParseException("unexpect token for exp.", look_ahead_);
-
-            while (true)
-            {
-                int right_priority = GetOpPriority(LookAhead());
-                if (left_priority < right_priority ||
-                    (left_priority == right_priority && IsRightAssociation(LookAhead())))
-                {
-                    exp = ParseExp(std::move(exp), NextToken(), right_priority);
-                }
-                else if (left_priority == right_priority)
-                {
-                    if (left_priority == 0)
-                        return exp;
-                    assert(left);
-                    exp = std::unique_ptr<BinaryExpression>(
-                        new BinaryExpression(std::move(left), std::move(exp), op));
-                    op = TokenDetail();
-                    left_priority = 0;
-                    exp = ParseExp(std::move(exp), NextToken(), right_priority);
-                }
-                else
-                {
-                    if (left)
-                        exp = std::unique_ptr<BinaryExpression>(
-                        new BinaryExpression(std::move(left), std::move(exp), op));
-                    return exp;
-                }
-            }
-        }
-
-        std::unique_ptr<SyntaxTree> ParseMainExp()
-        {
-            std::unique_ptr<SyntaxTree> exp;
-
-            switch (LookAhead().token_)
-            {
-            case Token_Nil:
-            case Token_False:
-            case Token_True:
-            case Token_Number:
-            case Token_String:
-            case Token_VarArg:
-                exp.reset(new Terminator(NextToken()));
-                break;
-
-            case Token_Function:
-                exp = ParseFunctionDef();
-                break;
-
-            case Token_Id:
-            case '(':
-                exp = ParsePrefixExp();
-                break;
-
-            case '{':
-                exp = ParseTableConstructor();
-                break;
-
-            default:
-                throw ParseException("unexpect token for exp.", look_ahead_);
-            }
-
-            return exp;
         }
 
     private:
@@ -880,22 +881,22 @@ namespace
         {
             switch (t.token_)
             {
-            case '^':               return 100;
-            case '*':
-            case '/':
-            case '%':               return 80;
-            case '+':
-            case '-':               return 70;
-            case Token_Concat:      return 60;
-            case '>':
-            case '<':
-            case Token_GreaterEqual:
-            case Token_LessEqual:
-            case Token_NotEqual:
-            case Token_Equal:       return 50;
-            case Token_And:         return 40;
-            case Token_Or:          return 30;
-            default:                return 0;
+                case '^':               return 100;
+                case '*':
+                case '/':
+                case '%':               return 80;
+                case '+':
+                case '-':               return 70;
+                case Token_Concat:      return 60;
+                case '>':
+                case '<':
+                case Token_GreaterEqual:
+                case Token_LessEqual:
+                case Token_NotEqual:
+                case Token_Equal:       return 50;
+                case Token_And:         return 40;
+                case Token_Or:          return 30;
+                default:                return 0;
             }
         }
 

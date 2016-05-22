@@ -1,5 +1,5 @@
-#include "unit_test.h"
-#include "test_common.h"
+#include "mUnitTest.h"
+#include "mTestCommon.h"
 
 namespace
 {
@@ -14,7 +14,7 @@ namespace
     {
         return g_parser.IsEOF();
     }
-}
+} // namespace
 
 TEST_CASE(parser_exp1)
 {
@@ -260,144 +260,144 @@ TEST_CASE(parser19)
 
 TEST_CASE(parser20)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("return return");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("return return");
+                     });
 }
 
 TEST_CASE(parser21)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("t = {} t.a = ");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("t = {} t.a = ");
+                     });
 }
 
 TEST_CASE(parser22)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("f().m():m().m");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("f().m():m().m");
+                     });
 }
 
 TEST_CASE(parser23)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("do end end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("do end end");
+                     });
 }
 
 TEST_CASE(parser24)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("while true, false do end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("while true, false do end");
+                     });
 }
 
 TEST_CASE(parser25)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("repeat until;");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("repeat until;");
+                     });
 }
 
 TEST_CASE(parser26)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("if true false then end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("if true false then end");
+                     });
 }
 
 TEST_CASE(parser27)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("if true then elseif false then else");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("if true then elseif false then else");
+                     });
 }
 
 TEST_CASE(parser28)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("for a.b = 1, 2 do end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("for a.b = 1, 2 do end");
+                     });
 }
 
 TEST_CASE(parser29)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("for a = 1, 2, 3, 4 do end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("for a = 1, 2, 3, 4 do end");
+                     });
 }
 
 TEST_CASE(parser30)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("for a.b in pairs(t) do end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("for a.b in pairs(t) do end");
+                     });
 }
 
 TEST_CASE(parser31)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("function a.b.c:m.c() end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("function a.b.c:m.c() end");
+                     });
 }
 
 TEST_CASE(parser32)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("local function a.b() end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("local function a.b() end");
+                     });
 }
 
 TEST_CASE(parser33)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("local function a(m, ..., n) end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("local function a(m, ..., n) end");
+                     });
 }
 
 TEST_CASE(parser34)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("local a = 1, 2,");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("local a = 1, 2,");
+                     });
 }
 
 TEST_CASE(parser35)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("t = {a.b = 1}");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("t = {a.b = 1}");
+                     });
 }
 
 TEST_CASE(parser36)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("local a end");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("local a end");
+                     });
 }
 
 TEST_CASE(parser37)
 {
-    EXPECT_EXCEPTION(oms::Exception,
-    {
-        Parse("f 1");
-    });
+    EXPECT_EXCEPTION(oms::ParseException,
+                     {
+                         Parse("f 1");
+                     });
 }

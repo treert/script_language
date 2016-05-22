@@ -1,6 +1,7 @@
-#pragma once
+#ifndef PARSER_H
+#define PARSER_H
 
-#include "msyntax_tree.h"
+#include "mSyntaxTree.h"
 #include <memory>
 
 namespace oms
@@ -10,3 +11,5 @@ namespace oms
 
     std::unique_ptr<SyntaxTree> Parse(Lexer *lexer);
 } // namespace oms
+
+#endif // PARSER_H

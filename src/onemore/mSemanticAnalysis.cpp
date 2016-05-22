@@ -1,11 +1,9 @@
-#include "msemantic_analysis.h"
-#include "mvisitor.h"
-#include "mexception.h"
-#include "msyntax_tree.h"
-#include "mvalue.h"
-//#include "State.h"
-//#include "String.h"
-//#include "Guard.h"
+#include "mSemanticAnalysis.h"
+#include "mVisitor.h"
+#include "mException.h"
+#include "mState.h"
+#include "mString.h"
+#include "mGuard.h"
 #include <unordered_set>
 #include <assert.h>
 
@@ -18,7 +16,7 @@ namespace oms
         // Local names
         // Same names are the same instance String, so using String
         // pointer as key is fine
-        std::unordered_set<std::string > names_;
+        std::unordered_set<const String *> names_;
 
         LexicalBlock() : parent_(nullptr) { }
     };
@@ -33,7 +31,7 @@ namespace oms
 
         LexicalFunction()
             : parent_(nullptr), current_block_(nullptr),
-            current_loop_(nullptr), has_vararg(false) { }
+              current_loop_(nullptr), has_vararg(false) { }
     };
 
     class SemanticAnalysisVisitor : public Visitor
@@ -118,14 +116,14 @@ namespace oms
         }
 
         // Insert a name into current block, replace its info when existed
-        void InsertName(std::string name)
+        void InsertName(const String *name)
         {
             assert(current_function_ && current_function_->current_block_);
             current_function_->current_block_->names_.insert(name);
         }
 
         // Search LexicalScoping of a name
-        LexicalScoping SearchName(std::string str) const
+        LexicalScoping SearchName(const String *str) const
         {
             assert(current_function_ && current_function_->current_block_);
 
@@ -139,7 +137,7 @@ namespace oms
                     if (it != block->names_.end())
                     {
                         return function == current_function_ ?
-                        LexicalScoping_Local : LexicalScoping_Upvalue;
+                            LexicalScoping_Local : LexicalScoping_Upvalue;
                     }
 
                     block = block->parent_;
@@ -214,8 +212,8 @@ namespace oms
 
 #define SEMANTIC_ANALYSIS_LOOP_GUARD(loop_ast)                          \
     auto *old_loop = GetLoopAST();                                      \
-    Guard l([=]() { this->SetLoopAST(loop_ast); }, \
-    [=]() { this->SetLoopAST(old_loop); })
+    Guard l([=]() { this->SetLoopAST(loop_ast); },                      \
+            [=]() { this->SetLoopAST(old_loop); })
 
     // For NameList AST
     struct NameListData
@@ -262,7 +260,7 @@ namespace oms
 
         explicit ExpVarData(SemanticOp semantic_op = SemanticOp_None)
             : semantic_op_(semantic_op), exp_type_(ExpType_Unknown),
-            results_any_count_(false) { }
+              results_any_count_(false) { }
     };
 
     // For FunctionName
@@ -466,12 +464,12 @@ namespace oms
         // Set Expression type
         switch (term->token_.token_)
         {
-        case Token_Nil: exp_var_data->exp_type_ = ExpType_Nil; break;
-        case Token_Id: exp_var_data->exp_type_ = ExpType_Unknown; break;
-        case Token_Number: exp_var_data->exp_type_ = ExpType_Number; break;
-        case Token_String: exp_var_data->exp_type_ = ExpType_String; break;
-        case Token_VarArg: exp_var_data->exp_type_ = ExpType_VarArg; break;
-        case Token_True: case Token_False: exp_var_data->exp_type_ = ExpType_Bool; break;
+            case Token_Nil: exp_var_data->exp_type_ = ExpType_Nil; break;
+            case Token_Id: exp_var_data->exp_type_ = ExpType_Unknown; break;
+            case Token_Number: exp_var_data->exp_type_ = ExpType_Number; break;
+            case Token_String: exp_var_data->exp_type_ = ExpType_String; break;
+            case Token_VarArg: exp_var_data->exp_type_ = ExpType_VarArg; break;
+            case Token_True: case Token_False: exp_var_data->exp_type_ = ExpType_Bool; break;
         }
 
         // Search lexical scoping of name
@@ -498,53 +496,53 @@ namespace oms
         auto parent_exp_var_data = static_cast<ExpVarData *>(data);
         switch (binary_exp->op_token_.token_)
         {
-        case '+': case '-': case '*': case '/': case '^': case '%':
-            if (l_exp_var_data.exp_type_ != ExpType_Unknown &&
-                l_exp_var_data.exp_type_ != ExpType_Number)
-                throw SemanticException("left expression of binary operator is not number",
-                binary_exp->op_token_);
-            if (r_exp_var_data.exp_type_ != ExpType_Unknown &&
-                r_exp_var_data.exp_type_ != ExpType_Number)
-                throw SemanticException("right expression of binary operator is not number",
-                binary_exp->op_token_);
-            parent_exp_var_data->exp_type_ = ExpType_Number;
-            break;
-        case '<': case '>': case Token_LessEqual: case Token_GreaterEqual:
-            if (l_exp_var_data.exp_type_ != ExpType_Unknown &&
-                r_exp_var_data.exp_type_ != ExpType_Unknown)
-            {
-                if (l_exp_var_data.exp_type_ != r_exp_var_data.exp_type_)
-                    throw SemanticException("compare different expression type",
-                    binary_exp->op_token_);
-                else if (l_exp_var_data.exp_type_ != ExpType_Number &&
-                    l_exp_var_data.exp_type_ != ExpType_String)
-                    throw SemanticException("can not compare operands",
-                    binary_exp->op_token_);
-            }
-            parent_exp_var_data->exp_type_ = ExpType_Bool;
-            break;
-        case Token_Concat:
-            if (l_exp_var_data.exp_type_ != ExpType_Unknown &&
-                r_exp_var_data.exp_type_ != ExpType_Unknown)
-            {
-                if (!((l_exp_var_data.exp_type_ == ExpType_String &&
-                    r_exp_var_data.exp_type_ == ExpType_String) ||
-                    (l_exp_var_data.exp_type_ == ExpType_String &&
-                    r_exp_var_data.exp_type_ == ExpType_Number) ||
-                    (l_exp_var_data.exp_type_ == ExpType_Number &&
-                    r_exp_var_data.exp_type_ == ExpType_String)))
-                    throw SemanticException("can not concat operands",
-                    binary_exp->op_token_);
-            }
-            parent_exp_var_data->exp_type_ = ExpType_String;
-            break;
-        case Token_NotEqual: case Token_Equal:
-            parent_exp_var_data->exp_type_ = ExpType_Bool;
-            break;
-        case Token_And: case Token_Or:
-            break;
-        default:
-            break;
+            case '+': case '-': case '*': case '/': case '^': case '%':
+                if (l_exp_var_data.exp_type_ != ExpType_Unknown &&
+                    l_exp_var_data.exp_type_ != ExpType_Number)
+                    throw SemanticException("left expression of binary operator is not number",
+                                            binary_exp->op_token_);
+                if (r_exp_var_data.exp_type_ != ExpType_Unknown &&
+                    r_exp_var_data.exp_type_ != ExpType_Number)
+                    throw SemanticException("right expression of binary operator is not number",
+                                            binary_exp->op_token_);
+                parent_exp_var_data->exp_type_ = ExpType_Number;
+                break;
+            case '<': case '>': case Token_LessEqual: case Token_GreaterEqual:
+                if (l_exp_var_data.exp_type_ != ExpType_Unknown &&
+                    r_exp_var_data.exp_type_ != ExpType_Unknown)
+                {
+                    if (l_exp_var_data.exp_type_ != r_exp_var_data.exp_type_)
+                        throw SemanticException("compare different expression type",
+                                                binary_exp->op_token_);
+                    else if (l_exp_var_data.exp_type_ != ExpType_Number &&
+                             l_exp_var_data.exp_type_ != ExpType_String)
+                        throw SemanticException("can not compare operands",
+                                                binary_exp->op_token_);
+                }
+                parent_exp_var_data->exp_type_ = ExpType_Bool;
+                break;
+            case Token_Concat:
+                if (l_exp_var_data.exp_type_ != ExpType_Unknown &&
+                    r_exp_var_data.exp_type_ != ExpType_Unknown)
+                {
+                    if (!((l_exp_var_data.exp_type_ == ExpType_String &&
+                           r_exp_var_data.exp_type_ == ExpType_String) ||
+                          (l_exp_var_data.exp_type_ == ExpType_String &&
+                           r_exp_var_data.exp_type_ == ExpType_Number) ||
+                          (l_exp_var_data.exp_type_ == ExpType_Number &&
+                           r_exp_var_data.exp_type_ == ExpType_String)))
+                        throw SemanticException("can not concat operands",
+                                                binary_exp->op_token_);
+                }
+                parent_exp_var_data->exp_type_ = ExpType_String;
+                break;
+            case Token_NotEqual: case Token_Equal:
+                parent_exp_var_data->exp_type_ = ExpType_Bool;
+                break;
+            case Token_And: case Token_Or:
+                break;
+            default:
+                break;
         }
     }
 
@@ -559,19 +557,19 @@ namespace oms
         {
             switch (unary_exp->op_token_.token_)
             {
-            case '-':
-                if (exp_var_data.exp_type_ != ExpType_Number)
-                    throw SemanticException("operand is not number",
-                    unary_exp->op_token_);
-                break;
-            case '#':
-                if (exp_var_data.exp_type_ != ExpType_Table &&
-                    exp_var_data.exp_type_ != ExpType_String)
-                    throw SemanticException("operand is not table or string",
-                    unary_exp->op_token_);
-                break;
-            default:
-                break;
+                case '-':
+                    if (exp_var_data.exp_type_ != ExpType_Number)
+                        throw SemanticException("operand is not number",
+                                                unary_exp->op_token_);
+                    break;
+                case '#':
+                    if (exp_var_data.exp_type_ != ExpType_Table &&
+                        exp_var_data.exp_type_ != ExpType_String)
+                        throw SemanticException("operand is not table or string",
+                                                unary_exp->op_token_);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -593,7 +591,7 @@ namespace oms
 
             if (func_body->has_self_)
             {
-                auto self = "state_->GetString(\"self\")";
+                auto self = state_->GetString("self");
                 InsertName(self);
             }
 
@@ -741,7 +739,7 @@ namespace oms
 
     void SemanticAnalysis(SyntaxTree *root, State *state)
     {
-        assert(root);
+        assert(root && state);
         SemanticAnalysisVisitor semantic_analysis(state);
         root->Accept(&semantic_analysis, nullptr);
     }

@@ -1,9 +1,9 @@
-#pragma  once
+#ifndef SYNTAX_TREE_H
+#define SYNTAX_TREE_H
 
+#include "mToken.h"
 #include <memory>
 #include <vector>
-
-#include "mlex.h"
 
 namespace oms
 {
@@ -29,6 +29,7 @@ namespace oms
         LexicalScoping_Local,           // Expression or variable in current function
     };
 
+    class String;
     class Visitor;
 
     // AST base class, all AST node derived from this class and
@@ -44,9 +45,12 @@ namespace oms
     {
     public:
         std::unique_ptr<SyntaxTree> block_;
+        String *module_;
 
-        Chunk(std::unique_ptr<SyntaxTree> block)
-            : block_(std::move(block))
+        Chunk(std::unique_ptr<SyntaxTree> block,
+              String *module)
+            : block_(std::move(block)),
+              module_(module)
         {
         }
 
@@ -116,10 +120,10 @@ namespace oms
         int last_line_;
 
         WhileStatement(std::unique_ptr<SyntaxTree> exp,
-            std::unique_ptr<SyntaxTree> block,
-            int first_line, int last_line)
+                       std::unique_ptr<SyntaxTree> block,
+                       int first_line, int last_line)
             : exp_(std::move(exp)), block_(std::move(block)),
-            first_line_(first_line), last_line_(last_line)
+              first_line_(first_line), last_line_(last_line)
         {
         }
 
@@ -136,8 +140,8 @@ namespace oms
         int line_;
 
         RepeatStatement(std::unique_ptr<SyntaxTree> block,
-            std::unique_ptr<SyntaxTree> exp,
-            int line)
+                        std::unique_ptr<SyntaxTree> exp,
+                        int line)
             : block_(std::move(block)), exp_(std::move(exp)), line_(line)
         {
         }
@@ -158,13 +162,13 @@ namespace oms
         int block_end_line_;
 
         IfStatement(std::unique_ptr<SyntaxTree> exp,
-            std::unique_ptr<SyntaxTree> true_branch,
-            std::unique_ptr<SyntaxTree> false_branch,
-            int line, int block_end_line)
+                    std::unique_ptr<SyntaxTree> true_branch,
+                    std::unique_ptr<SyntaxTree> false_branch,
+                    int line, int block_end_line)
             : exp_(std::move(exp)),
-            true_branch_(std::move(true_branch)),
-            false_branch_(std::move(false_branch)),
-            line_(line), block_end_line_(block_end_line)
+              true_branch_(std::move(true_branch)),
+              false_branch_(std::move(false_branch)),
+              line_(line), block_end_line_(block_end_line)
         {
         }
 
@@ -184,13 +188,13 @@ namespace oms
         int block_end_line_;
 
         ElseIfStatement(std::unique_ptr<SyntaxTree> exp,
-            std::unique_ptr<SyntaxTree> true_branch,
-            std::unique_ptr<SyntaxTree> false_branch,
-            int line, int block_end_line)
+                        std::unique_ptr<SyntaxTree> true_branch,
+                        std::unique_ptr<SyntaxTree> false_branch,
+                        int line, int block_end_line)
             : exp_(std::move(exp)),
-            true_branch_(std::move(true_branch)),
-            false_branch_(std::move(false_branch)),
-            line_(line), block_end_line_(block_end_line)
+              true_branch_(std::move(true_branch)),
+              false_branch_(std::move(false_branch)),
+              line_(line), block_end_line_(block_end_line)
         {
         }
 
@@ -220,15 +224,15 @@ namespace oms
         std::unique_ptr<SyntaxTree> block_;
 
         NumericForStatement(const TokenDetail &name,
-            std::unique_ptr<SyntaxTree> exp1,
-            std::unique_ptr<SyntaxTree> exp2,
-            std::unique_ptr<SyntaxTree> exp3,
-            std::unique_ptr<SyntaxTree> block)
+                            std::unique_ptr<SyntaxTree> exp1,
+                            std::unique_ptr<SyntaxTree> exp2,
+                            std::unique_ptr<SyntaxTree> exp3,
+                            std::unique_ptr<SyntaxTree> block)
             : name_(name),
-            exp1_(std::move(exp1)),
-            exp2_(std::move(exp2)),
-            exp3_(std::move(exp3)),
-            block_(std::move(block))
+              exp1_(std::move(exp1)),
+              exp2_(std::move(exp2)),
+              exp3_(std::move(exp3)),
+              block_(std::move(block))
         {
         }
 
@@ -245,13 +249,13 @@ namespace oms
         int line_;
 
         GenericForStatement(std::unique_ptr<SyntaxTree> name_list,
-            std::unique_ptr<SyntaxTree> exp_list,
-            std::unique_ptr<SyntaxTree> block,
-            int line)
+                            std::unique_ptr<SyntaxTree> exp_list,
+                            std::unique_ptr<SyntaxTree> block,
+                            int line)
             : name_list_(std::move(name_list)),
-            exp_list_(std::move(exp_list)),
-            block_(std::move(block)),
-            line_(line)
+              exp_list_(std::move(exp_list)),
+              block_(std::move(block)),
+              line_(line)
         {
         }
 
@@ -265,7 +269,7 @@ namespace oms
         std::unique_ptr<SyntaxTree> func_body_;
 
         FunctionStatement(std::unique_ptr<SyntaxTree> func_name,
-            std::unique_ptr<SyntaxTree> func_body)
+                          std::unique_ptr<SyntaxTree> func_body)
             : func_name_(std::move(func_name)), func_body_(std::move(func_body))
         {
         }
@@ -294,7 +298,7 @@ namespace oms
         std::unique_ptr<SyntaxTree> func_body_;
 
         LocalFunctionStatement(const TokenDetail &name,
-            std::unique_ptr<SyntaxTree> func_body)
+                               std::unique_ptr<SyntaxTree> func_body)
             : name_(name), func_body_(std::move(func_body))
         {
         }
@@ -315,10 +319,10 @@ namespace oms
         std::size_t name_count_;
 
         LocalNameListStatement(std::unique_ptr<SyntaxTree> name_list,
-            std::unique_ptr<SyntaxTree> exp_list,
-            int start_line)
+                               std::unique_ptr<SyntaxTree> exp_list,
+                               int start_line)
             : name_list_(std::move(name_list)), exp_list_(std::move(exp_list)),
-            line_(start_line), name_count_(0)
+              line_(start_line), name_count_(0)
         {
         }
 
@@ -338,10 +342,10 @@ namespace oms
         std::size_t var_count_;
 
         AssignmentStatement(std::unique_ptr<SyntaxTree> var_list,
-            std::unique_ptr<SyntaxTree> exp_list,
-            int start_line)
+                            std::unique_ptr<SyntaxTree> exp_list,
+                            int start_line)
             : var_list_(std::move(var_list)), exp_list_(std::move(exp_list)),
-            line_(start_line), var_count_(0)
+              line_(start_line), var_count_(0)
         {
         }
 
@@ -370,7 +374,7 @@ namespace oms
         Terminator() { }
         explicit Terminator(const TokenDetail &token)
             : token_(token), semantic_(SemanticOp_None),
-            scoping_(LexicalScoping_Unknown) { }
+              scoping_(LexicalScoping_Unknown) { }
 
         SYNTAX_TREE_ACCEPT_VISITOR_DECL();
     };
@@ -384,8 +388,8 @@ namespace oms
 
         BinaryExpression() { }
         BinaryExpression(std::unique_ptr<SyntaxTree> left,
-            std::unique_ptr<SyntaxTree> right,
-            const TokenDetail &op)
+                         std::unique_ptr<SyntaxTree> right,
+                         const TokenDetail &op)
             : left_(std::move(left)), right_(std::move(right)), op_token_(op)
         {
         }
@@ -401,7 +405,7 @@ namespace oms
 
         UnaryExpression() { }
         UnaryExpression(std::unique_ptr<SyntaxTree> exp,
-            const TokenDetail &op)
+                        const TokenDetail &op)
             : exp_(std::move(exp)), op_token_(op)
         {
         }
@@ -422,9 +426,9 @@ namespace oms
 
         FunctionBody() { }
         FunctionBody(std::unique_ptr<SyntaxTree> param_list,
-            std::unique_ptr<SyntaxTree> block, int line)
+                     std::unique_ptr<SyntaxTree> block, int line)
             : param_list_(std::move(param_list)),
-            block_(std::move(block)), has_self_(false), line_(line)
+              block_(std::move(block)), has_self_(false), line_(line)
         {
         }
 
@@ -442,7 +446,7 @@ namespace oms
 
         ParamList(std::unique_ptr<SyntaxTree> name_list, bool vararg)
             : name_list_(std::move(name_list)),
-            vararg_(vararg), fix_arg_count_(0)
+              vararg_(vararg), fix_arg_count_(0)
         {
         }
 
@@ -480,10 +484,10 @@ namespace oms
         int line_;
 
         TableIndexField(std::unique_ptr<SyntaxTree> index,
-            std::unique_ptr<SyntaxTree> value,
-            int line)
+                        std::unique_ptr<SyntaxTree> value,
+                        int line)
             : index_(std::move(index)), value_(std::move(value)),
-            line_(line)
+              line_(line)
         {
         }
 
@@ -497,7 +501,7 @@ namespace oms
         std::unique_ptr<SyntaxTree> value_;
 
         TableNameField(const TokenDetail &name,
-            std::unique_ptr<SyntaxTree> value)
+                       std::unique_ptr<SyntaxTree> value)
             : name_(name), value_(std::move(value))
         {
         }
@@ -513,7 +517,7 @@ namespace oms
         int line_;
 
         explicit TableArrayField(std::unique_ptr<SyntaxTree> value,
-            int line)
+                                 int line)
             : value_(std::move(value)), line_(line)
         {
         }
@@ -533,10 +537,10 @@ namespace oms
         SemanticOp semantic_;
 
         IndexAccessor(std::unique_ptr<SyntaxTree> table,
-            std::unique_ptr<SyntaxTree> index,
-            int line)
+                      std::unique_ptr<SyntaxTree> index,
+                      int line)
             : table_(std::move(table)), index_(std::move(index)),
-            line_(line), semantic_(SemanticOp_None)
+              line_(line), semantic_(SemanticOp_None)
         {
         }
 
@@ -553,9 +557,9 @@ namespace oms
         SemanticOp semantic_;
 
         MemberAccessor(std::unique_ptr<SyntaxTree> table,
-            const TokenDetail &member)
+                       const TokenDetail &member)
             : table_(std::move(table)), member_(member),
-            semantic_(SemanticOp_None)
+              semantic_(SemanticOp_None)
         {
         }
 
@@ -572,7 +576,7 @@ namespace oms
         int line_;
 
         NormalFuncCall(std::unique_ptr<SyntaxTree> caller,
-            std::unique_ptr<SyntaxTree> args, int line)
+                       std::unique_ptr<SyntaxTree> args, int line)
             : caller_(std::move(caller)), args_(std::move(args)), line_(line)
         {
         }
@@ -591,11 +595,11 @@ namespace oms
         int line_;
 
         MemberFuncCall(std::unique_ptr<SyntaxTree> caller,
-            const TokenDetail &member,
-            std::unique_ptr<SyntaxTree> args,
-            int line)
+                       const TokenDetail &member,
+                       std::unique_ptr<SyntaxTree> args,
+                       int line)
             : caller_(std::move(caller)), member_(member),
-            args_(std::move(args)), line_(line)
+              args_(std::move(args)), line_(line)
         {
         }
 
@@ -612,7 +616,7 @@ namespace oms
         int arg_value_count_;
 
         FuncCallArgs(std::unique_ptr<SyntaxTree> arg,
-            ArgType type)
+                     ArgType type)
             : arg_(std::move(arg)), type_(type), arg_value_count_(0)
         {
         }
@@ -633,3 +637,5 @@ namespace oms
         SYNTAX_TREE_ACCEPT_VISITOR_DECL();
     };
 } // namespace oms
+
+#endif // SYNTAX_TREE_H

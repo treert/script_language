@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UNIT_TEST_H
+#define UNIT_TEST_H
 
 #include <vector>
 #include <string>
@@ -60,3 +61,5 @@ protected:
         {                                                   \
         }                                                   \
     } while (0)
+
+#endif // UNIT_TEST_H
