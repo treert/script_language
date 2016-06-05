@@ -78,6 +78,10 @@
     <ClInclude Include="..\..\src\onemore\mVisitor.h" />
     <ClInclude Include="..\..\src\onemore\mVM.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\onemore\example\calculator.lua" />
+    <None Include="..\..\src\onemore\example\gctest.lua" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{671072F4-11F7-4898-91B2-4284B09FD82E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

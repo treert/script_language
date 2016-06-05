@@ -87,7 +87,7 @@ bool UnitTestBase::IsTestOK() const
     return errors_.empty();
 }
 
-int main()
-{
-    return UnitTestManager::GetInstance().RunAllTestCase();
-}
+//int main()
+//{
+//    return UnitTestManager::GetInstance().RunAllTestCase();
+//}

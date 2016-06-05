@@ -16,6 +16,9 @@
     <Filter Include="unit_tests">
       <UniqueIdentifier>{37e014be-e110-48aa-9591-e7cd0d57b6f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="example">
+      <UniqueIdentifier>{3774df3e-76d3-48be-a66e-6c6e4979c871}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\onemore\unittests\mUnitTest.cpp">
@@ -212,5 +215,13 @@
     <ClInclude Include="..\..\src\onemore\mCodeGenerate.h">
       <Filter>源文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\onemore\example\calculator.lua">
+      <Filter>example</Filter>
+    </None>
+    <None Include="..\..\src\onemore\example\gctest.lua">
+      <Filter>example</Filter>
+    </None>
   </ItemGroup>
 </Project>

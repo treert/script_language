@@ -44,24 +44,24 @@ void ExecuteFile(const char **argv, oms::State &state)
     }
 }
 
-//int main(int argc, const char **argv)
-//{
-//    oms::State state;
-//
-//    lib::base::RegisterLibBase(&state);
-//    lib::io::RegisterLibIO(&state);
-//    lib::math::RegisterLibMath(&state);
-//    lib::string::RegisterLibString(&state);
-//    lib::table::RegisterLibTable(&state);
-//
-//    if (argc < 2)
-//    {
-//        Repl(state);
-//    }
-//    else
-//    {
-//        ExecuteFile(argv, state);
-//    }
-//
-//    return 0;
-//}
+int main(int argc, const char **argv)
+{
+    oms::State state;
+
+    lib::base::RegisterLibBase(&state);
+    lib::io::RegisterLibIO(&state);
+    lib::math::RegisterLibMath(&state);
+    lib::string::RegisterLibString(&state);
+    lib::table::RegisterLibTable(&state);
+
+    if (argc < 2)
+    {
+        Repl(state);
+    }
+    else
+    {
+        ExecuteFile(argv, state);
+    }
+
+    return 0;
+}
