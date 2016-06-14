@@ -223,5 +223,8 @@
     <None Include="..\..\src\onemore\example\gctest.lua">
       <Filter>example</Filter>
     </None>
+    <None Include="..\..\src\onemore\example\test.lua">
+      <Filter>example</Filter>
+    </None>
   </ItemGroup>
 </Project>

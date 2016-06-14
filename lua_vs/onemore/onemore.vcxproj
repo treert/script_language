@@ -81,6 +81,7 @@
   <ItemGroup>
     <None Include="..\..\src\onemore\example\calculator.lua" />
     <None Include="..\..\src\onemore\example\gctest.lua" />
+    <None Include="..\..\src\onemore\example\test.lua" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{671072F4-11F7-4898-91B2-4284B09FD82E}</ProjectGuid>
