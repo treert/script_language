@@ -1635,7 +1635,9 @@ namespace oms
             if (arg->arg_)
             {
                 auto start_register = GenerateRegisterId();
-                ExpListData exp_list_data{ start_register, EXP_VALUE_COUNT_ANY };
+                auto end_register = arg->arg_value_count_ == EXP_VALUE_COUNT_ANY ?
+                    EXP_VALUE_COUNT_ANY : start_register + arg->arg_value_count_;
+                ExpListData exp_list_data{ start_register, end_register };
                 arg->arg_->Accept(this, &exp_list_data);
             }
         }
