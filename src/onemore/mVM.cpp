@@ -78,6 +78,15 @@ namespace oms
                     a = GET_REGISTER_A(i);
                     GET_REAL_VALUE(a)->SetNil();
                     break;
+                case OpType_FillNil:
+                    a = GET_REGISTER_A(i);
+                    b = GET_REGISTER_B(i);
+                    while (a < b)
+                    {
+                        a->SetNil();
+                        ++a;
+                    }
+                    break;
                 case OpType_LoadBool:
                     a = GET_REGISTER_A(i);
                     GET_REAL_VALUE(a)->SetBool(Instruction::GetParamB(i) ? true : false);
@@ -353,6 +362,7 @@ namespace oms
                 }
                 else
                 {
+                    //assert(!"unreachable no reg change to upval");
                     new_closure->AddUpvalue(reg->upvalue_);
                 }
             }
