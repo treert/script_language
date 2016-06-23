@@ -1,3 +1,4 @@
+--[[
 function tostring(a)
     if type(a) == "string" then
         return '"'..a..'"'
@@ -38,14 +39,16 @@ function dump(a)
     print("")
 end
 
-
+]]
 ---            common----
 
 
 
 do
     local a = {}
-    for i = 1,2 do
+    local b = {1,2}
+    for _,i in pairs(b) do
+    -- for i = 1,2 do
         a[i] = function() i = i+1; print(i); end
     end
     local b = 1
@@ -54,7 +57,7 @@ do
     a[2]()
 end
 
-
+do return end
 
 local function test_repeat_local()
     local a = 1
