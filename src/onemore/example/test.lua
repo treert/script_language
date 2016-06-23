@@ -47,8 +47,8 @@ end
 do
     local a = {}
     local b = {1,2}
-    for _,i in pairs(b) do
-    -- for i = 1,2 do
+    --for _,i in pairs(b) do
+     for i = 1,2 do
         a[i] = function() i = i+1; print(i); end
     end
     local b = 1

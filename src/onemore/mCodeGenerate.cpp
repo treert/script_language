@@ -808,39 +808,45 @@ namespace oms
     void CodeGenerateVisitor::Visit(WhileStatement *while_stmt, void *data)
     {
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
-        LOOP_GUARD(while_stmt);
-
-        auto register_id = GenerateRegisterId();
-        ExpVarData exp_var_data{ register_id, register_id + 1 };
-        while_stmt->exp_->Accept(this, &exp_var_data);
-
-        // Jump to loop tail when expression is false
         auto function = GetCurrentFunction();
-        auto instruction = Instruction::AsBxCode(OpType_JmpFalse, register_id, 0);
-        int index = function->AddInstruction(instruction, while_stmt->first_line_);
-        AddLoopJumpInfo(while_stmt, index, LoopJumpInfo::JumpTail);
+        LOOP_GUARD(while_stmt);
+        {
+            CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
+            auto register_id = GenerateRegisterId();
+            ExpVarData exp_var_data{ register_id, register_id + 1 };
+            while_stmt->exp_->Accept(this, &exp_var_data);
 
-        while_stmt->block_->Accept(this, nullptr);
+            // Jump to loop tail when expression is false
+            auto instruction = Instruction::AsBxCode(OpType_JmpFalse, register_id, 0);
+            int index = function->AddInstruction(instruction, while_stmt->first_line_);
+            AddLoopJumpInfo(while_stmt, index, LoopJumpInfo::JumpTail);
+
+            while_stmt->block_->Accept(this, nullptr);
+        }
 
         // Jump to loop head
-        instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);
-        index = function->AddInstruction(instruction, while_stmt->last_line_);
+        auto instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);
+        int index = function->AddInstruction(instruction, while_stmt->last_line_);
         AddLoopJumpInfo(while_stmt, index, LoopJumpInfo::JumpHead);
     }
 
+    // todo 这个实现与lua的不一致
     void CodeGenerateVisitor::Visit(RepeatStatement *repeat_stmt, void *data)
     {
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
+        // Get exp value
+        auto register_id = GenerateRegisterId();
         LOOP_GUARD(repeat_stmt);
         {
             REGISTER_GENERATOR_GUARD();
             repeat_stmt->block_->Accept(this, nullptr);
         }
-
-        // Get exp value
-        auto register_id = GenerateRegisterId();
-        ExpVarData exp_var_data{ register_id, register_id + 1 };
-        repeat_stmt->exp_->Accept(this, &exp_var_data);
+        {
+            // Get exp value
+            CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
+            ExpVarData exp_var_data{ register_id, register_id + 1 };
+            repeat_stmt->exp_->Accept(this, &exp_var_data);
+        }
 
         // Jump to head when exp value is true
         auto function = GetCurrentFunction();
