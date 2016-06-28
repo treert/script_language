@@ -14,9 +14,11 @@
     <ClCompile Include="..\..\src\cpp\A.cpp" />
     <ClCompile Include="..\..\src\cpp\C.cpp" />
     <ClCompile Include="..\..\src\cpp\main.cpp" />
+    <ClCompile Include="..\..\src\cpp\my_template.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\cpp\A.h" />
+    <ClInclude Include="..\..\src\cpp\my_template.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB864F01-7679-4384-8004-0BCB22B40C99}</ProjectGuid>
