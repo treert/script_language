@@ -28,7 +28,6 @@ namespace oms
 #define GET_REGISTER_B(i)       (call->register_ + Instruction::GetParamB(i))
 #define GET_REGISTER_C(i)       (call->register_ + Instruction::GetParamC(i))
 #define GET_UPVALUE_B(i)        (cl->GetUpvalue(Instruction::GetParamB(i)))
-#define GET_REAL_VALUE(a)       (a->type_ == ValueT_Upvalue ? a->upvalue_->GetValue() : a)
 
 #define GET_REGISTER_ABC(i)                                 \
     a = GET_REGISTER_A(i);                                  \
@@ -76,7 +75,7 @@ namespace oms
             switch (Instruction::GetOpCode(i)) {
                 case OpType_LoadNil:
                     a = GET_REGISTER_A(i);
-                    GET_REAL_VALUE(a)->SetNil();
+                    a->SetNil();
                     break;
                 case OpType_FillNil:
                     a = GET_REGISTER_A(i);
@@ -89,7 +88,7 @@ namespace oms
                     break;
                 case OpType_LoadBool:
                     a = GET_REGISTER_A(i);
-                    GET_REAL_VALUE(a)->SetBool(Instruction::GetParamB(i) ? true : false);
+                    a->SetBool(Instruction::GetParamB(i) ? true : false);
                     break;
                 case OpType_LoadInt:
                     a = GET_REGISTER_A(i);
@@ -100,12 +99,12 @@ namespace oms
                 case OpType_LoadConst:
                     a = GET_REGISTER_A(i);
                     b = GET_CONST_VALUE(i);
-                    *GET_REAL_VALUE(a) = *b;
+                    *a = *b;
                     break;
                 case OpType_Move:
                     a = GET_REGISTER_A(i);
                     b = GET_REGISTER_B(i);
-                    *GET_REAL_VALUE(a) = *GET_REAL_VALUE(b);
+                    *a = *b;
                     break;
                 case OpType_Call:
                     a = GET_REGISTER_A(i);
@@ -114,7 +113,7 @@ namespace oms
                 case OpType_GetUpvalue:
                     a = GET_REGISTER_A(i);
                     b = GET_UPVALUE_B(i)->GetValue();
-                    *GET_REAL_VALUE(a) = *b;
+                    *a = *b;
                     break;
                 case OpType_SetUpvalue:
                     a = GET_REGISTER_A(i);
@@ -124,7 +123,7 @@ namespace oms
                 case OpType_GetGlobal:
                     a = GET_REGISTER_A(i);
                     b = GET_CONST_VALUE(i);
-                    *GET_REAL_VALUE(a) = state_->global_.table_->GetValue(*b);
+                    *a = state_->global_.table_->GetValue(*b);
                     break;
                 case OpType_SetGlobal:
                     a = GET_REGISTER_A(i);
@@ -144,12 +143,12 @@ namespace oms
                     return Return(a, i);
                 case OpType_JmpFalse:
                     a = GET_REGISTER_A(i);
-                    if (GET_REAL_VALUE(a)->IsFalse())
+                    if (a->IsFalse())
                         call->instruction_ += -1 + Instruction::GetParamsBx(i);
                     break;
                 case OpType_JmpTrue:
                     a = GET_REGISTER_A(i);
-                    if (!GET_REAL_VALUE(a)->IsFalse())
+                    if (!a->IsFalse())
                         call->instruction_ += -1 + Instruction::GetParamsBx(i);
                     break;
                 case OpType_JmpNil:
