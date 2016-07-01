@@ -1,4 +1,64 @@
 
+2016-06-30 BNF
+
+chunk ::= block
+
+block ::= {stat [";"]} 
+
+stat ::=  varlist "=" explist | 
+     functioncall | 
+     "do" block "end" | 
+     "while" exp "do" block "end" | 
+     "repeat" block "until" exp | 
+     "if" exp "then" block {"elseif" exp "then" block} ["else" block] "end" | 
+     "for" Name "=" exp "," exp ["," exp] "do" block "end" | 
+     "for" namelist "in" explist "do" block "end" | 
+     "function" funcname funcbody | 
+     "local" namelist ["=" explist] 
+
+namelist ::= Name {"," Name}
+
+varlist ::= var {"," var}
+
+var ::= Name { "[" exp "]" | "." Name }  
+
+funcname ::= Name {"." Name} [":" Name]
+
+function ::= "function" funcbody
+
+funcbody ::= "(" [parlist] ")" block "end"
+
+parlist ::= namelist ["," "..."] | "..."
+
+explist ::= {exp ","} exp
+
+exp ::=  nil | false | true | Number | String| 
+     "..." | function | tableconstructor | 
+     exp binop exp | unop exp |
+     prefixexp
+
+prefixexp ::= var | functioncall | "(" exp ")"
+
+functioncall ::=  prefixexp args | prefixexp ":" Name args 
+
+args ::=  "(" [explist] ")" | tableconstructor | String 
+
+
+
+tableconstructor ::= "{" [fieldlist] "}"
+
+fieldlist ::= field {fieldsep field} [fieldsep]
+
+field ::= "[" exp "]" "=" exp | Name "=" exp | exp
+
+fieldsep ::= "," | ";"
+
+binop ::= "+" | "-" | "*" | "/" | "^" | "%" | ".." | 
+     "<" | "<=" | ">" | ">=" | "==" | "~=" | 
+     "and" | "or"
+
+unop ::= "-" | "not" | "#"
+
 
 2016-06-25 可以动手写一个简单的了
 
@@ -9,18 +69,12 @@
 脚本的核心：
 1. 处理数字计算、字符串运算。
 2. 处理类似json串的结构。
-3. 控制调用外部函数。加上协程功能，可以慢慢扩充功能。
+3. 控制调用外部函数。
+    1. 加上协程功能。
 
 number  bool 单值
 string function cfunction userdata 引用用计数GC 这些都定义成常量，是没有出度的。
-table 引用计数GC 
-
-【
-table 后期学习php,settable时复制，目前有引用，泄漏就泄漏吧。
-分为引用计数和复制计数 像PHP一样处理好了。
-思来想去，这个不做处理，性价比低。
-循环引用就循环引用把。加个检测模式大不了。
-】
+table 引用计数GC 【循环引用就循环引用把。加个检测模式大不了】
 
 
 要做的：
@@ -34,3 +88,5 @@ table 后期学习php,settable时复制，目前有引用，泄漏就泄漏吧�
 一些好的但是不能支持的：
 闭包
 oop
+
+
