@@ -90,9 +90,6 @@ namespace oms
         while (current_ != EOF)
         {
             switch (current_) {
-            case ' ': case '\t': case '\v': case '\f':
-                current_ = Next();
-                break;
             case '\r': case '\n':
                 LexNewLine();
                 break;
@@ -106,18 +103,6 @@ namespace oms
                         current_ = next;
                         RETURN_NORMAL_TOKEN_DETAIL(detail, '-');
                     }
-                }
-                break;
-            case '0': case '1': case '2': case '3': case '4':
-            case '5': case '6': case '7': case '8': case '9':
-                return LexNumber(detail);
-            case '+': case '*': case '/': case '%': case '^':
-            case '#': case '(': case ')': case '{': case '}':
-            case ']': case ';': case ':': case ',':
-                {
-                    int token = current_;
-                    current_ = Next();
-                    RETURN_NORMAL_TOKEN_DETAIL(detail, token);
                 }
                 break;
             case '.':
@@ -142,9 +127,7 @@ namespace oms
                         token_buffer_.clear();
                         token_buffer_.push_back(current_);
                         current_ = next;
-                        return LexNumberXFractional(detail, false, true,
-                                                    [](int c) { return isdigit(c) != 0; },
-                                                    [](int c) { return c == 'e' || c == 'E'; });
+                        return LexNumber(detail);
                     }
                     else
                     {
@@ -181,7 +164,25 @@ namespace oms
             case '\'': case '"':
                 return LexSingleLineString(detail);
             default:
-                return LexId(detail);
+                if (isspace(current_)) {
+                    current_ = Next();
+                    break;
+                }
+                else if (isdigit(current_))
+                {
+                    token_buffer_.clear();
+                    return LexNumber(detail);
+                }
+                else if (isalpha(current_) || '_' == current_ || '$' == current_)
+                {
+                    return LexId(detail);
+                }
+                else
+                {
+                    int token = current_;
+                    current_ = Next();
+                    RETURN_NORMAL_TOKEN_DETAIL(detail, token);
+                }
             }
         }
 
@@ -253,98 +254,43 @@ namespace oms
 
     int Lexer::LexNumber(TokenDetail *detail)
     {
-        bool integer_part = false;
-        token_buffer_.clear();
-        if (current_ == '0')
+        assert(isdigit(current_));
+        do{
+            token_buffer_.push_back(current_);
+            current_ = Next();
+        } while (isdigit(current_) || '.' == current_);
+        if (strchr("Ee", current_))
         {
-            int next = Next();
-            if (next == 'x' || next == 'X')
+            token_buffer_.push_back(current_);
+            current_ = Next();
+            if (strchr("+-", current_))
             {
                 token_buffer_.push_back(current_);
-                token_buffer_.push_back(next);
                 current_ = Next();
-
-                return LexNumberX(detail, false, IsHexChar,
-                                  [](int c) { return c == 'p' || c == 'P'; });
-            }
-            else
-            {
-                token_buffer_.push_back(current_);
-                current_ = next;
-                integer_part = true;
             }
         }
-
-        return LexNumberX(detail, integer_part,
-                          [](int c) { return isdigit(c) != 0; },
-                          [](int c) { return c == 'e' || c == 'E'; });
-    }
-
-    int Lexer::LexNumberX(TokenDetail *detail, bool integer_part,
-                          const std::function<bool (int)> &is_number_char,
-                          const std::function<bool (int)> &is_exponent)
-    {
-        while (is_number_char(current_))
+        while (isalnum(current_))
         {
             token_buffer_.push_back(current_);
             current_ = Next();
-            integer_part = true;
         }
 
-        bool point = false;
-        if (current_ == '.')
+        double number;
+        char *end_ptr;
+        if ('X' == token_buffer_[1] || 'x' == token_buffer_[1])
         {
-            token_buffer_.push_back(current_);
-            current_ = Next();
-            point = true;
+            number = static_cast<double>(strtoul(token_buffer_.c_str(), &end_ptr, 16));
         }
-
-        return LexNumberXFractional(detail, integer_part, point,
-                                    is_number_char, is_exponent);
-    }
-
-    int Lexer::LexNumberXFractional(TokenDetail *detail,
-                                    bool integer_part, bool point,
-                                    const std::function<bool (int)> &is_number_char,
-                                    const std::function<bool (int)> &is_exponent)
-    {
-        bool fractional_part = false;
-        while (is_number_char(current_))
+        else
         {
-            token_buffer_.push_back(current_);
-            current_ = Next();
-            fractional_part = true;
+            number = strtod(token_buffer_.c_str(), &end_ptr);
         }
 
-        if (point && !integer_part && !fractional_part)
+        if (*end_ptr != '\0')
+        {
             throw LexException(module_->GetCStr(), line_, column_,
-                    "unexpect '.'");
-        else if (!point && !integer_part && !fractional_part)
-            throw LexException(module_->GetCStr(), line_, column_,
-                    "unexpect incomplete number '", token_buffer_, "'");
-
-        if (is_exponent(current_))
-        {
-            token_buffer_.push_back(current_);
-            current_ = Next();
-            if (current_ == '-' || current_ == '+')
-            {
-                token_buffer_.push_back(current_);
-                current_ = Next();
-            }
-
-            if (!isdigit(current_))
-                throw LexException(module_->GetCStr(), line_, column_,
-                        "expect exponent after '", token_buffer_, "'");
-
-            while (isdigit(current_))
-            {
-                token_buffer_.push_back(current_);
-                current_ = Next();
-            }
+                "bad number '", token_buffer_, "'");
         }
-
-        double number = strtod(token_buffer_.c_str(), nullptr);
         RETURN_NUMBER_TOKEN_DETAIL(detail, number);
     }
 
