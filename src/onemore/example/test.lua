@@ -1,4 +1,6 @@
----[[
+
+
+---[asdfasd[
 function tostring(a)
     if type(a) == "string" then
         return '"'..a..'"'
@@ -39,7 +41,6 @@ function dump(a)
     print("")
 end
 
---]]
 ---            common----
 
 
@@ -53,10 +54,10 @@ end
 
 
 dump({
-    1.3,0x70,3.3e-100,get_table("a","b"),4,6
+    .3,0x70,3.3e-100,get_table("a","b"),4,6
     })
 
-    --[[
+
 --dump(get_table("a","b"))
 
 while true do
@@ -67,6 +68,3 @@ while true do
         break
     end
 end
-
-
---]]

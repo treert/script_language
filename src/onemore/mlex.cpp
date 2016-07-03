@@ -30,12 +30,21 @@ namespace
         return true;
     }
 
-    inline bool IsHexChar(int c)
+    bool IsIdLeftLetter(int c)
     {
-        return (c >= '0' && c <= '9') ||
-               (c >= 'a' && c <= 'f') ||
-               (c >= 'A' && c <= 'F');
+        return strchr("_",c) || isalnum(c);
     }
+
+    bool IsIdFirstLetter(int c)
+    {
+        return strchr("$_", c) || isalpha(c);
+    }
+
+    bool IsWordLetter(int c)
+    {
+        return strchr("_", c) || isalnum(c);
+    }
+
 } // namespace
 
 namespace oms
@@ -78,15 +87,13 @@ namespace oms
           line_(1),
           column_(0)
     {
+        Next();
     }
 
     int Lexer::GetToken(TokenDetail *detail)
     {
         assert(detail);
         SET_EOF_TOKEN_DETAIL(detail);
-        if (current_ == EOF)
-            current_ = Next();
-
         while (current_ != EOF)
         {
             switch (current_) {
@@ -95,54 +102,49 @@ namespace oms
                 break;
             case '-':
                 {
-                    int next = Next();
-                    if (next == '-')
+                    Next();
+                    if (current_ == '-')
                         LexComment();
                     else
                     {
-                        current_ = next;
                         RETURN_NORMAL_TOKEN_DETAIL(detail, '-');
                     }
                 }
                 break;
             case '.':
                 {
-                    int next = Next();
-                    if (next == '.')
+                    Next();
+                    if (current_ == '.')
                     {
-                        int pre_next = Next();
-                        if (pre_next == '.')
+                        Next();
+                        if (current_ == '.')
                         {
-                            current_ = Next();
+                            Next();
                             RETURN_NORMAL_TOKEN_DETAIL(detail, Token_VarArg);
                         }
                         else
                         {
-                            current_ = pre_next;
                             RETURN_NORMAL_TOKEN_DETAIL(detail, Token_Concat);
                         }
                     }
-                    else if (isdigit(next))
+                    else if (isdigit(current_))
                     {
-                        token_buffer_.clear();
-                        token_buffer_.push_back(current_);
-                        current_ = next;
+                        token_buffer_.assign(1,'.');
                         return LexNumber(detail);
                     }
                     else
                     {
-                        current_ = next;
                         RETURN_NORMAL_TOKEN_DETAIL(detail, '.');
                     }
                 }
                 break;
             case '~':
                 {
-                    int next = Next();
-                    if (next != '=')
+                    Next();
+                    if (current_ != '=')
                         throw LexException(module_->GetCStr(),
                                 line_, column_, "expect '=' after '~'");
-                    current_ = Next();
+                    Next();
                     RETURN_NORMAL_TOKEN_DETAIL(detail, Token_NotEqual);
                 }
                 break;
@@ -154,7 +156,7 @@ namespace oms
                 return LexXEqual(detail, Token_LessEqual);
             case '[':
                 {
-                    current_ = Next();
+                    Next();
                     if (current_ == '[' || current_ == '=')
                         return LexMultiLineString(detail);
                     else
@@ -165,7 +167,7 @@ namespace oms
                 return LexSingleLineString(detail);
             default:
                 if (isspace(current_)) {
-                    current_ = Next();
+                    Next();
                     break;
                 }
                 else if (isdigit(current_))
@@ -173,14 +175,14 @@ namespace oms
                     token_buffer_.clear();
                     return LexNumber(detail);
                 }
-                else if (isalpha(current_) || '_' == current_ || '$' == current_)
+                else if (IsIdFirstLetter(current_))
                 {
                     return LexId(detail);
                 }
                 else
                 {
                     int token = current_;
-                    current_ = Next();
+                    Next();
                     RETURN_NORMAL_TOKEN_DETAIL(detail, token);
                 }
             }
@@ -189,51 +191,78 @@ namespace oms
         return Token_EOF;
     }
 
+
+    void Lexer::Next()
+    {
+        current_ = in_stream_();
+        assert(current_ != 0);
+        if (current_ != EOF) ++column_;
+    }
+
     void Lexer::LexNewLine()
     {
-        int next = Next();
-        if ((next == '\r' || next == '\n') && next != current_)
-            current_ = Next();
-        else
-            current_ = next;
+        Next();
+        if ((current_ == '\r' || current_ == '\n') && current_ != current_)
+        {
+            Next();
+        }
         ++line_;
         column_ = 0;
     }
 
     void Lexer::LexComment()
     {
-        current_ = Next();
+        Next();
         if (current_ == '[')
         {
-            current_ = Next();
+            // named comment
+            Next();
+            token_buffer_.clear();
+            while (IsWordLetter(current_))
+            {
+                token_buffer_.push_back(current_);
+                Next();
+            }
             if (current_ == '[')
-                LexMultiLineComment();
+            {
+                LexNamedComment();
+            }
             else
-                LexSingleLineComment();
+            {
+                throw LexException(module_->GetCStr(), line_, column_,
+                        "named comment expect [ after name '",token_buffer_,"'");
+            }
         }
         else
             LexSingleLineComment();
     }
 
-    void Lexer::LexMultiLineComment()
+    void Lexer::LexNamedComment()
     {
-        bool is_comment_end = false;
-        while (!is_comment_end)
+        while (true)
         {
             if (current_ == ']')
             {
-                current_ = Next();
-                if (current_ == ']')
+                Next();
+                int i = 0;
+                int len = token_buffer_.size();
+                while (current_ == token_buffer_[i])
                 {
-                    is_comment_end = true;
-                    current_ = Next();
+                    ++i;
+                    Next();
+                }
+                if (i == len && current_ == ']')
+                {
+                    Next();
+                    break;
                 }
             }
             else if (current_ == EOF)
             {
                 // uncompleted multi-line comment
-                throw LexException(module_->GetCStr(), line_, column_,
-                        "expect complete multi-line comment before <eof>.");
+                //throw LexException(module_->GetCStr(), line_, column_,
+                //        "expect complete multi-line comment before <eof>.");
+                break;
             }
             else if (current_ == '\r' || current_ == '\n')
             {
@@ -241,7 +270,7 @@ namespace oms
             }
             else
             {
-                current_ = Next();
+                Next();
             }
         }
     }
@@ -249,7 +278,9 @@ namespace oms
     void Lexer::LexSingleLineComment()
     {
         while (current_ != '\r' && current_ != '\n' && current_ != EOF)
-            current_ = Next();
+        {
+            Next();
+        }
     }
 
     int Lexer::LexNumber(TokenDetail *detail)
@@ -257,22 +288,22 @@ namespace oms
         assert(isdigit(current_));
         do{
             token_buffer_.push_back(current_);
-            current_ = Next();
+            Next();
         } while (isdigit(current_) || '.' == current_);
         if (strchr("Ee", current_))
         {
             token_buffer_.push_back(current_);
-            current_ = Next();
+            Next();
             if (strchr("+-", current_))
             {
                 token_buffer_.push_back(current_);
-                current_ = Next();
+                Next();
             }
         }
         while (isalnum(current_))
         {
             token_buffer_.push_back(current_);
-            current_ = Next();
+            Next();
         }
 
         double number;
@@ -296,18 +327,16 @@ namespace oms
 
     int Lexer::LexXEqual(TokenDetail *detail, int equal_token)
     {
-        int token = current_;
-
-        int next = Next();
-        if (next == '=')
+        int single_token = current_;
+        Next();
+        if (current_ == '=')
         {
-            current_ = Next();
+            Next();
             RETURN_NORMAL_TOKEN_DETAIL(detail, equal_token);
         }
         else
         {
-            current_ = next;
-            RETURN_NORMAL_TOKEN_DETAIL(detail, token);
+            RETURN_NORMAL_TOKEN_DETAIL(detail, single_token);
         }
     }
 
@@ -317,30 +346,28 @@ namespace oms
         while (current_ == '=')
         {
             ++equals;
-            current_ = Next();
+            Next();
         }
 
         if (current_ != '[')
             throw LexException(module_->GetCStr(), line_, column_,
                     "incomplete multi-line string at '", token_buffer_, "'");
 
-        current_ = Next();
+        Next();
         token_buffer_.clear();
 
         if (current_ == '\r' || current_ == '\n')
         {
-            LexNewLine();
-            if (equals == 0)    // "[[]]" keeps first '\n'
-                token_buffer_.push_back('\n');
+            LexNewLine();// ignore first '\n'
         }
 
         while (current_ != EOF)
         {
             if (current_ == ']')
             {
-                current_ = Next();
+                Next();
                 int i = 0;
-                for (; i < equals; ++i, current_ = Next())
+                for (; i < equals; ++i, Next())
                 {
                     if (current_ != '=')
                         break;
@@ -348,7 +375,7 @@ namespace oms
 
                 if (i == equals && current_ == ']')
                 {
-                    current_ = Next();
+                    Next();
                     RETURN_TOKEN_DETAIL(detail, token_buffer_, Token_String);
                 }
                 else
@@ -359,13 +386,13 @@ namespace oms
             }
             else if (current_ == '\r' || current_ == '\n')
             {
-                LexNewLine();
                 token_buffer_.push_back('\n');
+                LexNewLine();
             }
             else
             {
                 token_buffer_.push_back(current_);
-                current_ = Next();
+                Next();
             }
         }
 
@@ -376,7 +403,7 @@ namespace oms
     int Lexer::LexSingleLineString(TokenDetail *detail)
     {
         int quote = current_;
-        current_ = Next();
+        Next();
         token_buffer_.clear();
 
         while (current_ != quote)
@@ -392,7 +419,7 @@ namespace oms
             LexStringChar();
         }
 
-        current_ = Next();
+        Next();
         RETURN_TOKEN_DETAIL(detail, token_buffer_, Token_String);
     }
 
@@ -400,7 +427,7 @@ namespace oms
     {
         if (current_ == '\\')
         {
-            current_ = Next();
+            Next();
             if (current_ == 'a')
                 token_buffer_.push_back('\a');
             else if (current_ == 'b')
@@ -423,21 +450,21 @@ namespace oms
                 token_buffer_.push_back('\'');
             else if (current_ == 'x')
             {
-                current_ = Next();
+                Next();
                 char hex[3] = { 0 };
                 int i = 0;
-                for (; i < 2 && IsHexChar(current_); ++i, current_ = Next())
+                for (; i < 2 && isxdigit(current_); ++i, Next())
                     hex[i] = current_;
                 if (i == 0)
                     throw LexException(module_->GetCStr(), line_, column_,
                             "unexpect character after '\\x'");
-                token_buffer_.push_back(static_cast<char>(strtoul(hex, 0, 16)));
+                token_buffer_.push_back(static_cast<char>(strtoul(hex, nullptr, 16)));
                 return ;
             }
             else if (isdigit(current_))
             {
                 char oct[4] = { 0 };
-                for (int i = 0; i < 3 && isdigit(current_); ++i, current_ = Next())
+                for (int i = 0; i < 3 && isdigit(current_); ++i, Next())
                     oct[i] = current_;
                 token_buffer_.push_back(static_cast<char>(strtoul(oct, 0, 8)));
                 return ;
@@ -451,24 +478,17 @@ namespace oms
             token_buffer_.push_back(current_);
         }
 
-        current_ = Next();
+        Next();
     }
 
     int Lexer::LexId(TokenDetail *detail)
     {
-        if (!isalpha(current_) && current_ != '_')
-            throw LexException(module_->GetCStr(),
-                    line_, column_, "unexpect character");
-
+        assert(IsIdFirstLetter(current_));
         token_buffer_.clear();
-        token_buffer_.push_back(current_);
-        current_ = Next();
-
-        while (isalnum(current_) || current_ == '_')
-        {
+        do{
             token_buffer_.push_back(current_);
-            current_ = Next();
-        }
+            Next();
+        } while (IsIdLeftLetter(current_));
 
         int token = 0;
         if (!IsKeyWord(token_buffer_, &token))

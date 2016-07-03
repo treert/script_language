@@ -31,16 +31,11 @@ namespace oms
         }
 
     private:
-        int Next()
-        {
-            auto c = in_stream_();
-            if (c != EOF) ++column_;
-            return c;
-        }
+        void Next();
 
         void LexNewLine();
         void LexComment();
-        void LexMultiLineComment();
+        void LexNamedComment();
         void LexSingleLineComment();
 
         int LexNumber(TokenDetail *detail);
