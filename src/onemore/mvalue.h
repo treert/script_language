@@ -107,7 +107,7 @@ namespace oms
 namespace std
 {
     template<>
-    struct hash<oms::Value> : public unary_function<oms::Value, size_t>
+    struct hash<oms::Value>
     {
         size_t operator () (const oms::Value &t) const
         {
