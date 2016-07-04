@@ -195,6 +195,7 @@ namespace
             std::unique_ptr<Block> block(new Block);
 
             bool has_return = false;
+            // this is possible suffix for block syntax
             while (LookAhead().token_ != Token_EOF &&
                    LookAhead().token_ != Token_End &&
                    LookAhead().token_ != Token_Until &&
@@ -645,7 +646,7 @@ namespace
                 return ParsePrefixExpTail(std::move(exp), type);
             }
             else if (LookAhead().token_ == ':' || LookAhead().token_ == '(' ||
-                     LookAhead().token_ == '{' || LookAhead().token_ == Token_String)
+                     LookAhead().token_ == '{')
             {
                 if (type) *type = PrefixExpType_Functioncall;
                 exp = ParseFunctionCall(std::move(exp));
@@ -705,19 +706,12 @@ namespace
 
         std::unique_ptr<SyntaxTree> ParseArgs()
         {
-            assert(LookAhead().token_ == Token_String ||
-                   LookAhead().token_ == '{' ||
-                   LookAhead().token_ == '(');
+            assert(LookAhead().token_ == '{' || LookAhead().token_ == '(');
 
             std::unique_ptr<SyntaxTree> arg;
             FuncCallArgs::ArgType type;
 
-            if (LookAhead().token_ == Token_String)
-            {
-                type = FuncCallArgs::String;
-                arg.reset(new Terminator(NextToken()));
-            }
-            else if (LookAhead().token_ == '{')
+            if (LookAhead().token_ == '{')
             {
                 type = FuncCallArgs::Table;
                 arg = ParseTableConstructor();

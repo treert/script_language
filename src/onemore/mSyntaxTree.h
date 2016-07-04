@@ -610,7 +610,7 @@ namespace oms
     {
     public:
         std::unique_ptr<SyntaxTree> arg_;
-        enum ArgType { ExpList, Table, String } type_;
+        enum ArgType { ExpList, Table } type_;
 
         // For code generate
         int arg_value_count_;
