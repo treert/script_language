@@ -612,6 +612,48 @@ namespace
             return std::unique_ptr<SyntaxTree>();
         }
 
+        std::unique_ptr<SyntaxTree> ParseLeftExp(PrefixExpType *type = nullptr)
+        {
+            NextToken();
+            if (current_.token_ != Token_Id)
+                throw ParseException("except token id to start left exp", current_);
+
+            std::unique_ptr<SyntaxTree> exp(new Terminator(current_));
+
+            PrefixExpType the_type = PrefixExpType_Var;
+            PrefixExpType last_type = PrefixExpType_Var;
+            for (;;)
+            {
+                if (LookAhead().token_ == '[' || LookAhead().token_ == '.')
+                {
+                    exp = ParseVar(std::move(exp));
+                    last_type = PrefixExpType_Var;
+                }
+                else if (LookAhead().token_ == ':' || LookAhead().token_ == '(' ||
+                    LookAhead().token_ == '{')
+                {
+                    exp = ParseFunctionCall(std::move(exp));
+                    the_type = PrefixExpType_Functioncall;
+                    last_type = PrefixExpType_Functioncall;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (the_type != last_type)
+            {
+                throw ParseException("expect function call end",current_);
+            }
+
+            if (type)
+            {
+                *type = the_type;
+            }
+            return exp;
+        }
+
         std::unique_ptr<SyntaxTree> ParsePrefixExp(PrefixExpType *type = nullptr)
         {
             NextToken();
@@ -716,7 +758,7 @@ namespace
                 type = FuncCallArgs::Table;
                 arg = ParseTableConstructor();
             }
-            else
+            else if (LookAhead().token_ == '(')
             {
                 type = FuncCallArgs::ExpList;
                 NextToken();            // skip '('
@@ -725,6 +767,10 @@ namespace
 
                 if (NextToken().token_ != ')')
                     throw ParseException("expect ')' to end function call args", current_);
+            }
+            else
+            {
+                throw ParseException("expect '(' or '{' to start function call args", look_ahead_);
             }
 
             return std::unique_ptr<SyntaxTree>(new FuncCallArgs(std::move(arg), type));

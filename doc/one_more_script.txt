@@ -25,6 +25,10 @@ varlist ::= var {"," var}
 
 var ::= Name { "[" exp "]" | "." Name }  
 
+functioncall ::= Name { "[" exp "]" | "." Name | args | ":" Name args} (args | ":" Name args) 
+
+args ::=  "(" [explist] ")" | tableconstructor 
+
 funcname ::= Name {"." Name} [":" Name]
 
 function ::= "function" funcbody
@@ -35,16 +39,13 @@ parlist ::= namelist ["," "..."] | "..."
 
 explist ::= {exp ","} exp
 
-exp ::=  nil | false | true | Number | String | 
+exp ::= nil | false | true | Number | String | 
      "..." | function | tableconstructor | 
-     var | functioncall |
-     (exp) |
-     exp binop exp | unop exp
-     
-functioncall ::= Name { "[" exp "]" | "." Name | args | ":" Name args} (args | ":" Name args) 
+     prefixexp |
+     (exp) | unop exp| exp binop exp |
 
-args ::=  "(" [explist] ")" | tableconstructor 
-
+prefixexp ::= Name {"[" exp "]" | "." Name | args | ":" Name args} |
+     (prefixexp) {"[" exp "]" | "." Name | args | ":" Name args}
 
 tableconstructor ::= "{" [fieldlist] "}"
 
