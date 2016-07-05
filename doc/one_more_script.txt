@@ -6,7 +6,7 @@ chunk ::= block
 block ::= {stat [";"]} 
 
 stat ::=  varlist "=" explist | 
-     functioncall | 
+     exp | 
      "do" block "end" | 
      "while" exp "do" block "end" | 
      "repeat" block "until" exp | 
@@ -24,8 +24,6 @@ namelist ::= Name {"," Name}
 varlist ::= var {"," var}
 
 var ::= Name { "[" exp "]" | "." Name }  
-
-functioncall ::= Name { "[" exp "]" | "." Name | args | ":" Name args} (args | ":" Name args) 
 
 args ::=  "(" [explist] ")" | tableconstructor 
 
