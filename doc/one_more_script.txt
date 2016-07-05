@@ -37,13 +37,16 @@ parlist ::= namelist ["," "..."] | "..."
 
 explist ::= {exp ","} exp
 
-exp ::= nil | false | true | Number | String | 
+exp ::= mainexp | exp binop exp 
+
+mainexp ::= nil | false | true | Number | String | 
      "..." | function | tableconstructor | 
      prefixexp |
-     (exp) | unop exp| exp binop exp |
+     unop exp|
 
-prefixexp ::= Name {"[" exp "]" | "." Name | args | ":" Name args} |
-     (prefixexp) {"[" exp "]" | "." Name | args | ":" Name args}
+prefixexp ::= var |
+     Name {"[" exp "]" | "." Name | args | ":" Name args} |
+     (exp) {"[" exp "]" | "." Name | args | ":" Name args}
 
 tableconstructor ::= "{" [fieldlist] "}"
 

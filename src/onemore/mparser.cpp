@@ -12,7 +12,6 @@ namespace
     {
         PrefixExpType_Normal,
         PrefixExpType_Var,
-        PrefixExpType_Functioncall,
     };
 
     class ParserImpl
@@ -42,21 +41,7 @@ namespace
                                              TokenDetail op = TokenDetail(),
                                              int left_priority = 0)
         {
-            std::unique_ptr<SyntaxTree> exp;
-            LookAhead();
-
-            if (look_ahead_.token_ == '-' || look_ahead_.token_ == '#' || look_ahead_.token_ == Token_Not)
-            {
-                NextToken();
-                std::unique_ptr<UnaryExpression> unexp(new UnaryExpression);
-                unexp->op_token_ = current_;
-                unexp->exp_ = ParseExp(std::unique_ptr<SyntaxTree>(), TokenDetail(), 90);
-                exp = std::move(unexp);
-            }
-            else if (IsMainExp(look_ahead_))
-                exp = ParseMainExp();
-            else
-                throw ParseException("unexpect token for exp.", look_ahead_);
+            std::unique_ptr<SyntaxTree> exp = ParseMainExp();
 
             while (true)
             {
@@ -115,8 +100,21 @@ namespace
                     exp = ParseTableConstructor();
                     break;
 
+                // unop exp
+                case '-':
+                case '#':
+                case Token_Not:
+                {
+                    NextToken();
+                    std::unique_ptr<UnaryExpression> unexp(new UnaryExpression);
+                    unexp->op_token_ = current_;
+                    unexp->exp_ = ParseExp(std::unique_ptr<SyntaxTree>(), TokenDetail(), 1000);
+                    exp = std::move(unexp);
+                }
+                    break;
+
                 default:
-                    throw ParseException("unexpect token for exp.", look_ahead_);
+                    throw ParseException("unexpect token for main exp.", look_ahead_);
             }
 
             return exp;
@@ -577,8 +575,40 @@ namespace
 
         std::unique_ptr<SyntaxTree> ParseOtherStatement()
         {
-            PrefixExpType type;
-            int start_line = LookAhead().line_;
+            std::unique_ptr<SyntaxTree> exp;
+            if (LookAhead().token_ == Token_Id)
+            {
+                PrefixExpType type;
+                int start_line = LookAhead().line_;
+                exp = ParsePrefixExp(&type);
+                if (type == PrefixExpType_Var &&
+                    (LookAhead().token_ == '=' || LookAhead().token_ == ','))
+                {
+                    std::unique_ptr<VarList> var_list(new VarList);
+                    var_list->var_list_.push_back(std::move(exp));
+                    while (LookAhead().token_ != '=')
+                    {
+                        if (LookAhead().token_ != ',')
+                            throw ParseException("expect ',' to split var", look_ahead_);
+                        NextToken();        // skip ','
+                        exp = ParsePrefixExp(&type);
+                        if (type != PrefixExpType_Var)
+                            throw ParseException("expect var here", current_);
+                        var_list->var_list_.push_back(std::move(exp));
+                    }
+                    NextToken();            // skip '='
+                    std::unique_ptr<SyntaxTree> exp_list = ParseExpList();
+                    return std::unique_ptr<SyntaxTree>(new AssignmentStatement(std::move(var_list),
+                        std::move(exp_list),
+                        start_line));
+                }
+            }
+            else
+            {
+                exp = ParseExp();
+            }
+
+
             std::unique_ptr<SyntaxTree> exp = ParsePrefixExp(&type);
 
             if (type == PrefixExpType_Var)
@@ -612,29 +642,38 @@ namespace
             return std::unique_ptr<SyntaxTree>();
         }
 
-        std::unique_ptr<SyntaxTree> ParseLeftExp(PrefixExpType *type = nullptr)
+        std::unique_ptr<SyntaxTree> ParsePrefixExp(PrefixExpType *type = nullptr)
         {
             NextToken();
-            if (current_.token_ != Token_Id)
-                throw ParseException("except token id to start left exp", current_);
+            assert(current_.token_ != Token_Id && current_.token_ != '(');
 
-            std::unique_ptr<SyntaxTree> exp(new Terminator(current_));
-
+            std::unique_ptr<SyntaxTree> exp;
             PrefixExpType the_type = PrefixExpType_Var;
-            PrefixExpType last_type = PrefixExpType_Var;
+
+            if (current_.token_ == '(')
+            {
+                exp = ParseExp();
+                if (NextToken().token_ != ')')
+                    throw ParseException("expect ')'", current_);
+                the_type = PrefixExpType_Normal;
+            }
+            else
+            {
+                exp.reset(new Terminator(current_));
+                
+            }
+            // parse prefix exp tail
             for (;;)
             {
                 if (LookAhead().token_ == '[' || LookAhead().token_ == '.')
                 {
                     exp = ParseVar(std::move(exp));
-                    last_type = PrefixExpType_Var;
                 }
                 else if (LookAhead().token_ == ':' || LookAhead().token_ == '(' ||
                     LookAhead().token_ == '{')
                 {
                     exp = ParseFunctionCall(std::move(exp));
-                    the_type = PrefixExpType_Functioncall;
-                    last_type = PrefixExpType_Functioncall;
+                    the_type = PrefixExpType_Normal;
                 }
                 else
                 {
@@ -642,62 +681,8 @@ namespace
                 }
             }
 
-            if (the_type != last_type)
-            {
-                throw ParseException("expect function call end",current_);
-            }
-
-            if (type)
-            {
-                *type = the_type;
-            }
+            if (type) *type = the_type;
             return exp;
-        }
-
-        std::unique_ptr<SyntaxTree> ParsePrefixExp(PrefixExpType *type = nullptr)
-        {
-            NextToken();
-            if (current_.token_ != Token_Id && current_.token_ != '(')
-                throw ParseException("unexpect token here", current_);
-
-            std::unique_ptr<SyntaxTree> exp;
-
-            if (current_.token_ == '(')
-            {
-                exp = ParseExp();
-                if (NextToken().token_ != ')')
-                    throw ParseException("expect ')'", current_);
-                if (type) *type = PrefixExpType_Normal;
-            }
-            else
-            {
-                exp.reset(new Terminator(current_));
-                if (type) *type = PrefixExpType_Var;
-            }
-
-            return ParsePrefixExpTail(std::move(exp), type);
-        }
-
-        std::unique_ptr<SyntaxTree> ParsePrefixExpTail(std::unique_ptr<SyntaxTree> exp,
-                                                       PrefixExpType *type)
-        {
-            if (LookAhead().token_ == '[' || LookAhead().token_ == '.')
-            {
-                if (type) *type = PrefixExpType_Var;
-                exp = ParseVar(std::move(exp));
-                return ParsePrefixExpTail(std::move(exp), type);
-            }
-            else if (LookAhead().token_ == ':' || LookAhead().token_ == '(' ||
-                     LookAhead().token_ == '{')
-            {
-                if (type) *type = PrefixExpType_Functioncall;
-                exp = ParseFunctionCall(std::move(exp));
-                return ParsePrefixExpTail(std::move(exp), type);
-            }
-            else
-            {
-                return exp;
-            }
         }
 
         std::unique_ptr<SyntaxTree> ParseVar(std::unique_ptr<SyntaxTree> table)
