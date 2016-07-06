@@ -42,7 +42,6 @@ namespace
                                              int left_priority = 0)
         {
             std::unique_ptr<SyntaxTree> exp = ParseMainExp();
-
             while (true)
             {
                 int right_priority = GetOpPriority(LookAhead());
@@ -56,9 +55,10 @@ namespace
                     if (left_priority == 0)
                         return exp;
                     assert(left);
-                    exp = std::unique_ptr<BinaryExpression>(
+                    left = std::unique_ptr<BinaryExpression>(
                         new BinaryExpression(std::move(left), std::move(exp), op));
-                    return ParseExp(std::move(exp), NextToken(), right_priority);
+                    op = NextToken();
+                    exp = ParseMainExp();
                 }
                 else
                 {
@@ -558,10 +558,11 @@ namespace
                 }
                 else
                 {
-                    int priority = GetOpPriority(LookAhead());
-                    while (priority > 0)
+                    int next_priority = GetOpPriority(LookAhead());
+                    while (next_priority > 0)
                     {
-                        exp = ParseExp(std::move(exp), NextToken(), priority);
+                        exp = ParseExp(std::move(exp), NextToken(), next_priority);
+                        next_priority = GetOpPriority(LookAhead());
                     }
                 }
             }
@@ -591,6 +592,7 @@ namespace
             {
                 exp.reset(new Terminator(current_));
             }
+
             // parse prefix exp tail
             for (;;)
             {

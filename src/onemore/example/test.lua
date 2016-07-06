@@ -61,7 +61,8 @@ dump({
     dump((2+2*2*2) and 3)
 
 
---dump(get_table("a","b"))
+--false and print(1)
+--true and print(2)
 
 while true do
     puts("exit > ")
