@@ -15,7 +15,7 @@ stat ::=  varlist "=" explist |
      "for" namelist "in" explist "do" block "end" | 
      "function" funcname funcbody | 
      "local" namelist ["=" explist] |
-     "return" explist |
+     "return" [explist] |
      "break" |
      "continue"
 

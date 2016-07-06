@@ -61,7 +61,6 @@ namespace oms
     {
     public:
         std::vector<std::unique_ptr<SyntaxTree>> statements_;
-        std::unique_ptr<SyntaxTree> return_stmt_;
 
         Block() { }
 

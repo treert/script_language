@@ -58,9 +58,7 @@ namespace
                     assert(left);
                     exp = std::unique_ptr<BinaryExpression>(
                         new BinaryExpression(std::move(left), std::move(exp), op));
-                    op = TokenDetail();
-                    left_priority = 0;
-                    exp = ParseExp(std::move(exp), NextToken(), right_priority);
+                    return ParseExp(std::move(exp), NextToken(), right_priority);
                 }
                 else
                 {
@@ -191,28 +189,51 @@ namespace
         std::unique_ptr<SyntaxTree> ParseBlock()
         {
             std::unique_ptr<Block> block(new Block);
-
-            bool has_return = false;
-            // this is possible suffix for block syntax
-            while (LookAhead().token_ != Token_EOF &&
-                   LookAhead().token_ != Token_End &&
-                   LookAhead().token_ != Token_Until &&
-                   LookAhead().token_ != Token_Elseif &&
-                   LookAhead().token_ != Token_Else)
-            {
-                if (has_return)
-                    throw ParseException("unexpect statement after return statement", look_ahead_);
-
-                if (LookAhead().token_ == Token_Return)
+            int end_state_cnt = 0;
+            for (;;){
+                std::unique_ptr<SyntaxTree> statement;
+                auto current_token = LookAhead();
+                switch (current_token.token_)
                 {
-                    block->return_stmt_ = ParseReturnStatement();
-                    has_return = true;
+                case ';':
+                    NextToken(); continue;
+                case Token_Do:
+                    statement = ParseDoStatement(); break;
+                case Token_While:
+                    statement = ParseWhileStatement(); break;
+                case Token_Repeat:
+                    statement = ParseRepeatStatement(); break;
+                case Token_If:
+                    statement = ParseIfStatement(); break;
+                case Token_For:
+                    statement = ParseForStatement(); break;
+                case Token_Function:
+                    statement = ParseFunctionStatement(); break;
+                case Token_Local:
+                    statement = ParseLocalStatement(); break;
+                case Token_Return:
+                    statement = ParseReturnStatement();
+                    ++end_state_cnt;
+                    break;
+                case Token_Break:
+                    statement = ParseBreakStatement(); 
+                    ++end_state_cnt;
+                    break;
+                default:
+                    if (IsMainExp(LookAhead()))
+                    {
+                        statement = ParseOtherStatement(); break;
+                    }
+                }
+                if (statement)
+                {
+                    if (end_state_cnt > 1)
+                        throw ParseException("unexpect statement after return/break/continue statement", current_token);
+                    block->statements_.push_back(std::move(statement));
                 }
                 else
                 {
-                    std::unique_ptr<SyntaxTree> statement = ParseStatement();
-                    if (statement)
-                        block->statements_.push_back(std::move(statement));
+                    break;
                 }
             }
 
@@ -225,57 +246,16 @@ namespace
             assert(current_.token_ == Token_Return);
 
             std::unique_ptr<ReturnStatement> return_stmt(new ReturnStatement(current_.line_));
-
-            if (LookAhead().token_ == Token_EOF ||
-                LookAhead().token_ == Token_End ||
-                LookAhead().token_ == Token_Until ||
-                LookAhead().token_ == Token_Elseif ||
-                LookAhead().token_ == Token_Else)
+            if (IsMainExp(LookAhead()))
             {
-                return std::move(return_stmt);
-            }
-
-            if (LookAhead().token_ != ';')
                 return_stmt->exp_list_ = ParseExpList();
-
-            if (LookAhead().token_ == ';')
-                NextToken();
-
-            return std::move(return_stmt);
-        }
-
-        std::unique_ptr<SyntaxTree> ParseStatement()
-        {
-            switch (LookAhead().token_)
-            {
-                case ';':
-                    NextToken();
-                    break;
-                case Token_Break:
-                    return ParseBreakStatement();
-                case Token_Do:
-                    return ParseDoStatement();
-                case Token_While:
-                    return ParseWhileStatement();
-                case Token_Repeat:
-                    return ParseRepeatStatement();
-                case Token_If:
-                    return ParseIfStatement();
-                case Token_Function:
-                    return ParseFunctionStatement();
-                case Token_For:
-                    return ParseForStatement();
-                case Token_Local:
-                    return ParseLocalStatement();
-                default:
-                    return ParseOtherStatement();
             }
-
-            return std::unique_ptr<SyntaxTree>();
+            return std::move(return_stmt);
         }
 
         std::unique_ptr<SyntaxTree> ParseBreakStatement()
         {
+            assert(look_ahead_.token_ == Token_Break);
             return std::unique_ptr<SyntaxTree>(new BreakStatement(NextToken()));
         }
 
@@ -512,33 +492,6 @@ namespace
             NextToken();                // skip 'local'
             assert(current_.token_ == Token_Local);
 
-            if (LookAhead().token_ == Token_Function)
-                return ParseLocalFunction();
-            else if (LookAhead().token_ == Token_Id)
-                return ParseLocalNameList();
-            else
-                throw ParseException("unexpect token after 'local'", look_ahead_);
-
-            assert(!"unreachable");
-            return std::unique_ptr<SyntaxTree>();
-        }
-
-        std::unique_ptr<SyntaxTree> ParseLocalFunction()
-        {
-            NextToken();                // skip 'function'
-            assert(current_.token_ == Token_Function);
-
-            if (NextToken().token_ != Token_Id)
-                throw ParseException("expect 'id' after 'local function'", current_);
-
-            TokenDetail name = current_;
-            std::unique_ptr<SyntaxTree> body = ParseFunctionBody();
-
-            return std::unique_ptr<SyntaxTree>(new LocalFunctionStatement(name, std::move(body)));
-        }
-
-        std::unique_ptr<SyntaxTree> ParseLocalNameList()
-        {
             int start_line = LookAhead().line_;
             std::unique_ptr<SyntaxTree> name_list = ParseNameList();
             std::unique_ptr<SyntaxTree> exp_list;
@@ -575,6 +528,7 @@ namespace
 
         std::unique_ptr<SyntaxTree> ParseOtherStatement()
         {
+            assert(IsMainExp(LookAhead()));
             std::unique_ptr<SyntaxTree> exp;
             if (LookAhead().token_ == Token_Id)
             {
@@ -602,50 +556,26 @@ namespace
                         std::move(exp_list),
                         start_line));
                 }
+                else
+                {
+                    int priority = GetOpPriority(LookAhead());
+                    while (priority > 0)
+                    {
+                        exp = ParseExp(std::move(exp), NextToken(), priority);
+                    }
+                }
             }
             else
             {
                 exp = ParseExp();
             }
-
-
-            std::unique_ptr<SyntaxTree> exp = ParsePrefixExp(&type);
-
-            if (type == PrefixExpType_Var)
-            {
-                std::unique_ptr<VarList> var_list(new VarList);
-                var_list->var_list_.push_back(std::move(exp));
-
-                while (LookAhead().token_ != '=')
-                {
-                    if (LookAhead().token_ != ',')
-                        throw ParseException("expect ',' to split var", look_ahead_);
-                    NextToken();        // skip ','
-                    exp = ParsePrefixExp(&type);
-                    if (type != PrefixExpType_Var)
-                        throw ParseException("expect var here", current_);
-                    var_list->var_list_.push_back(std::move(exp));
-                }
-
-                NextToken();            // skip '='
-                std::unique_ptr<SyntaxTree> exp_list = ParseExpList();
-                return std::unique_ptr<SyntaxTree>(new AssignmentStatement(std::move(var_list),
-                                                                           std::move(exp_list),
-                                                                           start_line));
-            }
-            else if (type == PrefixExpType_Functioncall)
-                return exp;
-            else
-                throw ParseException("incomplete statement", current_);
-
-            assert(!"unreachable");
-            return std::unique_ptr<SyntaxTree>();
+            return exp;
         }
 
         std::unique_ptr<SyntaxTree> ParsePrefixExp(PrefixExpType *type = nullptr)
         {
             NextToken();
-            assert(current_.token_ != Token_Id && current_.token_ != '(');
+            assert(current_.token_ == Token_Id || current_.token_ == '(');
 
             std::unique_ptr<SyntaxTree> exp;
             PrefixExpType the_type = PrefixExpType_Var;
@@ -660,7 +590,6 @@ namespace
             else
             {
                 exp.reset(new Terminator(current_));
-                
             }
             // parse prefix exp tail
             for (;;)
@@ -885,6 +814,7 @@ namespace
         {
             int token = t.token_;
             return
+                IsUnop(t) ||
                 token == Token_Nil ||
                 token == Token_False ||
                 token == Token_True ||
@@ -895,6 +825,15 @@ namespace
                 token == Token_Id ||
                 token == '(' ||
                 token == '{';
+        }
+
+        bool IsUnop(const TokenDetail &t) const
+        {
+            int token = t.token_;
+            return
+                token == Token_Not ||
+                token == '#' ||
+                token == '-';
         }
 
         bool IsRightAssociation(const TokenDetail &t) const

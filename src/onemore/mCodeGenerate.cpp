@@ -770,8 +770,6 @@ namespace oms
     {
         for (auto &stmt : block->statements_)
             stmt->Accept(this, nullptr);
-        if (block->return_stmt_)
-            block->return_stmt_->Accept(this, nullptr);
     }
 
     void CodeGenerateVisitor::Visit(ReturnStatement *ret_stmt, void *data)

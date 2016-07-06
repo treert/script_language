@@ -82,8 +82,6 @@ public:
         MATCH_AST_TYPE(ast, {
             for (auto &stmt : ast->statements_)
                 stmt->Accept(this, nullptr);
-            if (ast->return_stmt_)
-                ast->return_stmt_->Accept(this, nullptr);
         })
     }
 

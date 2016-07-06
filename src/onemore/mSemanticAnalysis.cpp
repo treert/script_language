@@ -284,8 +284,6 @@ namespace oms
     {
         for (auto &stmt : block->statements_)
             stmt->Accept(this, nullptr);
-        if (block->return_stmt_)
-            block->return_stmt_->Accept(this, nullptr);
     }
 
     void SemanticAnalysisVisitor::Visit(ReturnStatement *ret_stmt, void *data)
