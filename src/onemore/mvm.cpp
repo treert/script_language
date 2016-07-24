@@ -1,9 +1,9 @@
-#include "m-vm.h"
-#include "m-state.h"
-#include "m-table.h"
+#include "mvm.h"
+#include "mstate.h"
+#include "mtable.h"
 #include "muser_data.h"
-#include "m-function.h"
-#include "m-exception.h"
+#include "mfunction.h"
+#include "mexception.h"
 #include <assert.h>
 #include <math.h>
 

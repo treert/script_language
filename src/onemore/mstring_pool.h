@@ -1,7 +1,7 @@
 #ifndef STRING_POOL_H
 #define STRING_POOL_H
 
-#include "m-string.h"
+#include "mstring.h"
 #include <vector>
 #include <unordered_set>
 

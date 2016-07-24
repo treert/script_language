@@ -1,6 +1,6 @@
 #include "munit_test.h"
-#include "../m-table.h"
-#include "../m-string.h"
+#include "../mtable.h"
+#include "../mstring.h"
 
 TEST_CASE(table1)
 {

@@ -1,8 +1,8 @@
 #ifndef USER_DATA_H
 #define USER_DATA_H
 
-#include "m-gc.h"
-#include "m-table.h"
+#include "mgc.h"
+#include "mtable.h"
 
 namespace oms
 {

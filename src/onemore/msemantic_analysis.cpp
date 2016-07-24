@@ -1,9 +1,9 @@
 #include "msemantic_analysis.h"
-#include "m-visitor.h"
-#include "m-exception.h"
-#include "m-state.h"
-#include "m-string.h"
-#include "m-guard.h"
+#include "mvisitor.h"
+#include "mexception.h"
+#include "mstate.h"
+#include "mstring.h"
+#include "mguard.h"
 #include <unordered_set>
 #include <assert.h>
 

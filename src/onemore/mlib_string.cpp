@@ -1,5 +1,5 @@
 #include "mlib_string.h"
-#include "m-string.h"
+#include "mstring.h"
 #include <algorithm>
 #include <string>
 #include <cctype>

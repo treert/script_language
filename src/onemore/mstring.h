@@ -1,7 +1,7 @@
 #ifndef STRING_H
 #define STRING_H
 
-#include "m-gc.h"
+#include "mgc.h"
 #include <algorithm>
 #include <string>
 #include <string.h>

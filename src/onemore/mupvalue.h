@@ -1,7 +1,7 @@
 #ifndef UPVALUE_H
 #define UPVALUE_H
 
-#include "m-gc.h"
+#include "mgc.h"
 #include "m-value.h"
 
 namespace oms

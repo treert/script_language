@@ -1,12 +1,12 @@
-#include "m-state.h"
-#include "m-gc.h"
-#include "m-vm.h"
-#include "m-lex.h"
-#include "m-string.h"
-#include "m-function.h"
-#include "m-table.h"
+#include "mstate.h"
+#include "mgc.h"
+#include "mvm.h"
+#include "mlex.h"
+#include "mstring.h"
+#include "mfunction.h"
+#include "mtable.h"
 #include "mtext_in_stream.h"
-#include "m-exception.h"
+#include "mexception.h"
 #include <cassert>
 
 namespace oms

@@ -1,4 +1,4 @@
-#include "m-string.h"
+#include "mstring.h"
 
 namespace oms
 {

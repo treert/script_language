@@ -1,5 +1,5 @@
 #include "munit_test.h"
-#include "../m-string.h"
+#include "../mstring.h"
 #include "../mstring_pool.h"
 
 TEST_CASE(string1)

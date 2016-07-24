@@ -1,8 +1,8 @@
-#include "m-gc.h"
-#include "m-table.h"
-#include "m-function.h"
+#include "mgc.h"
+#include "mtable.h"
+#include "mfunction.h"
 #include "m-upvalue.h"
-#include "m-string.h"
+#include "mstring.h"
 #include "muser_data.h"
 #include <assert.h>
 #include <time.h>

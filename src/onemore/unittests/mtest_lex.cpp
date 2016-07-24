@@ -1,9 +1,9 @@
 #include "munit_test.h"
-#include "../m-lex.h"
-#include "../m-state.h"
-#include "../m-string.h"
+#include "../mlex.h"
+#include "../mstate.h"
+#include "../mstring.h"
 #include "../mtext_in_stream.h"
-#include "../m-exception.h"
+#include "../mexception.h"
 #include <functional>
 
 namespace

@@ -1,8 +1,8 @@
-#include "m-value.h"
-#include "m-function.h"
-#include "m-table.h"
-#include "m-string.h"
-#include "m-upvalue.h"
+#include "mvalue.h"
+#include "mfunction.h"
+#include "mtable.h"
+#include "mstring.h"
+#include "mupvalue.h"
 #include "muser_data.h"
 
 namespace oms

@@ -1,7 +1,7 @@
-#include "m-parser.h"
-#include "m-lex.h"
-#include "m-state.h"
-#include "m-exception.h"
+#include "mparser.h"
+#include "mlex.h"
+#include "mstate.h"
+#include "mexception.h"
 #include <assert.h>
 
 namespace
