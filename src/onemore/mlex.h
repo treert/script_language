@@ -30,6 +30,8 @@ namespace oms
             return module_;
         }
 
+        void SetInputStream(CharInStream in);
+
     private:
         void Next();
 

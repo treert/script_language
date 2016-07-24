@@ -206,8 +206,10 @@ TEST_CASE(parser10)
 
 TEST_CASE(parser11)
 {
-    EXPECT_TRUE(Parse("f:m'str'"));
-    EXPECT_TRUE(IsEOF());
+    EXPECT_EXCEPTION(oms::ParseException,
+    {
+        Parse("f:m'str'");
+    });
 }
 
 TEST_CASE(parser12)
@@ -276,10 +278,8 @@ TEST_CASE(parser21)
 
 TEST_CASE(parser22)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
-                     {
-                         Parse("f().m():m().m");
-                     });
+    EXPECT_TRUE(Parse("f().m():m().m"));
+    EXPECT_TRUE(IsEOF());
 }
 
 TEST_CASE(parser23)
@@ -396,8 +396,6 @@ TEST_CASE(parser36)
 
 TEST_CASE(parser37)
 {
-    EXPECT_EXCEPTION(oms::ParseException,
-                     {
-                         Parse("f 1");
-                     });
+    EXPECT_TRUE(Parse("f 1"));
+    EXPECT_TRUE(IsEOF());
 }

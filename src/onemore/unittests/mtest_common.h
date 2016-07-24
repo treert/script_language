@@ -23,6 +23,7 @@ public:
     void SetInput(const std::string &input)
     {
         iss_.SetInputString(input);
+        lexer_.SetInputStream(std::bind(&io::text::InStringStream::GetChar, &iss_));
     }
 
     bool IsEOF()

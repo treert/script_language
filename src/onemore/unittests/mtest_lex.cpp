@@ -44,7 +44,7 @@ TEST_CASE(lex2)
     LexerWrapper lexer("-- this is comment\n"
                        "--[[this is long\n comment]]"
                        "--[[this is long\n comment too--]]"
-                       "--[[incomplete comment]");
+                       "--[incomplete comment]");
 
     EXPECT_EXCEPTION(oms::LexException, {
         lexer.GetToken();
@@ -65,9 +65,9 @@ TEST_CASE(lex3)
 
 TEST_CASE(lex4)
 {
-    LexerWrapper lexer("3 3.0 3.1416 314.16e-2 0.31416E1 0xff 0x0.1E 0xA23p-4 0X1.921FB54442D18P+1"
-                       " 0x");
-    for (int i = 0; i < 9; ++i)
+    LexerWrapper lexer("3 3.0 3.1416 314.16e-2 0.31416E1 0xff 0Xf "
+        "0x");
+    for (int i = 0; i < 7; ++i)
         EXPECT_TRUE(lexer.GetToken() == oms::Token_Number);
 
     EXPECT_EXCEPTION(oms::LexException, {

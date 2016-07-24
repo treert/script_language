@@ -13,7 +13,8 @@ stat ::=  varlist "=" explist |
      "if" exp "then" block {"elseif" exp "then" block} ["else" block] "end" | 
      "for" Name "=" exp "," exp ["," exp] "do" block "end" | 
      "for" namelist "in" explist "do" block "end" | 
-     "function" funcname funcbody | 
+     "function" funcname funcbody |
+     "local" "function" Name funcbody | 
      "local" namelist ["=" explist] |
      "return" [explist] |
      "break" |
@@ -23,7 +24,10 @@ namelist ::= Name {"," Name}
 
 varlist ::= var {"," var}
 
-var ::= Name { "[" exp "]" | "." Name }  
+global ::= $"["exp"]" | $Name
+
+var ::= (global | Name) | 
+     (global | Name) {"[" exp "]" | "." Name | args | ":" Name args} ( "[" exp "]" | "." Name )  
 
 args ::=  "(" [explist] ")" | tableconstructor 
 
@@ -45,7 +49,7 @@ mainexp ::= nil | false | true | Number | String |
      unop exp|
 
 prefixexp ::= var |
-     Name {"[" exp "]" | "." Name | args | ":" Name args} |
+     (global | Name) {"[" exp "]" | "." Name | args | ":" Name args} |
      (exp) {"[" exp "]" | "." Name | args | ":" Name args}
 
 tableconstructor ::= "{" [fieldlist] "}"

@@ -2,7 +2,7 @@
 #define UPVALUE_H
 
 #include "mgc.h"
-#include "m-value.h"
+#include "mvalue.h"
 
 namespace oms
 {

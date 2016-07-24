@@ -191,6 +191,13 @@ namespace oms
         return Token_EOF;
     }
 
+    void Lexer::SetInputStream(CharInStream in)
+    {
+        in_stream_ = in;
+        line_ = 1;
+        column_ = 0;
+        Next();
+    }
 
     void Lexer::Next()
     {

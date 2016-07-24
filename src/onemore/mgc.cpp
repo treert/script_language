@@ -1,7 +1,7 @@
 #include "mgc.h"
 #include "mtable.h"
 #include "mfunction.h"
-#include "m-upvalue.h"
+#include "mupvalue.h"
 #include "mstring.h"
 #include "muser_data.h"
 #include <assert.h>

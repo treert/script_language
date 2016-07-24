@@ -54,7 +54,7 @@ end
 
 
 dump({
-    .3,0x70,3.3e-100,get_table("a","b")[3],4,6
+    .3,0x70,3.3e-100,get_table("a","b"),4,6
     })
 
     dump(2+2*2*2 and 3)

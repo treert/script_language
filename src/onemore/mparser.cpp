@@ -98,7 +98,7 @@ namespace
                     exp = ParseTableConstructor();
                     break;
 
-                // unop exp
+                // unop exp priority is 90 less then ^
                 case '-':
                 case '#':
                 case Token_Not:
@@ -106,7 +106,7 @@ namespace
                     NextToken();
                     std::unique_ptr<UnaryExpression> unexp(new UnaryExpression);
                     unexp->op_token_ = current_;
-                    unexp->exp_ = ParseExp(std::unique_ptr<SyntaxTree>(), TokenDetail(), 1000);
+                    unexp->exp_ = ParseExp(std::unique_ptr<SyntaxTree>(), TokenDetail(), 90);
                     exp = std::move(unexp);
                 }
                     break;
@@ -492,6 +492,33 @@ namespace
             NextToken();                // skip 'local'
             assert(current_.token_ == Token_Local);
 
+            if (LookAhead().token_ == Token_Function)
+                return ParseLocalFunction();
+            else if (LookAhead().token_ == Token_Id)
+                return ParseLocalNameList();
+            else
+                throw ParseException("unexpect token after 'local'", look_ahead_);
+
+            assert(!"unreachable");
+            return std::unique_ptr<SyntaxTree>();
+        }
+
+        std::unique_ptr<SyntaxTree> ParseLocalFunction()
+        {
+            NextToken();                // skip 'function'
+            assert(current_.token_ == Token_Function);
+
+            if (NextToken().token_ != Token_Id)
+                throw ParseException("expect 'id' after 'local function'", current_);
+
+            TokenDetail name = current_;
+            std::unique_ptr<SyntaxTree> body = ParseFunctionBody();
+
+            return std::unique_ptr<SyntaxTree>(new LocalFunctionStatement(name, std::move(body)));
+        }
+
+        std::unique_ptr<SyntaxTree> ParseLocalNameList()
+        {
             int start_line = LookAhead().line_;
             std::unique_ptr<SyntaxTree> name_list = ParseNameList();
             std::unique_ptr<SyntaxTree> exp_list;
@@ -503,8 +530,8 @@ namespace
             }
 
             return std::unique_ptr<SyntaxTree>(new LocalNameListStatement(std::move(name_list),
-                                                                          std::move(exp_list),
-                                                                          start_line));
+                std::move(exp_list),
+                start_line));
         }
 
         std::unique_ptr<SyntaxTree> ParseNameList()
@@ -580,6 +607,7 @@ namespace
 
             std::unique_ptr<SyntaxTree> exp;
             PrefixExpType the_type = PrefixExpType_Var;
+            PrefixExpType last_type = PrefixExpType_Var;
 
             if (current_.token_ == '(')
             {
@@ -599,12 +627,13 @@ namespace
                 if (LookAhead().token_ == '[' || LookAhead().token_ == '.')
                 {
                     exp = ParseVar(std::move(exp));
+                    last_type = PrefixExpType_Var;
                 }
                 else if (LookAhead().token_ == ':' || LookAhead().token_ == '(' ||
                     LookAhead().token_ == '{')
                 {
                     exp = ParseFunctionCall(std::move(exp));
-                    the_type = PrefixExpType_Normal;
+                    last_type = PrefixExpType_Normal;
                 }
                 else
                 {
@@ -612,7 +641,9 @@ namespace
                 }
             }
 
-            if (type) *type = the_type;
+            if (type){
+                *type = (the_type ==  PrefixExpType_Var) ? last_type : PrefixExpType_Normal;
+            }
             return exp;
         }
 
@@ -664,8 +695,6 @@ namespace
 
         std::unique_ptr<SyntaxTree> ParseArgs()
         {
-            assert(LookAhead().token_ == '{' || LookAhead().token_ == '(');
-
             std::unique_ptr<SyntaxTree> arg;
             FuncCallArgs::ArgType type;
 
@@ -843,6 +872,7 @@ namespace
             return t.token_ == '^';
         }
 
+        // just for bin op
         int GetOpPriority(const TokenDetail &t) const
         {
             switch (t.token_)
