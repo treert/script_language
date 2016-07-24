@@ -1,6 +1,6 @@
-#include "mlex.h"
-#include "mstate.h"
-#include "mexception.h"
+#include "m-lex.h"
+#include "m-state.h"
+#include "m-exception.h"
 #include <assert.h>
 #include <stddef.h>
 #include <stdlib.h>

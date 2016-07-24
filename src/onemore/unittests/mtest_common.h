@@ -1,13 +1,13 @@
 #ifndef TEST_COMMON_H
 #define TEST_COMMON_H
 
-#include "../mlex.h"
-#include "../mparser.h"
-#include "../mstate.h"
-#include "../mstring.h"
+#include "../m-lex.h"
+#include "../m-parser.h"
+#include "../m-state.h"
+#include "../m-string.h"
 #include "../mtext_in_stream.h"
-#include "../mexception.h"
-#include "../mvisitor.h"
+#include "../m-exception.h"
+#include "../m-visitor.h"
 #include <functional>
 #include <type_traits>
 

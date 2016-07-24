@@ -1,7 +1,7 @@
 #ifndef MODULE_MANAGER_H
 #define MODULE_MANAGER_H
 
-#include "mvalue.h"
+#include "m-value.h"
 #include <string>
 
 namespace oms

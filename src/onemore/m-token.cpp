@@ -1,5 +1,5 @@
-#include "mtoken.h"
-#include "mstring.h"
+#include "m-token.h"
+#include "m-string.h"
 #include <sstream>
 
 namespace oms

@@ -1,6 +1,6 @@
 #include "mlib_io.h"
-#include "mstate.h"
-#include "mstring.h"
+#include "m-state.h"
+#include "m-string.h"
 #include "muser_data.h"
 #include <cerrno>
 #include <cstring>

@@ -1,8 +1,8 @@
-#include "../mgc.h"
-#include "../mtable.h"
-#include "../mfunction.h"
-#include "../mstring.h"
-#include "../mvalue.h"
+#include "../m-gc.h"
+#include "../m-table.h"
+#include "../m-function.h"
+#include "../m-string.h"
+#include "../m-value.h"
 
 #ifdef _MSC_VER
 #include <Windows.h>

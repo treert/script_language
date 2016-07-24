@@ -1,7 +1,7 @@
 #ifndef SYNTAX_TREE_H
 #define SYNTAX_TREE_H
 
-#include "mtoken.h"
+#include "m-token.h"
 #include <memory>
 #include <vector>
 

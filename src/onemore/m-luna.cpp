@@ -1,5 +1,5 @@
-#include "mstate.h"
-#include "mexception.h"
+#include "m-state.h"
+#include "m-exception.h"
 #include "mlib_base.h"
 #include "mlib_io.h"
 #include "mlib_math.h"

@@ -1,7 +1,7 @@
 #ifndef LEX_H
 #define LEX_H
 
-#include "mtoken.h"
+#include "m-token.h"
 #include <string>
 #include <functional>
 

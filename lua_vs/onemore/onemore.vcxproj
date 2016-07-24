@@ -11,28 +11,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\onemore\mtable.cpp" />
-    <ClCompile Include="..\..\src\onemore\mtoken.cpp" />
-    <ClCompile Include="..\..\src\onemore\mupvalue.cpp" />
-    <ClCompile Include="..\..\src\onemore\mvalue.cpp" />
-    <ClCompile Include="..\..\src\onemore\mvm.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-table.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-token.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-upvalue.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-value.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-vm.cpp" />
     <ClCompile Include="..\..\src\onemore\mcode_generate.cpp" />
-    <ClCompile Include="..\..\src\onemore\mfunction.cpp" />
-    <ClCompile Include="..\..\src\onemore\mgc.cpp" />
-    <ClCompile Include="..\..\src\onemore\mlex.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-function.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-gc.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-lex.cpp" />
     <ClCompile Include="..\..\src\onemore\mlib_api.cpp" />
     <ClCompile Include="..\..\src\onemore\mlib_base.cpp" />
     <ClCompile Include="..\..\src\onemore\mlib_io.cpp" />
     <ClCompile Include="..\..\src\onemore\mlib_math.cpp" />
     <ClCompile Include="..\..\src\onemore\mlib_string.cpp" />
     <ClCompile Include="..\..\src\onemore\mlib_table.cpp" />
-    <ClCompile Include="..\..\src\onemore\mluna.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-luna.cpp" />
     <ClCompile Include="..\..\src\onemore\mmodule_manager.cpp" />
-    <ClCompile Include="..\..\src\onemore\mparser.cpp" />
-    <ClCompile Include="..\..\src\onemore\mruntime.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-parser.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-runtime.cpp" />
     <ClCompile Include="..\..\src\onemore\msemantic_analysis.cpp" />
-    <ClCompile Include="..\..\src\onemore\mstate.cpp" />
-    <ClCompile Include="..\..\src\onemore\mstring.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-state.cpp" />
+    <ClCompile Include="..\..\src\onemore\m-string.cpp" />
     <ClCompile Include="..\..\src\onemore\mstring_pool.cpp" />
     <ClCompile Include="..\..\src\onemore\msyntax_tree.cpp" />
     <ClCompile Include="..\..\src\onemore\mtext_in_stream.cpp" />
@@ -46,18 +46,18 @@
     <ClCompile Include="..\..\src\onemore\unittests\munit_test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\onemore\mtable.h" />
-    <ClInclude Include="..\..\src\onemore\mtoken.h" />
-    <ClInclude Include="..\..\src\onemore\mupvalue.h" />
-    <ClInclude Include="..\..\src\onemore\mvalue.h" />
-    <ClInclude Include="..\..\src\onemore\mvisitor.h" />
-    <ClInclude Include="..\..\src\onemore\mvm.h" />
+    <ClInclude Include="..\..\src\onemore\m-table.h" />
+    <ClInclude Include="..\..\src\onemore\m-token.h" />
+    <ClInclude Include="..\..\src\onemore\m-upvalue.h" />
+    <ClInclude Include="..\..\src\onemore\m-value.h" />
+    <ClInclude Include="..\..\src\onemore\m-visitor.h" />
+    <ClInclude Include="..\..\src\onemore\m-vm.h" />
     <ClInclude Include="..\..\src\onemore\mcode_generate.h" />
-    <ClInclude Include="..\..\src\onemore\mexception.h" />
-    <ClInclude Include="..\..\src\onemore\mfunction.h" />
-    <ClInclude Include="..\..\src\onemore\mgc.h" />
-    <ClInclude Include="..\..\src\onemore\mguard.h" />
-    <ClInclude Include="..\..\src\onemore\mlex.h" />
+    <ClInclude Include="..\..\src\onemore\m-exception.h" />
+    <ClInclude Include="..\..\src\onemore\m-function.h" />
+    <ClInclude Include="..\..\src\onemore\m-gc.h" />
+    <ClInclude Include="..\..\src\onemore\m-guard.h" />
+    <ClInclude Include="..\..\src\onemore\m-lex.h" />
     <ClInclude Include="..\..\src\onemore\mlib_api.h" />
     <ClInclude Include="..\..\src\onemore\mlib_base.h" />
     <ClInclude Include="..\..\src\onemore\mlib_io.h" />
@@ -66,11 +66,11 @@
     <ClInclude Include="..\..\src\onemore\mlib_table.h" />
     <ClInclude Include="..\..\src\onemore\mmodule_manager.h" />
     <ClInclude Include="..\..\src\onemore\mop_code.h" />
-    <ClInclude Include="..\..\src\onemore\mparser.h" />
-    <ClInclude Include="..\..\src\onemore\mruntime.h" />
+    <ClInclude Include="..\..\src\onemore\m-parser.h" />
+    <ClInclude Include="..\..\src\onemore\m-runtime.h" />
     <ClInclude Include="..\..\src\onemore\msemantic_analysis.h" />
-    <ClInclude Include="..\..\src\onemore\mstate.h" />
-    <ClInclude Include="..\..\src\onemore\mstring.h" />
+    <ClInclude Include="..\..\src\onemore\m-state.h" />
+    <ClInclude Include="..\..\src\onemore\m-string.h" />
     <ClInclude Include="..\..\src\onemore\mstring_pool.h" />
     <ClInclude Include="..\..\src\onemore\msyntax_tree.h" />
     <ClInclude Include="..\..\src\onemore\mtext_in_stream.h" />

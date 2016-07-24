@@ -45,15 +45,6 @@
     <ClCompile Include="..\..\src\onemore\mcode_generate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mfunction.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mgc.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mlex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\onemore\mlib_api.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -75,19 +66,7 @@
     <ClCompile Include="..\..\src\onemore\mmodule_manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mparser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mruntime.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\onemore\msemantic_analysis.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mstate.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mstring.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\onemore\mstring_pool.cpp">
@@ -102,22 +81,43 @@
     <ClCompile Include="..\..\src\onemore\muser_data.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mvm.cpp">
+    <ClCompile Include="..\..\src\onemore\m-vm.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mvalue.cpp">
+    <ClCompile Include="..\..\src\onemore\m-value.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mupvalue.cpp">
+    <ClCompile Include="..\..\src\onemore\m-upvalue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mtoken.cpp">
+    <ClCompile Include="..\..\src\onemore\m-token.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mtable.cpp">
+    <ClCompile Include="..\..\src\onemore\m-table.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\onemore\mluna.cpp">
+    <ClCompile Include="..\..\src\onemore\m-string.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\m-state.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\m-runtime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\m-parser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\m-luna.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\m-lex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\m-gc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onemore\m-function.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -129,21 +129,6 @@
       <Filter>unit_tests</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\onemore\mcode_generate.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mexception.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mfunction.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mgc.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mguard.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mlex.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\onemore\mlib_api.h">
@@ -170,19 +155,7 @@
     <ClInclude Include="..\..\src\onemore\mop_code.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mparser.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mruntime.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\onemore\msemantic_analysis.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mstate.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mstring.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\onemore\mstring_pool.h">
@@ -197,22 +170,49 @@
     <ClInclude Include="..\..\src\onemore\muser_data.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mvm.h">
+    <ClInclude Include="..\..\src\onemore\m-vm.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mvisitor.h">
+    <ClInclude Include="..\..\src\onemore\m-visitor.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mvalue.h">
+    <ClInclude Include="..\..\src\onemore\m-value.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mupvalue.h">
+    <ClInclude Include="..\..\src\onemore\m-upvalue.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mtoken.h">
+    <ClInclude Include="..\..\src\onemore\m-token.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\onemore\mtable.h">
+    <ClInclude Include="..\..\src\onemore\m-table.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-string.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-state.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-runtime.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-parser.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-lex.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-guard.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-gc.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-function.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onemore\m-exception.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

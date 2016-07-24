@@ -1,11 +1,11 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-#include "mgc.h"
-#include "mvalue.h"
+#include "m-gc.h"
+#include "m-value.h"
 #include "mop_code.h"
-#include "mstring.h"
-#include "mupvalue.h"
+#include "m-string.h"
+#include "m-upvalue.h"
 #include <vector>
 
 namespace oms

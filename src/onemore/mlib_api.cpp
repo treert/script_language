@@ -1,7 +1,7 @@
 #include "mlib_api.h"
-#include "mstate.h"
-#include "mruntime.h"
-#include "mtable.h"
+#include "m-state.h"
+#include "m-runtime.h"
+#include "m-table.h"
 #include <assert.h>
 
 namespace oms

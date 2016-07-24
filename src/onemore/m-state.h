@@ -1,7 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "mgc.h"
+#include "m-gc.h"
 #include "mruntime.h"
 #include "mmodule_manager.h"
 #include "mstring_pool.h"

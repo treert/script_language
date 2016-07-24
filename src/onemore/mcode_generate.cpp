@@ -1,9 +1,9 @@
 #include "mcode_generate.h"
-#include "mstate.h"
-#include "mstring.h"
-#include "mfunction.h"
-#include "mexception.h"
-#include "mguard.h"
+#include "m-state.h"
+#include "m-string.h"
+#include "m-function.h"
+#include "m-exception.h"
+#include "m-guard.h"
 #include <vector>
 #include <stack>
 #include <list>

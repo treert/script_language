@@ -1,6 +1,6 @@
 #include "mlib_table.h"
-#include "mstate.h"
-#include "mtable.h"
+#include "m-state.h"
+#include "m-table.h"
 #include <sstream>
 
 namespace lib {
