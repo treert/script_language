@@ -1,8 +1,8 @@
 #ifndef VM_H
 #define VM_H
 
-#include "mValue.h"
-#include "mOpCode.h"
+#include "mvalue.h"
+#include "mop_code.h"
 #include <utility>
 
 namespace oms

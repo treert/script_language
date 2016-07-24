@@ -1,7 +1,7 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-#include "mGC.h"
+#include "mgc.h"
 #include <functional>
 
 namespace oms

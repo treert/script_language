@@ -1,9 +1,9 @@
-#include "mGC.h"
-#include "mTable.h"
-#include "mFunction.h"
-#include "mUpValue.h"
-#include "mString.h"
-#include "mUserData.h"
+#include "mgc.h"
+#include "mtable.h"
+#include "mfunction.h"
+#include "mupvalue.h"
+#include "mstring.h"
+#include "muser_data.h"
 #include <assert.h>
 #include <time.h>
 

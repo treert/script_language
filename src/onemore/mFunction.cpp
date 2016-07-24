@@ -1,4 +1,4 @@
-#include "mFunction.h"
+#include "mfunction.h"
 #include <limits>
 
 namespace oms

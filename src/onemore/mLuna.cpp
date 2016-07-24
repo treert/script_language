@@ -1,10 +1,10 @@
-#include "mState.h"
-#include "mException.h"
-#include "mLibBase.h"
-#include "mLibIO.h"
-#include "mLibMath.h"
-#include "mLibString.h"
-#include "mLibTable.h"
+#include "mstate.h"
+#include "mexception.h"
+#include "mlib_base.h"
+#include "mlib_io.h"
+#include "mlib_math.h"
+#include "mlib_string.h"
+#include "mlib_table.h"
 #include <stdio.h>
 
 void Repl(oms::State &state)

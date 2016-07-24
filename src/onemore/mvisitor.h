@@ -1,7 +1,7 @@
 #ifndef VISITOR_H
 #define VISITOR_H
 
-#include "mSyntaxTree.h"
+#include "msyntax_tree.h"
 
 namespace oms
 {

@@ -1,9 +1,9 @@
-#include "mValue.h"
-#include "mFunction.h"
-#include "mTable.h"
-#include "mString.h"
-#include "mUpValue.h"
-#include "mUserData.h"
+#include "mvalue.h"
+#include "mfunction.h"
+#include "mtable.h"
+#include "mstring.h"
+#include "mupvalue.h"
+#include "muser_data.h"
 
 namespace oms
 {

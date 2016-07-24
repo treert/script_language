@@ -1,4 +1,4 @@
-#include "mTable.h"
+#include "mtable.h"
 #include <math.h>
 
 namespace

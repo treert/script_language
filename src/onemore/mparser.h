@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "mSyntaxTree.h"
+#include "msyntax_tree.h"
 #include <memory>
 
 namespace oms

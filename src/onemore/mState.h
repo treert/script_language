@@ -1,10 +1,10 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "mGC.h"
-#include "mRuntime.h"
-#include "mModuleManager.h"
-#include "mStringPool.h"
+#include "mgc.h"
+#include "mruntime.h"
+#include "mmodule_manager.h"
+#include "mstring_pool.h"
 #include <string>
 #include <memory>
 #include <vector>
