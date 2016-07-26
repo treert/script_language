@@ -3,6 +3,7 @@
 
 #include "mvalue.h"
 #include <vector>
+#include <list>
 
 namespace oms
 {
@@ -16,6 +17,8 @@ namespace oms
 
         std::vector<Value> stack_;
         Value *top_;
+        // open upvalues list
+        std::list<Upvalue*> upvalue_list_;
 
         Stack();
         Stack(const Stack&) = delete;
@@ -23,6 +26,9 @@ namespace oms
 
         // Set new top pointer, and [new top, old top) will be set nil
         void SetNewTop(Value *top);
+
+        // close upvalues to ptr
+        void CloseUpvalueTo(Value *ptr);
     };
 
     // Function call stack info

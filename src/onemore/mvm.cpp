@@ -80,6 +80,7 @@ namespace oms
                 case OpType_FillNil:
                     a = GET_REGISTER_A(i);
                     b = GET_REGISTER_B(i);
+                    state_->stack_.CloseUpvalueTo(a);
                     while (a < b)
                     {
                         a->SetNil();
@@ -349,21 +350,30 @@ namespace oms
             auto upvalue_info = a_proto->GetUpvalue(i);
             if (upvalue_info->parent_local_)
             {
-                // Transform local variable to upvalue
+                Upvalue *upvalue = nullptr;
                 auto reg = call->register_ + upvalue_info->register_index_;
-                if (reg->type_ != ValueT_Upvalue)
+                // find upvalue
+                auto& upvalue_list = state_->stack_.upvalue_list_;
+                for (auto iter = upvalue_list.rbegin(); iter != upvalue_list.rend(); ++iter)
                 {
-                    auto upvalue = state_->NewUpvalue();
-                    upvalue->SetValue(*reg);
-                    reg->type_ = ValueT_Upvalue;
-                    reg->upvalue_ = upvalue;
-                    new_closure->AddUpvalue(upvalue);
+                    if ((*iter)->GetValue() == reg)
+                    {
+                        upvalue = *iter;
+                        break;
+                    }
+                    if ((*iter)->GetValue() < reg)
+                    {
+                        break;
+                    }
                 }
-                else
+                if (nullptr == upvalue)
                 {
-                    //assert(!"unreachable no reg change to upval");
-                    new_closure->AddUpvalue(reg->upvalue_);
+                    // new upvalue
+                    upvalue = state_->NewUpvalue();
+                    upvalue->SetValuePtr(reg);
+                    upvalue_list.push_back(upvalue);
                 }
+                new_closure->AddUpvalue(upvalue);
             }
             else
             {

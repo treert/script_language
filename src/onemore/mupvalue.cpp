@@ -6,7 +6,7 @@ namespace oms
     {
         if (v->Visit(this))
         {
-            value_.Accept(v);
+            (*ptr_value_).Accept(v);
         }
     }
 } // namespace oms
