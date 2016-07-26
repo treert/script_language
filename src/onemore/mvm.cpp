@@ -77,15 +77,9 @@ namespace oms
                     a = GET_REGISTER_A(i);
                     a->SetNil();
                     break;
-                case OpType_FillNil:
+                case OpType_CloseUpvalue:
                     a = GET_REGISTER_A(i);
-                    b = GET_REGISTER_B(i);
                     state_->stack_.CloseUpvalueTo(a);
-                    while (a < b)
-                    {
-                        a->SetNil();
-                        ++a;
-                    }
                     break;
                 case OpType_LoadBool:
                     a = GET_REGISTER_A(i);

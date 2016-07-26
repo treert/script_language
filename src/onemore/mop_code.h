@@ -6,7 +6,7 @@ namespace oms
     enum OpType
     {
         OpType_LoadNil = 1,             // A    A: register
-        OpType_FillNil,                 // AB   A: start reg B: end reg [A,B)
+        OpType_CloseUpvalue,            // A    A: close upvalue to this register
         OpType_LoadBool,                // AB   A: register B: 1 true 0 false
         OpType_LoadInt,                 // A    A: register Next instruction opcode is const unsigned int
         OpType_LoadConst,               // ABx  A: register Bx: const index

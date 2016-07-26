@@ -45,11 +45,15 @@ end
 
 
 
-
+function ret(...)
+    local a = 1
+    local b = 2
+    return a,...
+end
 
 function get_table(...)
-
-    return {1,2,...}
+    local a,b = ret(...)
+    return {1,2,a,b}
 end
 
 
@@ -59,6 +63,15 @@ dump({
 
     dump(2+2*2*2 and 3)
     dump((2+2*2*2) and 3)
+
+a  = {}
+for i = 1,3 do
+    a[i] = function() print(i);i = i+1; end  
+end
+a[1]()
+a[1]()
+a[1]()
+a[2]()
 
 
 --false and print(1)

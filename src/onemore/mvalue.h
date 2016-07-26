@@ -25,7 +25,6 @@ namespace oms
         ValueT_Obj,
         ValueT_String,
         ValueT_Closure,
-        ValueT_Upvalue,
         ValueT_Table,
         ValueT_UserData,
         ValueT_CFunction,
@@ -54,7 +53,6 @@ namespace oms
         explicit Value(double num) : num_(num), type_(ValueT_Number) { }
         explicit Value(String *str) : str_(str), type_(ValueT_String) { }
         explicit Value(Closure *closure) : closure_(closure), type_(ValueT_Closure) { }
-        explicit Value(Upvalue *upvalue) : upvalue_(upvalue), type_(ValueT_Upvalue) { }
         explicit Value(Table *table) : table_(table), type_(ValueT_Table) { }
         explicit Value(UserData *user_data) : user_data_(user_data), type_(ValueT_UserData) { }
         explicit Value(CFunctionType cfunc) : cfunc_(cfunc), type_(ValueT_CFunction) { }
@@ -90,7 +88,6 @@ namespace oms
             case ValueT_Obj: return left.obj_ == right.obj_;
             case ValueT_String: return left.str_ == right.str_;
             case ValueT_Closure: return left.closure_ == right.closure_;
-            case ValueT_Upvalue: return left.upvalue_ == right.upvalue_;
             case ValueT_Table: return left.table_ == right.table_;
             case ValueT_UserData: return left.user_data_ == right.user_data_;
             case ValueT_CFunction: return left.cfunc_ == right.cfunc_;
@@ -123,8 +120,6 @@ namespace std
                     return hash<void *>()(t.str_);
                 case oms::ValueT_Closure:
                     return hash<void *>()(t.closure_);
-                case oms::ValueT_Upvalue:
-                    return hash<void *>()(t.upvalue_);
                 case oms::ValueT_Table:
                     return hash<void *>()(t.table_);
                 case oms::ValueT_UserData:

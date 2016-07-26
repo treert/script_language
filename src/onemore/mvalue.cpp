@@ -25,9 +25,6 @@ namespace oms
             case ValueT_Closure:
                 closure_->Accept(v);
                 break;
-            case ValueT_Upvalue:
-                upvalue_->Accept(v);
-                break;
             case ValueT_Table:
                 table_->Accept(v);
                 break;
@@ -52,7 +49,6 @@ namespace oms
             case ValueT_CFunction: return "C-Function";
             case ValueT_String: return "string";
             case ValueT_Closure: return "function";
-            case ValueT_Upvalue: return "upvalue";
             case ValueT_Table: return "table";
             case ValueT_UserData: return "userdata";
             default: return "unknown type";

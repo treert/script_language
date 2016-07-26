@@ -229,6 +229,12 @@ namespace oms
             value.Accept(v);
         }
 
+        // Visit upvalue values
+        for (const auto &value : stack_.upvalue_list_)
+        {
+            value->Accept(v);
+        }
+
         // Visit call info
         for (const auto &call : calls_)
         {

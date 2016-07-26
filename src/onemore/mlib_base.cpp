@@ -74,10 +74,8 @@ namespace base {
             return 0;
 
         const oms::Value *v = api.GetValue(0);
-        oms::ValueT type = v->type_ == oms::ValueT_Upvalue ?
-            v->upvalue_->GetValue()->type_ : v->type_;
 
-        switch (type) {
+        switch (v->type_) {
             case oms::ValueT_Nil:
                 api.PushString("nil");
                 break;
