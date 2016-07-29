@@ -284,8 +284,9 @@ namespace oms
                 case OpType_ForStep:
                     GET_REGISTER_ABC(i);
                     i = *call->instruction_++;
+                    assert(Instruction::GetOpCode(i) == OpType_Jmp);
                     if ((c->num_ > 0.0 && a->num_ > b->num_) ||
-                        (c->num_ <= 0.0 && a->num_ < b->num_))
+                        (c->num_ < 0.0 && a->num_ < b->num_))
                         call->instruction_ += -1 + Instruction::GetParamsBx(i);
                     break;
                 default:
@@ -485,6 +486,11 @@ namespace oms
             auto pos = GetCurrentInstructionPos();
             throw RuntimeException(pos.first, pos.second,
                                    step, "'for' step", "number");
+        }
+        else if (step->num_ == 0)
+        {
+            auto pos = GetCurrentInstructionPos();
+            throw RuntimeException(pos.first, pos.second, "for step equal 0,will case unlimit loop");
         }
     }
 

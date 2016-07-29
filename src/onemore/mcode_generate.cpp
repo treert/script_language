@@ -914,7 +914,7 @@ namespace oms
             function->AddInstruction(instruction, line);
 
             // Break loop, prepare to jump to the end of the loop
-            instruction.opcode_ = 0;
+            instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);
             int index = function->AddInstruction(instruction, line);
             AddLoopJumpInfo(num_for, index, LoopJumpInfo::JumpTail);
 
