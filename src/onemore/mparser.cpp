@@ -14,6 +14,29 @@ namespace
         PrefixExpType_Var,
     };
 
+    bool exp_ret_any_results(SyntaxTree* exp)
+    {
+        auto* terminor = dynamic_cast<Terminator*>(exp);
+        if (terminor)
+        {
+            return terminor->token_.token_ == Token_VarArg;
+        }
+
+        auto* normal_call = dynamic_cast<NormalFuncCall*>(exp);
+        if (normal_call)
+        {
+            return true;
+        }
+
+        auto* member_call = dynamic_cast<MemberFuncCall*>(exp);
+        if (member_call)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     class ParserImpl
     {
     public:
@@ -735,6 +758,8 @@ namespace
                 else
                     anymore = false;
             }
+
+            exp_list->exp_any_ = exp_ret_any_results(exp_list->exp_list_.back().get());
 
             return std::move(exp_list);
         }

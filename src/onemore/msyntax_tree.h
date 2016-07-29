@@ -468,8 +468,9 @@ namespace oms
         std::vector<std::unique_ptr<SyntaxTree>> fields_;
 
         int line_;
+        bool last_exp_ret_any_results_;
 
-        explicit TableDefine(int line) : line_(line) { }
+        explicit TableDefine(int line) : line_(line),last_exp_ret_any_results_(false) { }
 
         SYNTAX_TREE_ACCEPT_VISITOR_DECL();
     };
@@ -631,7 +632,9 @@ namespace oms
         // Start line
         int line_;
 
-        explicit ExpressionList(int start_line) : line_(start_line) { }
+        bool exp_any_;
+
+        explicit ExpressionList(int start_line) : line_(start_line),exp_any_(false) { }
 
         SYNTAX_TREE_ACCEPT_VISITOR_DECL();
     };
