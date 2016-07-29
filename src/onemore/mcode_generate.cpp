@@ -894,10 +894,7 @@ namespace oms
             else
             {
                 // Default step is 1
-                auto instruction = Instruction::ACode(OpType_LoadInt, step_register);
-                function->AddInstruction(instruction, line);
-                // Int value 1
-                instruction.opcode_ = 1;
+                auto instruction = Instruction::ABxCode(OpType_LoadInt, step_register, 1);
                 function->AddInstruction(instruction, line);
             }
         }
@@ -1571,9 +1568,7 @@ namespace oms
         // Load key
         auto function = GetCurrentFunction();
         auto key_register = GenerateRegisterId();
-        auto instruction = Instruction::ACode(OpType_LoadInt, key_register);
-        function->AddInstruction(instruction, field->line_);
-        instruction.opcode_ = field_data->array_index_++;
+        auto instruction = Instruction::ABxCode(OpType_LoadInt, key_register, field_data->array_index_++);
         function->AddInstruction(instruction, field->line_);
 
         SetTableFieldValue(field, table_register, key_register, field->line_);

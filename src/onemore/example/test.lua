@@ -44,7 +44,6 @@ end
 ---            common----
 
 
-
 function ret(...)
     local a = 1
     local b = 2
@@ -72,6 +71,13 @@ a[1]()
 a[1]()
 a[1]()
 a[2]()
+
+b = {1,2,3,4}
+
+b[1],b[2],b[3] =b[3],b[2],b[1]
+
+dump(b)
+
 
 
 --false and print(1)

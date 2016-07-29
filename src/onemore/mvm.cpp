@@ -87,8 +87,7 @@ namespace oms
                     break;
                 case OpType_LoadInt:
                     a = GET_REGISTER_A(i);
-                    assert(call->instruction_ < call->end_);
-                    a->num_ = (*call->instruction_++).opcode_;
+                    a->num_ = Instruction::GetParamBx(i);
                     a->type_ = ValueT_Number;
                     break;
                 case OpType_LoadConst:
