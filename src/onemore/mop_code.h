@@ -6,7 +6,6 @@ namespace oms
     enum OpType
     {
         OpType_LoadNil = 1,             // A    A: register
-        OpType_CloseUpvalue,            // A    A: close upvalue to this register
         OpType_LoadBool,                // AB   A: register B: 1 true 0 false
         OpType_LoadInt,                 // ABx  A: register Bx: const unsigned int
         OpType_LoadConst,               // ABx  A: register Bx: const index
@@ -44,6 +43,8 @@ namespace oms
         OpType_GetTable,                // ABC  A: register of table B: key register C: value register
         OpType_ForInit,                 // ABC  A: var register B: limit register    C: step register
         OpType_ForStep,                 // ABC  ABC same with OpType_ForInit, next instruction sBx: diff of instruction index
+        OpType_CloseUpvalue,            // A    A: close upvalue to this register
+        OpType_SetTop,                  // A    A: set new top to this register,current for exp list and table define last exp
     };
 
     struct Instruction

@@ -4,11 +4,47 @@
 #include "mstate.h"
 #include "mstring.h"
 #include "mguard.h"
+#include "msyntax_tree.h"
 #include <unordered_set>
 #include <assert.h>
 
 namespace oms
 {
+
+    bool exp_ret_any_results(SyntaxTree* exp)
+    {
+        auto* terminor = dynamic_cast<Terminator*>(exp);
+        if (terminor)
+        {
+            return terminor->token_.token_ == Token_VarArg;
+        }
+
+        auto* normal_call = dynamic_cast<NormalFuncCall*>(exp);
+        if (normal_call)
+        {
+            return true;
+        }
+
+        auto* member_call = dynamic_cast<MemberFuncCall*>(exp);
+        if (member_call)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool table_define_last_exp_ret_any_results(SyntaxTree* table_field)
+    {
+        auto* table_array_field = dynamic_cast<TableArrayField*>(table_field);
+        if (table_array_field)
+        {
+            return exp_ret_any_results(table_array_field->value_.get());
+        }
+
+        return false;
+    }
+
     // Lexical block data in LexicalFunction for name finding
     struct LexicalBlock
     {
@@ -627,6 +663,11 @@ namespace oms
         for (auto &field : table_def->fields_)
             field->Accept(this, nullptr);
 
+        if (table_def->fields_.size() > 0)
+        {
+            table_def->last_exp_ret_any_results_ = table_define_last_exp_ret_any_results(table_def->fields_.back().get());
+        }
+
         // Set Expression type
         static_cast<ExpVarData *>(data)->exp_type_ = ExpType_Table;
     }
@@ -726,6 +767,8 @@ namespace oms
             ExpVarData exp_var_data{ SemanticOp_Read };
             exp_list->exp_list_[i]->Accept(this, &exp_var_data);
         }
+
+        exp_list->exp_any_ = exp_ret_any_results(exp_list->exp_list_.back().get());
 
         // If the last expression in list which has any count value results,
         // then this expression list has any count value results also

@@ -1,11 +1,10 @@
 #ifndef SEMANTIC_ANALYSIS_H
 #define SEMANTIC_ANALYSIS_H
 
-#include "msyntax_tree.h"
-
 namespace oms
 {
     class State;
+    class SyntaxTree;
 
     void SemanticAnalysis(SyntaxTree *root, State *state);
 }

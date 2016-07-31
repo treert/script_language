@@ -77,10 +77,6 @@ namespace oms
                     a = GET_REGISTER_A(i);
                     a->SetNil();
                     break;
-                case OpType_CloseUpvalue:
-                    a = GET_REGISTER_A(i);
-                    state_->stack_.CloseUpvalueTo(a);
-                    break;
                 case OpType_LoadBool:
                     a = GET_REGISTER_A(i);
                     a->SetBool(Instruction::GetParamB(i) ? true : false);
@@ -288,6 +284,22 @@ namespace oms
                     if ((c->num_ > 0.0 && a->num_ > b->num_) ||
                         (c->num_ < 0.0 && a->num_ < b->num_))
                         call->instruction_ += -1 + Instruction::GetParamsBx(i);
+                    break;
+                case OpType_CloseUpvalue:
+                    a = GET_REGISTER_A(i);
+                    state_->stack_.CloseUpvalueTo(a);
+                    break;
+                case OpType_SetTop:
+                    a = GET_REGISTER_A(i);
+                    {
+                        auto top = state_->stack_.top_;
+                        while (top < a)
+                        {
+                            top->SetNil();
+                            ++top;
+                        }
+                        state_->stack_.top_ = a;
+                    }
                     break;
                 default:
                     break;

@@ -1,12 +1,10 @@
 #ifndef CODE_GENERATE_H
 #define CODE_GENERATE_H
 
-#include "mvisitor.h"
-#include <memory>
-
 namespace oms
 {
     class State;
+    class SyntaxTree;
 
     void CodeGenerate(SyntaxTree *root, State *state);
 } // namespace oms

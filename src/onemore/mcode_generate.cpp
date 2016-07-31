@@ -4,6 +4,8 @@
 #include "mfunction.h"
 #include "mexception.h"
 #include "mguard.h"
+#include "mvisitor.h"
+#include <memory>
 #include <vector>
 #include <stack>
 #include <list>
@@ -711,7 +713,35 @@ namespace oms
         int adjust_args = adjust_caller_arg(caller_register);
 
         FuncCallArgsData arg_data;
+        auto start_register_id = GetNextRegisterId();
         func_call->args_->Accept(this, &arg_data);
+
+        int args_count = 0;
+        bool args_any = false;
+        {
+            auto* args = static_cast<FuncCallArgs*>(func_call->args_.get());
+            if (args->type_ == FuncCallArgs::ExpList)
+            {
+                auto* exp_list = static_cast<ExpressionList*>(args->arg_.get());
+                if (exp_list)
+                {
+                    args_count = exp_list->exp_list_.size();
+                    args_any = exp_list->exp_any_;
+                }
+                else
+                {
+                    args_count = 0;
+                    args_any = false;
+                }
+            }
+            else
+            {
+                assert(args->type_ == FuncCallArgs::Table);
+                args_count = 1;
+                args_any = false;
+            }
+            args_count += adjust_args;
+        }
 
         // Calculate total args
         int total_args = arg_data.arg_value_count_ == EXP_VALUE_COUNT_ANY ?
@@ -775,17 +805,31 @@ namespace oms
     void CodeGenerateVisitor::Visit(ReturnStatement *ret_stmt, void *data)
     {
         int register_id = GetNextRegisterId();
+        bool need_set_top = true;
+        int exp_count = 0;
         if (ret_stmt->exp_list_)
         {
+            auto* exp_list = static_cast<ExpressionList*>(ret_stmt->exp_list_.get());
+            need_set_top = !exp_list->exp_any_;
+            exp_count = exp_list->exp_list_.size();
+
             register_id = GenerateRegisterId();
             ExpListData exp_list_data{ register_id, EXP_VALUE_COUNT_ANY };
             ret_stmt->exp_list_->Accept(this, &exp_list_data);
         }
 
         auto function = GetCurrentFunction();
-        auto instruction = Instruction::AsBxCode(OpType_Ret, register_id,
+        Instruction instruction;
+        int line = ret_stmt->line_;
+        if (need_set_top)
+        {
+            instruction = Instruction::ACode(OpType_SetTop, register_id + exp_count);
+            function->AddInstruction(instruction, line);
+        }
+        
+        instruction = Instruction::AsBxCode(OpType_Ret, register_id,
                                                  ret_stmt->exp_value_count_);
-        function->AddInstruction(instruction, ret_stmt->line_);
+        function->AddInstruction(instruction, line);
     }
 
     void CodeGenerateVisitor::Visit(BreakStatement *break_stmt, void *data)
@@ -941,6 +985,9 @@ namespace oms
     void CodeGenerateVisitor::Visit(GenericForStatement *gen_for, void *data)
     {
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
+        auto function = GetCurrentFunction();
+        auto line = gen_for->line_;
+        Instruction instruction;
 
         // Init generic for statement data
         auto func_register = GenerateRegisterId();
@@ -949,8 +996,15 @@ namespace oms
         ExpListData exp_list_data{ func_register, var_register + 1 };
         gen_for->exp_list_->Accept(this, &exp_list_data);
 
-        auto function = GetCurrentFunction();
-        auto line = gen_for->line_;
+        {
+            auto* exp_list = static_cast<ExpressionList*>(gen_for->exp_list_.get());
+            if (exp_list->exp_any_)
+            {
+                instruction = Instruction::ACode(OpType_SetTop, func_register + 3);
+                function->AddInstruction(instruction, line);
+            }
+        }
+
         LOOP_GUARD(gen_for);
         {
             CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
@@ -976,9 +1030,12 @@ namespace oms
             move(temp_state, state_register);
             move(temp_var, var_register);
 
-            auto instruction = Instruction::ABCCode(OpType_Call, temp_func,
+            instruction = Instruction::ABCCode(OpType_Call, temp_func,
                                                     2 + 1,  // Two args
                                                     name_end - name_start + 1);
+            function->AddInstruction(instruction, line);
+
+            instruction = Instruction::ACode(OpType_SetTop, name_end);
             function->AddInstruction(instruction, line);
 
             // Copy results to registers of names
@@ -997,7 +1054,7 @@ namespace oms
         }
         
         // Jump to loop start
-        auto instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);
+        instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);
         int index = function->AddInstruction(instruction, line);
         AddLoopJumpInfo(gen_for, index, LoopJumpInfo::JumpHead);
     }
@@ -1117,6 +1174,9 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(LocalNameListStatement *l_namelist_stmt, void *data)
     {
+        auto function = GetCurrentFunction();
+        Instruction instruction;
+        auto line = l_namelist_stmt->line_;
         // Generate code for expression list first, then expression list can get
         // variables which has the same name with variables defined in NameList
         // e.g.
@@ -1134,6 +1194,24 @@ namespace oms
             {
                 ExpListData exp_list_data{ start_register, end_register };
                 l_namelist_stmt->exp_list_->Accept(this, &exp_list_data);
+
+
+                {
+                    auto* name_list = static_cast<NameList*>(l_namelist_stmt->name_list_.get());
+                    auto* exp_list = static_cast<ExpressionList*>(l_namelist_stmt->exp_list_.get());
+                    if (exp_list->exp_any_)
+                    {
+                        instruction = Instruction::ACode(OpType_SetTop,
+                            start_register + name_list->names_.size());
+                        function->AddInstruction(instruction, line);
+                    }
+                    else
+                    {
+                        FillRemainRegisterNil(start_register + exp_list->exp_list_.size(),
+                            start_register + name_list->names_.size(), line);
+                    }
+                }
+
             }
             catch (const CodeGenerateException &)
             {
@@ -1180,6 +1258,26 @@ namespace oms
                 GetCurrentFunction()->GetModule()->GetCStr(),
                 assign_stmt->line_,
                 "assignment statement is too complex");
+        }
+
+        auto function = GetCurrentFunction();
+        auto line = assign_stmt->line_;
+        Instruction instruction;
+
+        {
+            auto* var_list = static_cast<VarList*>(assign_stmt->var_list_.get());
+            auto* exp_list = static_cast<ExpressionList*>(assign_stmt->exp_list_.get());
+            if (exp_list->exp_any_)
+            {
+                instruction = Instruction::ACode(OpType_SetTop,
+                    register_id + var_list->var_list_.size());
+                function->AddInstruction(instruction, line);
+            }
+            else
+            {
+                FillRemainRegisterNil(register_id + exp_list->exp_list_.size(),
+                    register_id + var_list->var_list_.size(), line);
+            }
         }
 
         // Assign results to var list
