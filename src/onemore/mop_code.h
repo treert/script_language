@@ -17,7 +17,7 @@ namespace oms
         OpType_Closure,                 // ABx  A: register Bx: proto index
         OpType_Call,                    // ABC  A: register B: arg value count + 1 C: expected result count + 1
         OpType_VarArg,                  // AsBx A: register sBx: expected result count
-        OpType_Ret,                     // AsBx A: return value start register sBx: return value count
+        OpType_Ret,                     // ABC  A: return value start register B: return value count C: return any count
         OpType_JmpFalse,                // AsBx A: register sBx: diff of instruction index
         OpType_JmpTrue,                 // AsBx A: register sBx: diff of instruction index
         OpType_JmpNil,                  // AsBx A: register sBx: diff of instruction index

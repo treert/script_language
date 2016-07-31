@@ -417,33 +417,22 @@ namespace oms
 
     void VM::Return(Value *a, Instruction i)
     {
-        // Set stack top when return value count is fixed
-        int ret_value_count = Instruction::GetParamsBx(i);
-        if (ret_value_count != EXP_VALUE_COUNT_ANY)
-            state_->stack_.top_ = a + ret_value_count;
-
         assert(!state_->calls_.empty());
         auto call = &state_->calls_.back();
-
         auto src = a;
         auto dst = call->func_;
-
-        int expect_result = call->expect_result_;
-        int result_count = state_->stack_.top_ - src;
-        if (expect_result == EXP_VALUE_COUNT_ANY)
+        int exp_count = Instruction::GetParamB(i);
+        int exp_any = Instruction::GetParamC(i);
+        int result_count = exp_count;
+        if (exp_any)
         {
-            for (int i = 0; i < result_count; ++i)
-                *dst++ = *src++;
+            result_count = state_->stack_.top_ - src;
         }
-        else
+
+        dst->SetNil();
+        while (result_count--)
         {
-            int i = 0;
-            int count = std::min(expect_result, result_count);
-            for (; i < count; ++i)
-                *dst++ = *src++;
-            // No enough results for expect results, set remain as nil
-            for (; i < expect_result; ++i, ++dst)
-                dst->SetNil();
+            *dst++ = *src++;
         }
 
         // Set new top and pop current CallInfo

@@ -804,31 +804,24 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(ReturnStatement *ret_stmt, void *data)
     {
+        auto function = GetCurrentFunction();
+        Instruction instruction;
+        int line = ret_stmt->line_;
         int register_id = GetNextRegisterId();
-        bool need_set_top = true;
+        bool exp_any_ = false;
         int exp_count = 0;
         if (ret_stmt->exp_list_)
         {
             auto* exp_list = static_cast<ExpressionList*>(ret_stmt->exp_list_.get());
-            need_set_top = !exp_list->exp_any_;
+            exp_any_ = exp_list->exp_any_;
             exp_count = exp_list->exp_list_.size();
 
-            register_id = GenerateRegisterId();
+            //register_id = GenerateRegisterId();
             ExpListData exp_list_data{ register_id, EXP_VALUE_COUNT_ANY };
             ret_stmt->exp_list_->Accept(this, &exp_list_data);
         }
 
-        auto function = GetCurrentFunction();
-        Instruction instruction;
-        int line = ret_stmt->line_;
-        if (need_set_top)
-        {
-            instruction = Instruction::ACode(OpType_SetTop, register_id + exp_count);
-            function->AddInstruction(instruction, line);
-        }
-        
-        instruction = Instruction::AsBxCode(OpType_Ret, register_id,
-                                                 ret_stmt->exp_value_count_);
+        instruction = Instruction::ABCCode(OpType_Ret, register_id, exp_count, exp_any_);
         function->AddInstruction(instruction, line);
     }
 
