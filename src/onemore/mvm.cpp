@@ -306,10 +306,8 @@ namespace oms
             }
         }
 
-        Value *new_top = call->func_;
-        new_top->SetNil();
         // Reset top value
-        state_->stack_.SetNewTop(new_top);
+        state_->stack_.SetNewTop(call->func_);
 
         // Pop current CallInfo, and return to last CallInfo
         state_->calls_.pop_back();
@@ -400,21 +398,9 @@ namespace oms
         int vararg_count = total_args - proto->FixedArgCount();
 
         arg += proto->FixedArgCount();
-        int expect_count = Instruction::GetParamsBx(i);
-        if (expect_count == EXP_VALUE_COUNT_ANY)
-        {
-            for (int i = 0; i < vararg_count; ++i)
-                *a++ = *arg++;
-            state_->stack_.SetNewTop(a);
-        }
-        else
-        {
-            int i = 0;
-            for (; i < vararg_count && i < expect_count; ++i)
-                *a++ = *arg++;
-            for (; i < expect_count; ++i, ++a)
-                a->SetNil();
-        }
+        for (int i = 0; i < vararg_count; ++i)
+            *a++ = *arg++;
+        state_->stack_.SetNewTop(a);
     }
 
     void VM::Return(Value *a, Instruction i)

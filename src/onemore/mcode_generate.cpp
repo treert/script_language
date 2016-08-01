@@ -1381,7 +1381,7 @@ namespace oms
             // Copy vararg to registers which start from register_id
             auto expect_results = end_register == EXP_VALUE_COUNT_ANY ?
                 EXP_VALUE_COUNT_ANY : end_register - register_id;
-            auto instruction = Instruction::AsBxCode(OpType_VarArg, register_id, expect_results);
+            auto instruction = Instruction::ACode(OpType_VarArg, register_id);
             function->AddInstruction(instruction, term->token_.line_);
 
             // All registers will be filled when executing, so do not

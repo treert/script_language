@@ -14,6 +14,7 @@ namespace oms
     {
         Value *old = top_;
         top_ = top;
+        top_->SetNil();
 
         // Clear values between new top to old
         for (; top <= old; ++top)

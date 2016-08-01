@@ -305,9 +305,7 @@ namespace oms
             *dst++ = *src++;
         }
 
-        // Set registers which after dst to nil
-        // and set new stack top pointer
-        dst->SetNil();
+        // Set new stack top pointer
         stack_.SetNewTop(dst);
 
         // Pop the c function CallInfo
