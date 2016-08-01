@@ -328,7 +328,6 @@ namespace oms
         {
             ExpListData exp_list_data;
             ret_stmt->exp_list_->Accept(this, &exp_list_data);
-            ret_stmt->exp_value_count_ = exp_list_data.exp_value_count_;
         }
     }
 
@@ -745,14 +744,12 @@ namespace oms
             {
                 ExpListData exp_list_data;
                 call_args->arg_->Accept(this, &exp_list_data);
-                call_args->arg_value_count_ = exp_list_data.exp_value_count_;
             }
         }
         else
         {
             ExpVarData exp_var_data{ SemanticOp_Read };
             call_args->arg_->Accept(this, &exp_var_data);
-            call_args->arg_value_count_ = 1;
         }
     }
 

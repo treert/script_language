@@ -73,9 +73,8 @@ namespace oms
         std::unique_ptr<SyntaxTree> exp_list_;
 
         int line_;
-        int exp_value_count_;
 
-        explicit ReturnStatement(int line) : line_(line), exp_value_count_(0) { }
+        explicit ReturnStatement(int line) : line_(line) { }
 
         SYNTAX_TREE_ACCEPT_VISITOR_DECL();
     };
@@ -612,12 +611,9 @@ namespace oms
         std::unique_ptr<SyntaxTree> arg_;
         enum ArgType { ExpList, Table } type_;
 
-        // For code generate
-        int arg_value_count_;
-
         FuncCallArgs(std::unique_ptr<SyntaxTree> arg,
                      ArgType type)
-            : arg_(std::move(arg)), type_(type), arg_value_count_(0)
+            : arg_(std::move(arg)), type_(type)
         {
         }
 
