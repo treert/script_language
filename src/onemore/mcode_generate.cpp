@@ -1246,7 +1246,9 @@ namespace oms
             }
 
             // Assign results to var list
-            VarListData var_list_data{ register_id, EXP_VALUE_COUNT_ANY };
+            int end_register = register_id + var_list->var_list_.size();
+            ResetRegisterIdGenerator(end_register);
+            VarListData var_list_data{ register_id, end_register };
             assign_stmt->var_list_->Accept(this, &var_list_data);
         }
         catch (const CodeGenerateException &)
