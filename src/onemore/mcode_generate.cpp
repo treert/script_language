@@ -1219,42 +1219,20 @@ namespace oms
     {
         REGISTER_GENERATOR_GUARD();
 
-        // Reserve registers for var list
-        int register_id = GetNextRegisterId();
-        int end_register = register_id + assign_stmt->var_count_;
-        ResetRegisterIdGenerator(end_register);
-        if (IsRegisterCountOverflow())
-        {
-            throw CodeGenerateException(
-                GetCurrentFunction()->GetModule()->GetCStr(),
-                assign_stmt->line_,
-                "assignment statement is too complex");
-        }
-
-        try
-        {
-            // Get exp list results placed into [register_id, end_register)
-            ExpListData exp_list_data{ register_id, end_register };
-            assign_stmt->exp_list_->Accept(this, &exp_list_data);
-        }
-        catch (const CodeGenerateException &)
-        {
-            // Exp list consume some registers, and register count overflow,
-            // catch it, throw new exception to report assignment statement
-            // is too complex
-            throw CodeGenerateException(
-                GetCurrentFunction()->GetModule()->GetCStr(),
-                assign_stmt->line_,
-                "assignment statement is too complex");
-        }
-
         auto function = GetCurrentFunction();
         auto line = assign_stmt->line_;
         Instruction instruction;
 
+        auto* var_list = static_cast<VarList*>(assign_stmt->var_list_.get());
+        auto* exp_list = static_cast<ExpressionList*>(assign_stmt->exp_list_.get());
+        int register_id = GetNextRegisterId();
+
+        try
         {
-            auto* var_list = static_cast<VarList*>(assign_stmt->var_list_.get());
-            auto* exp_list = static_cast<ExpressionList*>(assign_stmt->exp_list_.get());
+            // Get exp list results placed into [register_id, end_register)
+            ExpListData exp_list_data{ register_id, EXP_VALUE_COUNT_ANY };
+            assign_stmt->exp_list_->Accept(this, &exp_list_data);
+
             if (exp_list->exp_any_)
             {
                 instruction = Instruction::ACode(OpType_SetTop,
@@ -1266,11 +1244,21 @@ namespace oms
                 FillRemainRegisterNil(register_id + exp_list->exp_list_.size(),
                     register_id + var_list->var_list_.size(), line);
             }
-        }
 
-        // Assign results to var list
-        VarListData var_list_data{ register_id, end_register };
-        assign_stmt->var_list_->Accept(this, &var_list_data);
+            // Assign results to var list
+            VarListData var_list_data{ register_id, EXP_VALUE_COUNT_ANY };
+            assign_stmt->var_list_->Accept(this, &var_list_data);
+        }
+        catch (const CodeGenerateException &)
+        {
+            // Var or Exp list consume some registers, and register count overflow,
+            // catch it, throw new exception to report assignment statement
+            // is too complex
+            throw CodeGenerateException(
+                GetCurrentFunction()->GetModule()->GetCStr(),
+                assign_stmt->line_,
+                "assignment statement is too complex");
+        }
     }
 
     void CodeGenerateVisitor::Visit(VarList *var_list, void *data)
