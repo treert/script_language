@@ -72,7 +72,7 @@ namespace oms
         // If f is a closure, then create a stack frame and return true,
         // call VM::Execute() to execute the closure instructions.
         // Return false when f is a c function.
-        bool CallFunction(Value *f, int arg_count, int expect_result);
+        bool CallFunction(Value *f, int arg_count);
 
         // New GCObjects
         String * GetString(const std::string &str);
@@ -115,8 +115,8 @@ namespace oms
         void FullGCRoot(GCObjectVisitor *v);
 
         // For CallFunction
-        void CallClosure(Value *f, int expect_result);
-        void CallCFunction(Value *f, int expect_result);
+        void CallClosure(Value *f, int arg_count);
+        void CallCFunction(Value *f, int arg_count);
         void CheckCFunctionError();
 
         // Get the table which stores all metatables

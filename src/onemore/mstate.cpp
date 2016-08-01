@@ -75,7 +75,7 @@ namespace oms
     void State::DoModule(const std::string &module_name)
     {
         LoadModule(module_name);
-        if (CallFunction(stack_.top_ - 1, 0, 0))
+        if (CallFunction(stack_.top_ - 1, 0))
         {
             VM vm(this);
             vm.Execute();
@@ -85,30 +85,26 @@ namespace oms
     void State::DoString(const std::string &str, const std::string &name)
     {
         module_manager_->LoadString(str, name);
-        if (CallFunction(stack_.top_ - 1, 0, 0))
+        if (CallFunction(stack_.top_ - 1, 0))
         {
             VM vm(this);
             vm.Execute();
         }
     }
 
-    bool State::CallFunction(Value *f, int arg_count, int expect_result)
+    bool State::CallFunction(Value *f, int arg_count)
     {
         assert(f->type_ == ValueT_Closure || f->type_ == ValueT_CFunction);
-
-        // Set stack top when arg_count is fixed
-        if (arg_count != EXP_VALUE_COUNT_ANY)
-            stack_.top_ = f + 1 + arg_count;
 
         if (f->type_ == ValueT_Closure)
         {
             // We need enter next ExecuteFrame
-            CallClosure(f, expect_result);
+            CallClosure(f, arg_count);
             return true;
         }
         else
         {
-            CallCFunction(f, expect_result);
+            CallCFunction(f, arg_count);
             return false;
         }
     }
@@ -257,7 +253,7 @@ namespace oms
         return v.table_;
     }
 
-    void State::CallClosure(Value *f, int expect_result)
+    void State::CallClosure(Value *f, int arg_count)
     {
         CallInfo callee;
         Function *callee_proto = f->closure_->GetPrototype();
@@ -265,74 +261,53 @@ namespace oms
         callee.func_ = f;
         callee.instruction_ = callee_proto->GetOpCodes();
         callee.end_ = callee.instruction_ + callee_proto->OpCodeSize();
-        callee.expect_result_ = expect_result;
 
-        Value *arg = f + 1;
         int fixed_args = callee_proto->FixedArgCount();
-
-        // Fixed arg start from base register
+        Value *arg = f + 1;
         if (callee_proto->HasVararg())
         {
-            Value *top = stack_.top_;
-            callee.register_ = top;
-            int count = top - arg;
-            for (int i = 0; i < count && i < fixed_args; ++i)
-                *top++ = *arg++;
+            // move args for var_arg
+            Value *old_arg = arg;
+            arg += arg_count;
+            for (int i = 0; i < arg_count && i < fixed_args; ++i)
+                *(arg + i) = *old_arg++;
         }
-        else
+        callee.register_ = arg;
+        // Fill nil for rest fixed_arg
+        for (int i = arg_count; i < fixed_args; ++i)
         {
-            callee.register_ = arg;
-            // fill nil for overflow args
-            auto new_top = callee.register_ + fixed_args;
-            for (auto arg = stack_.top_; arg < new_top; arg++)
-            {
-                arg->SetNil();
-            }
+            (callee.register_ + i)->SetNil();
         }
 
-        stack_.SetNewTop(callee.register_ + fixed_args);
         calls_.push_back(callee);
     }
 
-    void State::CallCFunction(Value *f, int expect_result)
+    void State::CallCFunction(Value *f, int arg_count)
     {
         // Push the c function CallInfo
         CallInfo callee;
         callee.register_ = f + 1;
         callee.func_ = f;
-        callee.expect_result_ = expect_result;
         calls_.push_back(callee);
 
-        // Call c function
+        // Call c function, use stack top tell arg_count
+        stack_.top_ = f + 1 + arg_count;
         CFunctionType cfunc = f->cfunc_;
         ClearCFunctionError();
         int res_count = cfunc(this);
         CheckCFunctionError();
 
-        Value *src = nullptr;
-        if (res_count > 0)
-            src = stack_.top_ - res_count;
-
         // Copy c function result to caller stack
+        Value *src = stack_.top_ - res_count;
         Value *dst = f;
-        if (expect_result == EXP_VALUE_COUNT_ANY)
+        for (int i = 0; i < res_count; ++i)
         {
-            for (int i = 0; i < res_count; ++i)
-                *dst++ = *src++;
-        }
-        else
-        {
-            int count = std::min(expect_result, res_count);
-            for (int i = 0; i < count; ++i)
-                *dst++ = *src++;
-            // Set all remain expect results to nil
-            count = expect_result - res_count;
-            for (int i = 0; i < count; ++i, ++dst)
-                dst->SetNil();
+            *dst++ = *src++;
         }
 
         // Set registers which after dst to nil
         // and set new stack top pointer
+        dst->SetNil();
         stack_.SetNewTop(dst);
 
         // Pop the c function CallInfo

@@ -42,8 +42,6 @@ namespace oms
         const Instruction *instruction_;
         // Instruction end
         const Instruction *end_;
-        // expect result of this function call
-        int expect_result_;
 
         CallInfo();
     };

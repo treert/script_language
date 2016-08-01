@@ -307,11 +307,9 @@ namespace oms
         }
 
         Value *new_top = call->func_;
+        new_top->SetNil();
         // Reset top value
         state_->stack_.SetNewTop(new_top);
-        // Set expect results
-        if (call->expect_result_ != EXP_VALUE_COUNT_ANY)
-            state_->stack_.SetNewTop(new_top + call->expect_result_);
 
         // Pop current CallInfo, and return to last CallInfo
         state_->calls_.pop_back();
@@ -328,9 +326,13 @@ namespace oms
 
         try
         {
-            int arg_count = Instruction::GetParamB(i) - 1;
-            int expect_result = Instruction::GetParamC(i) - 1;
-            return state_->CallFunction(a, arg_count, expect_result);
+            int arg_count = Instruction::GetParamB(i);
+            int arg_any = Instruction::GetParamC(i);
+            if (arg_any)
+            {
+                arg_count = state_->stack_.top_ - a;
+            }
+            return state_->CallFunction(a, arg_count);
         } catch (const CallCFuncException &e)
         {
             // Calculate line number of the call

@@ -37,8 +37,7 @@ namespace oms
         : register_(nullptr),
           func_(nullptr),
           instruction_(nullptr),
-          end_(nullptr),
-          expect_result_(0)
+          end_(nullptr)
     {
     }
 } // namespace oms

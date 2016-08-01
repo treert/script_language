@@ -753,10 +753,7 @@ namespace oms
 
         // Generate call instruction
         auto function = GetCurrentFunction();
-        auto instruction = Instruction::ABCCode(OpType_Call,
-                                                caller_register,
-                                                total_args + 1,
-                                                results + 1);
+        auto instruction = Instruction::ABCCode(OpType_Call, caller_register, args_count, args_any);
         function->AddInstruction(instruction, func_call->line_);
 
         // Copy results of function call to dst registers
@@ -1023,9 +1020,7 @@ namespace oms
             move(temp_state, state_register);
             move(temp_var, var_register);
 
-            instruction = Instruction::ABCCode(OpType_Call, temp_func,
-                                                    2 + 1,  // Two args
-                                                    name_end - name_start + 1);
+            instruction = Instruction::ABCCode(OpType_Call, temp_func, 2, 0);
             function->AddInstruction(instruction, line);
 
             instruction = Instruction::ACode(OpType_SetTop, name_end);
