@@ -267,14 +267,6 @@ namespace oms
         VarListData() : var_count_(0) { }
     };
 
-    // For ExpList AST
-    struct ExpListData
-    {
-        int exp_value_count_;
-
-        ExpListData() : exp_value_count_(0) { }
-    };
-
     // Expression type for semantic
     enum ExpType
     {
@@ -326,8 +318,7 @@ namespace oms
     {
         if (ret_stmt->exp_list_)
         {
-            ExpListData exp_list_data;
-            ret_stmt->exp_list_->Accept(this, &exp_list_data);
+            ret_stmt->exp_list_->Accept(this, nullptr);
         }
     }
 
@@ -415,8 +406,7 @@ namespace oms
     void SemanticAnalysisVisitor::Visit(GenericForStatement *gen_for, void *data)
     {
         SEMANTIC_ANALYSIS_LOOP_GUARD(gen_for);
-        ExpListData exp_list_data;
-        gen_for->exp_list_->Accept(this, &exp_list_data);
+        gen_for->exp_list_->Accept(this, nullptr);
 
         SEMANTIC_ANALYSIS_GUARD(EnterBlock, LeaveBlock);
         NameListData name_list_data;
@@ -460,8 +450,7 @@ namespace oms
     {
         if (l_namelist_stmt->exp_list_)
         {
-            ExpListData exp_list_data;
-            l_namelist_stmt->exp_list_->Accept(this, &exp_list_data);
+            l_namelist_stmt->exp_list_->Accept(this, nullptr);
         }
 
         NameListData name_list_data;
@@ -472,9 +461,8 @@ namespace oms
     void SemanticAnalysisVisitor::Visit(AssignmentStatement *assign_stmt, void *data)
     {
         VarListData var_list_data;
-        ExpListData exp_list_data;
         assign_stmt->var_list_->Accept(this, &var_list_data);
-        assign_stmt->exp_list_->Accept(this, &exp_list_data);
+        assign_stmt->exp_list_->Accept(this, nullptr);
         assign_stmt->var_count_ = var_list_data.var_count_;
     }
 
@@ -742,8 +730,7 @@ namespace oms
         {
             if (call_args->arg_)
             {
-                ExpListData exp_list_data;
-                call_args->arg_->Accept(this, &exp_list_data);
+                call_args->arg_->Accept(this, nullptr);
             }
         }
         else
@@ -771,8 +758,6 @@ namespace oms
         // then this expression list has any count value results also
         ExpVarData exp_var_data{ SemanticOp_Read };
         exp_list->exp_list_.back()->Accept(this, &exp_var_data);
-        int count = exp_var_data.results_any_count_ ? EXP_VALUE_COUNT_ANY : size + 1;
-        static_cast<ExpListData *>(data)->exp_value_count_ = count;
     }
 
     void SemanticAnalysis(SyntaxTree *root, State *state)
