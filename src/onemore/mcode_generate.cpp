@@ -512,6 +512,18 @@ namespace oms
     Guard l([=]() { this->EnterLoop(loop_ast); },                       \
             [=]() { this->LeaveLoop(); })
 
+    // For Var
+    // Var need register to get value
+    struct VarValueData
+    {
+        int value_register_id_;
+
+        VarValueData(int register_id)
+            :value_register_id_(register_id)
+        {}
+    };
+
+
     // For expression and variable
     struct ExpVarData
     {
@@ -1207,16 +1219,15 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(Terminator *term, void *data)
     {
-        auto exp_var_data = static_cast<ExpVarData *>(data);
-        auto register_id = exp_var_data->start_register_;
-        auto end_register = exp_var_data->end_register_;
         auto function = GetCurrentFunction();
 
         // Generate code for SemanticOp_Write
         if (term->semantic_ == SemanticOp_Write)
         {
             assert(term->token_.token_ == Token_Id);
-            assert(register_id + 1 == end_register);
+            assert(data != nullptr);
+            auto var_value_data = static_cast<VarValueData*>(data);
+            auto register_id = var_value_data->value_register_id_;
             if (term->scoping_ == LexicalScoping_Global)
             {
                 auto index = function->AddConstString(term->token_.str_);
@@ -1240,10 +1251,6 @@ namespace oms
         }
 
         // Generate code for SemanticOp_Read
-        // Just return when term is SemanticOp_Read and no registers to fill
-        if (term->semantic_ == SemanticOp_Read &&
-            end_register != EXP_VALUE_COUNT_ANY && register_id >= end_register)
-            return ;
 
         if (term->token_.token_ == Token_Number || term->token_.token_ == Token_String)
         {
