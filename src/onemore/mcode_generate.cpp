@@ -501,15 +501,6 @@ namespace oms
     Guard l([=]() { this->EnterLoop(loop_ast); },                       \
             [=]() { this->LeaveLoop(); })
 
-    // For NameList AST
-    struct NameListData
-    {
-        // NameList need init itself or not
-        bool need_init_;
-
-        explicit NameListData(bool need_init) : need_init_(need_init) { }
-    };
-
     // For ExpList AST
     struct ExpListData
     {
@@ -1001,8 +992,7 @@ namespace oms
             
             // Alloca registers for names
             auto name_start = GetNextRegisterId();
-            NameListData name_list_data{ false };
-            gen_for->name_list_->Accept(this, &name_list_data);
+            gen_for->name_list_->Accept(this, nullptr);
             auto name_end = GetNextRegisterId();
             assert(name_start < name_end);
 
@@ -1165,6 +1155,7 @@ namespace oms
         auto function = GetCurrentFunction();
         Instruction instruction;
         auto line = l_namelist_stmt->line_;
+        auto name_list = dynamic_cast<NameList*>(l_namelist_stmt->name_list_.get());
         // Generate code for expression list first, then expression list can get
         // variables which has the same name with variables defined in NameList
         // e.g.
@@ -1174,7 +1165,7 @@ namespace oms
         {
             // Reserve registers for NameList
             int start_register = GetNextRegisterId();
-            int end_register = start_register + l_namelist_stmt->name_count_;
+            int end_register = start_register + name_list->names_.size();
             Guard g([=]() { this->ResetRegisterIdGenerator(end_register); },
                     [=]() { this->ResetRegisterIdGenerator(start_register); });
 
@@ -1209,10 +1200,7 @@ namespace oms
                     "expression of local name list is too complex");
             }
         }
-
-        // NameList need init itself when ExpList is not existed
-        NameListData name_list_data{ !l_namelist_stmt->exp_list_ };
-        l_namelist_stmt->name_list_->Accept(this, &name_list_data);
+        name_list->Accept(this, nullptr);
     }
 
     void CodeGenerateVisitor::Visit(AssignmentStatement *assign_stmt, void *data)
@@ -1549,33 +1537,24 @@ namespace oms
     void CodeGenerateVisitor::Visit(ParamList *param_list, void *data)
     {
         auto function = GetCurrentFunction();
-        function->AddFixedArgCount(param_list->fix_arg_count_);
+
         if (param_list->vararg_) function->SetHasVararg();
 
         if (param_list->name_list_)
         {
-            NameListData name_list_data{ false };
-            param_list->name_list_->Accept(this, &name_list_data);
+            auto* name_list = dynamic_cast<NameList*>(param_list->name_list_.get());
+            function->AddFixedArgCount(name_list->names_.size());
+            name_list->Accept(this, nullptr);
         }
     }
 
     void CodeGenerateVisitor::Visit(NameList *name_list, void *data)
     {
-        auto need_init = static_cast<NameListData *>(data)->need_init_;
-
         auto size = name_list->names_.size();
         for (std::size_t i = 0; i < size; ++i)
         {
             auto register_id = GenerateRegisterId();
             InsertName(name_list->names_[i].str_, register_id);
-
-            // Add init instructions when need
-            if (need_init)
-            {
-                auto function = GetCurrentFunction();
-                auto instruction = Instruction::ACode(OpType_LoadNil, register_id);
-                function->AddInstruction(instruction, name_list->names_[i].line_);
-            }
         }
     }
 

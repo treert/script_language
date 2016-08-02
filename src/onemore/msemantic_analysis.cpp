@@ -251,14 +251,6 @@ namespace oms
     Guard l([=]() { this->SetLoopAST(loop_ast); },                      \
             [=]() { this->SetLoopAST(old_loop); })
 
-    // For NameList AST
-    struct NameListData
-    {
-        std::size_t name_count_;
-
-        NameListData() : name_count_(0) { }
-    };
-
     // For VarList AST
     struct VarListData
     {
@@ -409,8 +401,7 @@ namespace oms
         gen_for->exp_list_->Accept(this, nullptr);
 
         SEMANTIC_ANALYSIS_GUARD(EnterBlock, LeaveBlock);
-        NameListData name_list_data;
-        gen_for->name_list_->Accept(this, &name_list_data);
+        gen_for->name_list_->Accept(this, nullptr);
         gen_for->block_->Accept(this, nullptr);
     }
 
@@ -453,9 +444,7 @@ namespace oms
             l_namelist_stmt->exp_list_->Accept(this, nullptr);
         }
 
-        NameListData name_list_data;
-        l_namelist_stmt->name_list_->Accept(this, &name_list_data);
-        l_namelist_stmt->name_count_ = name_list_data.name_count_;
+        l_namelist_stmt->name_list_->Accept(this, nullptr);
     }
 
     void SemanticAnalysisVisitor::Visit(AssignmentStatement *assign_stmt, void *data)
@@ -627,9 +616,7 @@ namespace oms
     {
         if (par_list->name_list_)
         {
-            NameListData name_list_data;
-            par_list->name_list_->Accept(this, &name_list_data);
-            par_list->fix_arg_count_ = name_list_data.name_count_;
+            par_list->name_list_->Accept(this, nullptr);
         }
 
         if (par_list->vararg_)
@@ -639,7 +626,6 @@ namespace oms
     void SemanticAnalysisVisitor::Visit(NameList *name_list, void *data)
     {
         auto size = name_list->names_.size();
-        static_cast<NameListData *>(data)->name_count_ = size;
 
         for (std::size_t i = 0; i < size; ++i)
             InsertName(name_list->names_[i].str_);

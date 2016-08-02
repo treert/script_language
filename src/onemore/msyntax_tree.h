@@ -313,14 +313,11 @@ namespace oms
         // Start line
         int line_;
 
-        // For semantic and code generate
-        std::size_t name_count_;
-
         LocalNameListStatement(std::unique_ptr<SyntaxTree> name_list,
                                std::unique_ptr<SyntaxTree> exp_list,
                                int start_line)
             : name_list_(std::move(name_list)), exp_list_(std::move(exp_list)),
-              line_(start_line), name_count_(0)
+              line_(start_line)
         {
         }
 
@@ -439,12 +436,9 @@ namespace oms
         std::unique_ptr<SyntaxTree> name_list_;
         bool vararg_;
 
-        // For semantic and code generate
-        std::size_t fix_arg_count_;
-
         ParamList(std::unique_ptr<SyntaxTree> name_list, bool vararg)
             : name_list_(std::move(name_list)),
-              vararg_(vararg), fix_arg_count_(0)
+              vararg_(vararg)
         {
         }
 
