@@ -523,31 +523,6 @@ namespace oms
         {}
     };
 
-
-    // For expression and variable
-    struct ExpVarData
-    {
-        // Need fill into range [start_register_, end_register_)
-        // when end_register_ != EXP_VALUE_COUNT_ANY, otherwise fill any
-        // count registers begin with start_register_
-        int start_register_;
-        int end_register_;
-
-        ExpVarData(int start_register, int end_register)
-            : start_register_(start_register), end_register_(end_register) { }
-    };
-
-    // For VarList AST
-    struct VarListData
-    {
-        // VarList get results from range [start_register_, end_register_)
-        int start_register_;
-        int end_register_;
-
-        VarListData(int start_register, int end_register)
-            : start_register_(start_register), end_register_(end_register) { }
-    };
-
     // For table field
     struct TableFieldData
     {
@@ -560,14 +535,6 @@ namespace oms
         explicit TableFieldData(int table_register)
             : table_register_(table_register),
               array_index_(1) { }
-    };
-
-    // For FuncCallArgs AST
-    struct FuncCallArgsData
-    {
-        int arg_value_count_;
-
-        FuncCallArgsData() : arg_value_count_(0) { }
     };
 
     // For FunctionName AST
@@ -619,9 +586,10 @@ namespace oms
                                                  int key_register,
                                                  int line)
     {
+        REGISTER_GENERATOR_GUARD();
         // Load value
-        field->value_->Accept(this, &exp_var_data);
-        auto value_register = GetNextRegisterId();
+        field->value_->Accept(this, nullptr);
+        auto value_register = GenerateRegisterId();
 
         // Set table field
         auto instruction = Instruction::ABCCode(OpType_SetTable, table_register,
@@ -634,54 +602,32 @@ namespace oms
                                                void *data, int line,
                                                const LoadKey &load_key)
     {
-        auto exp_var_data = static_cast<ExpVarData *>(data);
-        auto register_id = exp_var_data->start_register_;
-        auto end_register = exp_var_data->end_register_;
-        auto function = GetCurrentFunction();
+        REGISTER_GENERATOR_GUARD();
+        auto start_register = GetNextRegisterId();
+        // Load table
+        accessor->table_->Accept(this, nullptr);
+        auto table_register = GenerateRegisterId();
+        // Load key
+        load_key();
+        auto key_register = GenerateRegisterId();
 
-        int table_register = 0;
-        int key_register = 0;
-        int value_register = 0;
-        OpType op_type;
         if (accessor->semantic_ == SemanticOp_Read)
         {
-            // No more register, do nothing
-            if (end_register != EXP_VALUE_COUNT_ANY && register_id >= end_register)
-                return ;
-
-            if (end_register != EXP_VALUE_COUNT_ANY && register_id + 1 < end_register)
-                key_register = register_id + 1;
-            else
-                key_register = GenerateRegisterId();
-            table_register = register_id;
-            value_register = register_id;
-            op_type = OpType_GetTable;
+            // Get table value by key
+            auto instruction = Instruction::ABCCode(OpType_GetTable, table_register,
+                key_register, start_register);
         }
         else
         {
             assert(accessor->semantic_ == SemanticOp_Write);
-            assert(register_id + 1 == end_register);
+            assert(data != nullptr);
+            auto var_value_data = static_cast<VarValueData*>(data);
+            auto value_register = var_value_data->value_register_id_;
 
-            table_register = GenerateRegisterId();
-            key_register = GenerateRegisterId();
-            value_register = register_id;
-            op_type = OpType_SetTable;
+            // Set table value by key
+            auto instruction = Instruction::ABCCode(OpType_SetTable, table_register,
+                key_register, value_register);
         }
-
-        // Load table
-        ExpVarData table_exp_var_data{ table_register, table_register + 1 };
-        accessor->table_->Accept(this, &table_exp_var_data);
-
-        // Load key
-        load_key(key_register);
-
-        // Set/Get table value by key
-        auto instruction = Instruction::ABCCode(op_type, table_register,
-                                                key_register, value_register);
-        function->AddInstruction(instruction, line);
-
-        if (accessor->semantic_ == SemanticOp_Read)
-            FillRemainRegisterNil(register_id + 1, end_register, line);
     }
 
     template<typename FuncCallType, typename CallerArgAdjuster>
@@ -699,7 +645,7 @@ namespace oms
         int adjust_args = adjust_caller_arg(caller_register);
 
         // handle args
-        func_call->args_->Accept(this, &arg_data);
+        func_call->args_->Accept(this, nullptr);
         int args_count = 0;
         bool args_any = false;
         {
@@ -803,9 +749,8 @@ namespace oms
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
         LOOP_GUARD(while_stmt);
 
-        auto register_id = GenerateRegisterId();
-        ExpVarData exp_var_data{ register_id, register_id + 1 };
-        while_stmt->exp_->Accept(this, &exp_var_data);
+        while_stmt->exp_->Accept(this, nullptr);
+        auto register_id = GetNextRegisterId();
 
         // Jump to loop tail when expression is false
         auto function = GetCurrentFunction();
@@ -824,17 +769,12 @@ namespace oms
     void CodeGenerateVisitor::Visit(RepeatStatement *repeat_stmt, void *data)
     {
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
-        // Get exp value
-        auto register_id = GenerateRegisterId();
-        
         LOOP_GUARD(repeat_stmt);
-        {
-            REGISTER_GENERATOR_GUARD();
-            repeat_stmt->block_->Accept(this, nullptr);
-        }
 
-        ExpVarData exp_var_data{ register_id, register_id + 1 };
-        repeat_stmt->exp_->Accept(this, &exp_var_data);
+        repeat_stmt->block_->Accept(this, nullptr);
+
+        repeat_stmt->exp_->Accept(this, nullptr);
+        auto register_id = GetNextRegisterId();
 
         // Jump to head when exp value is true
         auto function = GetCurrentFunction();
@@ -861,38 +801,28 @@ namespace oms
     void CodeGenerateVisitor::Visit(NumericForStatement *num_for, void *data)
     {
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
-
-        auto var_register = GenerateRegisterId();
-        auto limit_register = GenerateRegisterId();
-        auto step_register = GenerateRegisterId();
         auto function = GetCurrentFunction();
         auto line = num_for->name_.line_;
 
         // Init name, limit, step
+        num_for->exp1_->Accept(this, nullptr);
+        auto var_register = GenerateRegisterId();
+
+        num_for->exp2_->Accept(this, nullptr);
+        auto limit_register = GenerateRegisterId();
+
+        if (num_for->exp3_)
         {
-            REGISTER_GENERATOR_GUARD();
-            ExpVarData name_exp_data{ var_register, var_register + 1 };
-            num_for->exp1_->Accept(this, &name_exp_data);
+            num_for->exp3_->Accept(this, nullptr);
         }
+        else
         {
-            REGISTER_GENERATOR_GUARD();
-            ExpVarData limit_exp_data{ limit_register, limit_register + 1 };
-            num_for->exp2_->Accept(this, &limit_exp_data);
+            // Default step is 1
+            AssertRegisterIdValid(GetNextRegisterId());
+            auto instruction = Instruction::ABxCode(OpType_LoadInt, GetNextRegisterId(), 1);
+            function->AddInstruction(instruction, line);
         }
-        {
-            REGISTER_GENERATOR_GUARD();
-            if (num_for->exp3_)
-            {
-                ExpVarData step_exp_data{ step_register, step_register + 1 };
-                num_for->exp3_->Accept(this, &step_exp_data);
-            }
-            else
-            {
-                // Default step is 1
-                auto instruction = Instruction::ABxCode(OpType_LoadInt, step_register, 1);
-                function->AddInstruction(instruction, line);
-            }
-        }
+        auto step_register = GenerateRegisterId();
 
         // Init 'for' var, limit, step value
         auto instruction = Instruction::ABCCode(OpType_ForInit, var_register,
@@ -939,7 +869,6 @@ namespace oms
         auto function = GetCurrentFunction();
         auto line = gen_for->line_;
         Instruction instruction;
-        auto start_register = GetNextRegisterId();
 
         // Init generic for statement data
         auto* exp_list = static_cast<ExpressionList*>(gen_for->exp_list_.get());
@@ -1004,9 +933,8 @@ namespace oms
     void CodeGenerateVisitor::Visit(FunctionStatement *func_stmt, void *data)
     {
         REGISTER_GENERATOR_GUARD();
+        func_stmt->func_body_->Accept(this, nullptr);
         auto func_register = GenerateRegisterId();
-        ExpVarData exp_var_data{ func_register, func_register + 1 };
-        func_stmt->func_body_->Accept(this, &exp_var_data);
 
         FunctionNameData name_data{ func_register };
         func_stmt->func_name_->Accept(this, &name_data);
@@ -1108,10 +1036,8 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(LocalFunctionStatement *l_func_stmt, void *data)
     {
-        auto register_id = GenerateRegisterId();
-        InsertName(l_func_stmt->name_.str_, register_id);
-        ExpVarData exp_var_data{ register_id, register_id + 1 };
-        l_func_stmt->func_body_->Accept(this, &exp_var_data);
+        InsertName(l_func_stmt->name_.str_, GetNextRegisterId());
+        l_func_stmt->func_body_->Accept(this, nullptr);
     }
 
     void CodeGenerateVisitor::Visit(LocalNameListStatement *l_namelist_stmt, void *data)
@@ -1157,8 +1083,6 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(AssignmentStatement *assign_stmt, void *data)
     {
-        REGISTER_GENERATOR_GUARD();
-
         auto function = GetCurrentFunction();
         auto line = assign_stmt->line_;
         Instruction instruction;
@@ -1167,27 +1091,23 @@ namespace oms
         auto* var_list = static_cast<VarList*>(assign_stmt->var_list_.get());
         auto* exp_list = static_cast<ExpressionList*>(assign_stmt->exp_list_.get());
 
+        auto end_register = start_register + var_list->var_list_.size();
         try
         {
             exp_list->Accept(this, nullptr);
             if (exp_list->exp_any_)
             {
-                instruction = Instruction::ACode(OpType_SetTop,
-                    start_register + var_list->var_list_.size());
+                instruction = Instruction::ACode(OpType_SetTop, end_register);
                 function->AddInstruction(instruction, line);
             }
             else
             {
                 FillRemainRegisterNil(start_register + exp_list->exp_list_.size(),
-                    start_register + var_list->var_list_.size(), line);
+                    end_register, line);
             }
 
             // Assign results to var list
-            int end_register = start_register + var_list->var_list_.size();
-            AssertRegisterIdValid(end_register);
-            ResetRegisterIdGenerator(end_register);
-            VarListData var_list_data{ start_register, end_register };
-            assign_stmt->var_list_->Accept(this, &var_list_data);
+            assign_stmt->var_list_->Accept(this, nullptr);
         }
         catch (const CodeGenerateException &)
         {
@@ -1203,22 +1123,24 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(VarList *var_list, void *data)
     {
-        auto var_list_data = static_cast<VarListData *>(data);
-        int register_id = var_list_data->start_register_;
-        int end_register = var_list_data->end_register_;
+        REGISTER_GENERATOR_GUARD();
         int var_count = var_list->var_list_.size();
-        assert(end_register - register_id == var_count);
+        auto start_register = GetNextRegisterId();
+        auto end_register = start_register + var_count;
+        AssertRegisterIdValid(start_register);
+        ResetRegisterIdGenerator(end_register);
 
         // Assign results to each variable
-        for (int i = 0; i < var_count; ++i, ++register_id)
+        for (int i = 0; i < var_count; ++i, ++start_register)
         {
-            ExpVarData exp_var_data{ register_id, register_id + 1 };
-            var_list->var_list_[i]->Accept(this, &exp_var_data);
+            VarValueData var_value_data{start_register};
+            var_list->var_list_[i]->Accept(this, &var_value_data);
         }
     }
 
     void CodeGenerateVisitor::Visit(Terminator *term, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         auto function = GetCurrentFunction();
 
         // Generate code for SemanticOp_Write
@@ -1251,7 +1173,8 @@ namespace oms
         }
 
         // Generate code for SemanticOp_Read
-
+        auto register_id = GenerateRegisterId();
+        Instruction instruction;
         if (term->token_.token_ == Token_Number || term->token_.token_ == Token_String)
         {
             // Load const to register
@@ -1260,8 +1183,7 @@ namespace oms
                 index = function->AddConstNumber(term->token_.number_);
             else
                 index = function->AddConstString(term->token_.str_);
-            auto instruction = Instruction::ABxCode(OpType_LoadConst, register_id++, index);
-            function->AddInstruction(instruction, term->token_.line_);
+            instruction = Instruction::ABxCode(OpType_LoadConst, register_id, index);
         }
         else if (term->token_.token_ == Token_Id)
         {
@@ -1269,60 +1191,42 @@ namespace oms
             {
                 // Get value from global table by key index
                 auto index = function->AddConstString(term->token_.str_);
-                auto instruction = Instruction::ABxCode(OpType_GetGlobal, register_id++, index);
-                function->AddInstruction(instruction, term->token_.line_);
+                instruction = Instruction::ABxCode(OpType_GetGlobal, register_id, index);
             }
             else if (term->scoping_ == LexicalScoping_Local)
             {
                 // Load local variable value to dst register
                 auto local = SearchLocalName(term->token_.str_);
                 assert(local);
-                auto instruction = Instruction::ABCode(OpType_Move, register_id++, local->register_id_);
-                function->AddInstruction(instruction, term->token_.line_);
+                instruction = Instruction::ABCode(OpType_Move, register_id, local->register_id_);
             }
             else if (term->scoping_ == LexicalScoping_Upvalue)
             {
                 // Get upvalue index
                 auto index = PrepareUpvalue(term->token_.str_);
-                auto instruction = Instruction::ABCode(OpType_GetUpvalue, register_id++, index);
-                function->AddInstruction(instruction, term->token_.line_);
+                instruction = Instruction::ABCode(OpType_GetUpvalue, register_id, index);
             }
         }
         else if (term->token_.token_ == Token_True || term->token_.token_ == Token_False)
         {
             auto bvalue = term->token_.token_ == Token_True ? 1 : 0;
-            auto instruction = Instruction::ABCode(OpType_LoadBool, register_id++, bvalue);
-            function->AddInstruction(instruction, term->token_.line_);
+            instruction = Instruction::ABCode(OpType_LoadBool, register_id, bvalue);
         }
         else if (term->token_.token_ == Token_Nil)
         {
-            auto instruction = Instruction::ACode(OpType_LoadNil, register_id++);
-            function->AddInstruction(instruction, term->token_.line_);
+            instruction = Instruction::ACode(OpType_LoadNil, register_id);
         }
         else if (term->token_.token_ == Token_VarArg)
         {
-            // Copy vararg to registers which start from register_id
-            auto expect_results = end_register == EXP_VALUE_COUNT_ANY ?
-                EXP_VALUE_COUNT_ANY : end_register - register_id;
-            auto instruction = Instruction::ACode(OpType_VarArg, register_id);
-            function->AddInstruction(instruction, term->token_.line_);
-
-            // All registers will be filled when executing, so do not
-            // fill nil to remain registers
-            register_id = end_register;
+            instruction = Instruction::ACode(OpType_VarArg, register_id);
         }
 
-        FillRemainRegisterNil(register_id, end_register, term->token_.line_);
+        function->AddInstruction(instruction, term->token_.line_);
     }
 
     void CodeGenerateVisitor::Visit(BinaryExpression *bin_exp, void *data)
     {
-        auto exp_var_data = static_cast<ExpVarData *>(data);
-        auto register_id = exp_var_data->start_register_;
-        auto end_register = exp_var_data->end_register_;
-
-        if (end_register != EXP_VALUE_COUNT_ANY && register_id >= end_register)
-            return ;
+        REGISTER_GENERATOR_GUARD();
 
         auto function = GetCurrentFunction();
         auto line = bin_exp->op_token_.line_;
@@ -1330,53 +1234,35 @@ namespace oms
         if (token == Token_And || token == Token_Or)
         {
             // Calculate left expression
-            ExpVarData left_data{ register_id, register_id + 1 };
-            bin_exp->left_->Accept(this, &left_data);
+            bin_exp->left_->Accept(this, nullptr);
 
             // Do not calculate right expression when the result of left expression
             // satisfy semantics of operator
             auto op_type = token == Token_And ? OpType_JmpFalse : OpType_JmpTrue;
-            auto instruction = Instruction::AsBxCode(op_type, register_id, 0);
+            auto instruction = Instruction::AsBxCode(op_type, GetNextRegisterId(), 0);
             int index = function->AddInstruction(instruction, line);
 
             // Calculate right expression
-            ExpVarData right_data{ register_id, register_id + 1 };
-            bin_exp->right_->Accept(this, &right_data);
+            bin_exp->right_->Accept(this, nullptr);
 
             int dst_index = function->OpCodeSize();
             function->GetMutableInstruction(index)->RefillsBx(dst_index - index);
 
-            return FillRemainRegisterNil(register_id + 1, end_register, line);
+            return;
         }
 
         int left_register = 0;
         // Generate code to calculate left expression
         {
-            ExpVarData exp_var_data{ register_id, register_id + 1 };
-            bin_exp->left_->Accept(this, &exp_var_data);
-            left_register = register_id;
+            bin_exp->left_->Accept(this, nullptr);
+            left_register = GenerateRegisterId();
         }
 
         int right_register = 0;
         // Generate code to calculate right expression
         {
-            if (end_register != EXP_VALUE_COUNT_ANY && register_id + 1 < end_register)
-            {
-                // If parent AST provide more than one register, then use the second
-                // register as temp register of right expression
-                ExpVarData exp_var_data{ register_id + 1, register_id + 2 };
-                bin_exp->right_->Accept(this, &exp_var_data);
-                right_register = register_id + 1;
-            }
-            else
-            {
-                // No more register, then generate a new register as temp register of
-                // right expression
-                REGISTER_GENERATOR_GUARD();
-                right_register = GenerateRegisterId();
-                ExpVarData exp_var_data{ right_register, right_register + 1 };
-                bin_exp->right_->Accept(this, &exp_var_data);
-            }
+            bin_exp->right_->Accept(this, nullptr);
+            right_register = GenerateRegisterId();
         }
 
         // Choose OpType by operator
@@ -1399,23 +1285,17 @@ namespace oms
         }
 
         // Generate instruction to calculate
-        auto instruction = Instruction::ABCCode(op_type, register_id++,
+        auto instruction = Instruction::ABCCode(op_type, left_register,
                                                 left_register, right_register);
         function->AddInstruction(instruction, line);
-
-        FillRemainRegisterNil(register_id, end_register, line);
     }
 
     void CodeGenerateVisitor::Visit(UnaryExpression *unexp, void *data)
     {
-        auto exp_var_data = static_cast<ExpVarData *>(data);
-        auto register_id = exp_var_data->start_register_;
-        auto end_register = exp_var_data->end_register_;
+        REGISTER_GENERATOR_GUARD();
 
-        if (end_register != EXP_VALUE_COUNT_ANY && register_id >= end_register)
-            return ;
-
-        unexp->exp_->Accept(this, exp_var_data);
+        unexp->exp_->Accept(this, nullptr);
+        auto register_id = GenerateRegisterId();
 
         // Choose OpType by operator
         OpType op_type;
@@ -1429,14 +1309,13 @@ namespace oms
 
         // Generate instruction
         auto function = GetCurrentFunction();
-        auto instruction = Instruction::ACode(op_type, register_id++);
+        auto instruction = Instruction::ACode(op_type, register_id);
         function->AddInstruction(instruction, unexp->op_token_.line_);
-
-        FillRemainRegisterNil(register_id, end_register, unexp->op_token_.line_);
     }
 
     void CodeGenerateVisitor::Visit(FunctionBody *func_body, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         int child_index = 0;
         {
             CODE_GENERATE_GUARD(EnterFunction, LeaveFunction);
@@ -1464,19 +1343,11 @@ namespace oms
         }
 
         // Generate closure
-        auto exp_var_data = static_cast<ExpVarData *>(data);
-        auto register_id = exp_var_data->start_register_;
-        auto end_register = exp_var_data->end_register_;
-        if (end_register == EXP_VALUE_COUNT_ANY || register_id < end_register)
-        {
-            auto function = GetCurrentFunction();
-            auto i = Instruction::ABxCode(OpType_Closure,
-                                          register_id++,
-                                          child_index);
-            function->AddInstruction(i, func_body->line_);
-        }
-
-        FillRemainRegisterNil(register_id, end_register, func_body->line_);
+        auto function = GetCurrentFunction();
+        auto i = Instruction::ABxCode(OpType_Closure,
+                                        GenerateRegisterId(),
+                                        child_index);
+        function->AddInstruction(i, func_body->line_);
     }
 
     void CodeGenerateVisitor::Visit(ParamList *param_list, void *data)
@@ -1505,48 +1376,41 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(TableDefine *table, void *data)
     {
-        auto exp_var_data = static_cast<ExpVarData *>(data);
-        auto register_id = exp_var_data->start_register_;
-        auto end_register = exp_var_data->end_register_;
-
-        // No register, then do not generate code
-        if (end_register != EXP_VALUE_COUNT_ANY && register_id >= end_register)
-            return ;
-
+        REGISTER_GENERATOR_GUARD();
         // New table
         auto function = GetCurrentFunction();
-        auto instruction = Instruction::ACode(OpType_NewTable, register_id);
+        auto table_register = GenerateRegisterId();
+        auto instruction = Instruction::ACode(OpType_NewTable, table_register);
         function->AddInstruction(instruction, table->line_);
 
         if (!table->fields_.empty())
         {
             // Init table value
-            TableFieldData field_data{ register_id };
+            TableFieldData field_data{ table_register };
             for (auto &field : table->fields_)
             {
                 REGISTER_GENERATOR_GUARD();
                 field->Accept(this, &field_data);
             }
         }
-
-        FillRemainRegisterNil(register_id + 1, end_register, table->line_);
     }
 
     void CodeGenerateVisitor::Visit(TableIndexField *field, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         auto field_data = static_cast<TableFieldData *>(data);
         auto table_register = field_data->table_register_;
 
         // Load key
+        field->index_->Accept(this, nullptr);
         auto key_register = GenerateRegisterId();
-        ExpVarData exp_var_data{ key_register, key_register + 1 };
-        field->index_->Accept(this, &exp_var_data);
 
         SetTableFieldValue(field, table_register, key_register, field->line_);
     }
 
     void CodeGenerateVisitor::Visit(TableNameField *field, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         auto field_data = static_cast<TableFieldData *>(data);
         auto table_register = field_data->table_register_;
 
@@ -1562,6 +1426,7 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(TableArrayField *field, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         auto field_data = static_cast<TableFieldData *>(data);
         auto table_register = field_data->table_register_;
 
@@ -1576,25 +1441,24 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(IndexAccessor *accessor, void *data)
     {
-        AccessTableField(accessor, data, accessor->line_,
-                         [=](int key_register) {
-                             ExpVarData data{ key_register, key_register + 1 };
-                             accessor->index_->Accept(this, &data);
-                         });
+        AccessTableField(accessor, data, accessor->line_, [=]() {
+            accessor->index_->Accept(this, nullptr);
+        });
     }
 
     void CodeGenerateVisitor::Visit(MemberAccessor *accessor, void *data)
     {
-        AccessTableField(accessor, data, accessor->member_.line_,
-                         [=](int key_register) {
-                             auto function = GetCurrentFunction();
-                             auto key_index = function->
-                                AddConstString(accessor->member_.str_);
-                             auto instruction = Instruction::
-                                ABxCode(OpType_LoadConst, key_register, key_index);
-                             function->AddInstruction(instruction,
-                                                      accessor->member_.line_);
-                         });
+        AccessTableField(accessor, data, accessor->member_.line_, [=]() {
+            auto key_register = GetNextRegisterId();
+            AssertRegisterIdValid(key_register);
+            auto function = GetCurrentFunction();
+            auto key_index = function->
+                AddConstString(accessor->member_.str_);
+            auto instruction = Instruction::
+                ABxCode(OpType_LoadConst, key_register, key_index);
+            function->AddInstruction(instruction,
+                accessor->member_.line_);
+        });
     }
 
     void CodeGenerateVisitor::Visit(NormalFuncCall *func_call, void *data)
@@ -1641,9 +1505,7 @@ namespace oms
         else
         {
             // arg->type_ is FuncCallArgs::Table or FuncCallArgs::String
-            auto start_register = GenerateRegisterId();
-            ExpVarData exp_var_data{ start_register, start_register + 1 };
-            arg->arg_->Accept(this, &exp_var_data);
+            arg->arg_->Accept(this, nullptr);
         }
     }
 
