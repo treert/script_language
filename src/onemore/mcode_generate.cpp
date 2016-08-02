@@ -426,6 +426,17 @@ namespace oms
             current_function_->register_id_ = generator;
         }
 
+        void AssertRegisterIdValid(int register_id)
+        {
+            if (register_id > MAX_FUNCTION_REGISTER_COUNT)
+            {
+                throw CodeGenerateException(
+                    GetCurrentFunction()->GetModule()->GetCStr(),
+                    GetCurrentFunction()->GetLine(),
+                    "too many local variables in function");
+            }
+        }
+
         // Is register count overflow
         bool IsRegisterCountOverflow()
         {
@@ -483,7 +494,7 @@ namespace oms
                               const LoadKey &load_key);
 
         template<typename FuncCallType, typename CallerArgAdjuster>
-        void FunctionCall(FuncCallType *func_call, void *data,
+        void FunctionCall(FuncCallType *func_call,
                           const CallerArgAdjuster &adjust_caller_arg);
 
         // Current code generating function
@@ -500,19 +511,6 @@ namespace oms
 #define LOOP_GUARD(loop_ast)                                            \
     Guard l([=]() { this->EnterLoop(loop_ast); },                       \
             [=]() { this->LeaveLoop(); })
-
-    // For ExpList AST
-    struct ExpListData
-    {
-        // ExpList need fill into range [start_register_, end_register_)
-        // when end_register_ != EXP_VALUE_COUNT_ANY, otherwise fill any
-        // count registers begin with start_register_
-        int start_register_;
-        int end_register_;
-
-        ExpListData(int start_register, int end_register)
-            : start_register_(start_register), end_register_(end_register) { }
-    };
 
     // For expression and variable
     struct ExpVarData
@@ -575,11 +573,8 @@ namespace oms
         auto function = GetCurrentFunction();
         int jmp_end_index = 0;
         {
-            REGISTER_GENERATOR_GUARD();
-            auto register_id = GenerateRegisterId();
-            ExpVarData exp_var_data{ register_id, register_id + 1 };
-            if_stmt->exp_->Accept(this, &exp_var_data);
-
+            if_stmt->exp_->Accept(this, nullptr);
+            auto register_id = GetNextRegisterId();
             auto instruction = Instruction::AsBxCode(OpType_JmpFalse, register_id, 0);
             int jmp_index = function->AddInstruction(instruction, if_stmt->line_);
 
@@ -613,9 +608,8 @@ namespace oms
                                                  int line)
     {
         // Load value
-        auto value_register = GenerateRegisterId();
-        ExpVarData exp_var_data{ value_register, value_register + 1 };
         field->value_->Accept(this, &exp_var_data);
+        auto value_register = GetNextRegisterId();
 
         // Set table field
         auto instruction = Instruction::ABCCode(OpType_SetTable, table_register,
@@ -679,34 +673,21 @@ namespace oms
     }
 
     template<typename FuncCallType, typename CallerArgAdjuster>
-    void CodeGenerateVisitor::FunctionCall(FuncCallType *func_call, void *data,
+    void CodeGenerateVisitor::FunctionCall(FuncCallType *func_call,
                                            const CallerArgAdjuster &adjust_caller_arg)
     {
         REGISTER_GENERATOR_GUARD();
-        auto exp_var_data = static_cast<ExpVarData *>(data);
-        auto start_register = exp_var_data ? exp_var_data->start_register_ : 0;
-        auto end_register = exp_var_data ? exp_var_data->end_register_ : 0;
 
         // Generate code to get caller
-        int caller_register = 0;
-        if (end_register == EXP_VALUE_COUNT_ANY)
-            caller_register = start_register;
-        else
-            caller_register = GenerateRegisterId();
-        {
-            REGISTER_GENERATOR_GUARD();
-            ExpVarData caller_data{ caller_register, caller_register + 1 };
-            func_call->caller_->Accept(this, &caller_data);
-        }
+        func_call->caller_->Accept(this, nullptr);
+        auto caller_register = GenerateRegisterId();
 
         // Adjust caller, and also adjust args,
         // return how many args adjusted
         int adjust_args = adjust_caller_arg(caller_register);
 
-        FuncCallArgsData arg_data;
-        auto start_register_id = GetNextRegisterId();
+        // handle args
         func_call->args_->Accept(this, &arg_data);
-
         int args_count = 0;
         bool args_any = false;
         {
@@ -734,31 +715,10 @@ namespace oms
             args_count += adjust_args;
         }
 
-        // Calculate total args
-        int total_args = arg_data.arg_value_count_ == EXP_VALUE_COUNT_ANY ?
-            EXP_VALUE_COUNT_ANY : arg_data.arg_value_count_ + adjust_args;
-
-        // Calculate expect results count of function call
-        auto results = end_register == EXP_VALUE_COUNT_ANY ?
-            EXP_VALUE_COUNT_ANY : end_register - start_register;
-
         // Generate call instruction
         auto function = GetCurrentFunction();
         auto instruction = Instruction::ABCCode(OpType_Call, caller_register, args_count, args_any);
         function->AddInstruction(instruction, func_call->line_);
-
-        // Copy results of function call to dst registers
-        // if end_register == EXP_VALUE_COUNT_ANY, then do not
-        // copy results to dst registers, just keep it
-        if (end_register != EXP_VALUE_COUNT_ANY)
-        {
-            auto src = caller_register;
-            for (auto dst = start_register; dst < end_register; ++dst, ++src)
-            {
-                auto i = Instruction::ABCode(OpType_Move, dst, src);
-                function->AddInstruction(i, func_call->line_);
-            }
-        }
     }
 
     void CodeGenerateVisitor::Visit(Chunk *chunk, void *data)
@@ -804,9 +764,7 @@ namespace oms
             exp_any_ = exp_list->exp_any_;
             exp_count = exp_list->exp_list_.size();
 
-            //register_id = GenerateRegisterId();
-            ExpListData exp_list_data{ register_id, EXP_VALUE_COUNT_ANY };
-            ret_stmt->exp_list_->Accept(this, &exp_list_data);
+            exp_list->Accept(this, nullptr);
         }
 
         instruction = Instruction::ABCCode(OpType_Ret, register_id, exp_count, exp_any_);
@@ -969,22 +927,19 @@ namespace oms
         auto function = GetCurrentFunction();
         auto line = gen_for->line_;
         Instruction instruction;
+        auto start_register = GetNextRegisterId();
 
         // Init generic for statement data
+        auto* exp_list = static_cast<ExpressionList*>(gen_for->exp_list_.get());
+        exp_list->Accept(this, nullptr);
+        if (exp_list->exp_any_)
+        {
+            instruction = Instruction::ACode(OpType_SetTop, GetNextRegisterId() + 3);
+            function->AddInstruction(instruction, line);
+        }
         auto func_register = GenerateRegisterId();
         auto state_register = GenerateRegisterId();
         auto var_register = GenerateRegisterId();
-        ExpListData exp_list_data{ func_register, var_register + 1 };
-        gen_for->exp_list_->Accept(this, &exp_list_data);
-
-        {
-            auto* exp_list = static_cast<ExpressionList*>(gen_for->exp_list_.get());
-            if (exp_list->exp_any_)
-            {
-                instruction = Instruction::ACode(OpType_SetTop, func_register + 3);
-                function->AddInstruction(instruction, line);
-            }
-        }
 
         LOOP_GUARD(gen_for);
         {
@@ -997,9 +952,10 @@ namespace oms
             assert(name_start < name_end);
 
             // Alloca temp registers for call iterate function
-            auto temp_func = GenerateRegisterId();
-            auto temp_state = GenerateRegisterId();
-            auto temp_var = GenerateRegisterId();
+            AssertRegisterIdValid(name_start + 3);
+            auto temp_func = name_start;
+            auto temp_state = name_start + 1;
+            auto temp_var = name_start + 2;
 
             // Call iterate function
             auto move = [=](int dst, int src) {
@@ -1015,10 +971,6 @@ namespace oms
 
             instruction = Instruction::ACode(OpType_SetTop, name_end);
             function->AddInstruction(instruction, line);
-
-            // Copy results to registers of names
-            for (auto name = name_start; name < name_end; ++name, ++temp_func)
-                move(name, temp_func);
 
             // Break the loop when the first name value is nil
             instruction = Instruction::AsBxCode(OpType_JmpNil, name_start, 0);
@@ -1155,7 +1107,7 @@ namespace oms
         auto function = GetCurrentFunction();
         Instruction instruction;
         auto line = l_namelist_stmt->line_;
-        auto name_list = dynamic_cast<NameList*>(l_namelist_stmt->name_list_.get());
+        auto* name_list = dynamic_cast<NameList*>(l_namelist_stmt->name_list_.get());
         // Generate code for expression list first, then expression list can get
         // variables which has the same name with variables defined in NameList
         // e.g.
@@ -1163,34 +1115,22 @@ namespace oms
         //     local i = i -- i value is 1
         if (l_namelist_stmt->exp_list_)
         {
-            // Reserve registers for NameList
-            int start_register = GetNextRegisterId();
-            int end_register = start_register + name_list->names_.size();
-            Guard g([=]() { this->ResetRegisterIdGenerator(end_register); },
-                    [=]() { this->ResetRegisterIdGenerator(start_register); });
-
+            auto* exp_list = static_cast<ExpressionList*>(l_namelist_stmt->exp_list_.get());
             try
             {
-                ExpListData exp_list_data{ start_register, end_register };
-                l_namelist_stmt->exp_list_->Accept(this, &exp_list_data);
-
-
+                int start_register = GetNextRegisterId();
+                exp_list->Accept(this, nullptr);
+                if (exp_list->exp_any_)
                 {
-                    auto* name_list = static_cast<NameList*>(l_namelist_stmt->name_list_.get());
-                    auto* exp_list = static_cast<ExpressionList*>(l_namelist_stmt->exp_list_.get());
-                    if (exp_list->exp_any_)
-                    {
-                        instruction = Instruction::ACode(OpType_SetTop,
-                            start_register + name_list->names_.size());
-                        function->AddInstruction(instruction, line);
-                    }
-                    else
-                    {
-                        FillRemainRegisterNil(start_register + exp_list->exp_list_.size(),
-                            start_register + name_list->names_.size(), line);
-                    }
+                    instruction = Instruction::ACode(OpType_SetTop,
+                        start_register + name_list->names_.size());
+                    function->AddInstruction(instruction, line);
                 }
-
+                else
+                {
+                    FillRemainRegisterNil(start_register + exp_list->exp_list_.size(),
+                        start_register + name_list->names_.size(), line);
+                }
             }
             catch (const CodeGenerateException &)
             {
@@ -1210,33 +1150,31 @@ namespace oms
         auto function = GetCurrentFunction();
         auto line = assign_stmt->line_;
         Instruction instruction;
+        auto start_register = GetNextRegisterId();
 
         auto* var_list = static_cast<VarList*>(assign_stmt->var_list_.get());
         auto* exp_list = static_cast<ExpressionList*>(assign_stmt->exp_list_.get());
-        int register_id = GetNextRegisterId();
 
         try
         {
-            // Get exp list results placed into [register_id, end_register)
-            ExpListData exp_list_data{ register_id, EXP_VALUE_COUNT_ANY };
-            assign_stmt->exp_list_->Accept(this, &exp_list_data);
-
+            exp_list->Accept(this, nullptr);
             if (exp_list->exp_any_)
             {
                 instruction = Instruction::ACode(OpType_SetTop,
-                    register_id + var_list->var_list_.size());
+                    start_register + var_list->var_list_.size());
                 function->AddInstruction(instruction, line);
             }
             else
             {
-                FillRemainRegisterNil(register_id + exp_list->exp_list_.size(),
-                    register_id + var_list->var_list_.size(), line);
+                FillRemainRegisterNil(start_register + exp_list->exp_list_.size(),
+                    start_register + var_list->var_list_.size(), line);
             }
 
             // Assign results to var list
-            int end_register = register_id + var_list->var_list_.size();
+            int end_register = start_register + var_list->var_list_.size();
+            AssertRegisterIdValid(end_register);
             ResetRegisterIdGenerator(end_register);
-            VarListData var_list_data{ register_id, end_register };
+            VarListData var_list_data{ start_register, end_register };
             assign_stmt->var_list_->Accept(this, &var_list_data);
         }
         catch (const CodeGenerateException &)
@@ -1654,12 +1592,12 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(NormalFuncCall *func_call, void *data)
     {
-        FunctionCall(func_call, data, [](int) { return 0; });
+        FunctionCall(func_call, [](int) { return 0; });
     }
 
     void CodeGenerateVisitor::Visit(MemberFuncCall *func_call, void *data)
     {
-        FunctionCall(func_call, data, [=](int caller_register) {
+        FunctionCall(func_call, [=](int caller_register) {
             auto function = GetCurrentFunction();
             // Copy table to arg_register as first argument
             auto arg_register = GenerateRegisterId();
@@ -1690,9 +1628,7 @@ namespace oms
         {
             if (arg->arg_)
             {
-                auto start_register = GenerateRegisterId();
-                ExpListData exp_list_data{ start_register, EXP_VALUE_COUNT_ANY };
-                arg->arg_->Accept(this, &exp_list_data);
+                arg->arg_->Accept(this, nullptr);
             }
         }
         else
@@ -1706,53 +1642,15 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(ExpressionList *exp_list, void *data)
     {
-        auto exp_list_data = static_cast<ExpListData *>(data);
-        auto register_id = exp_list_data->start_register_;
-        auto end_register = exp_list_data->end_register_;
-
-        // When parent do not limit register count, reset register
-        // id generator as consume some registers, and check register
-        // count overflow or not
-        auto register_consumer = [=](int id) {
-            if (end_register == EXP_VALUE_COUNT_ANY)
-                ResetRegisterIdGenerator(id);
-            if (IsRegisterCountOverflow())
-            {
-                throw CodeGenerateException(
-                    GetCurrentFunction()->GetModule()->GetCStr(), exp_list->line_,
-                    "too many local variables or too complex expression");
-            }
-        };
-
-        assert(!exp_list->exp_list_.empty());
-        int count = exp_list->exp_list_.size() - 1;
-
-        // Each expression consume one register
-        int i = 0;
-        int max_register = end_register == EXP_VALUE_COUNT_ANY ?
-            std::numeric_limits<int>::max() : end_register;
-        for (; i < count && register_id < max_register; ++i, ++register_id)
-        {
-            register_consumer(register_id + 1);
-
-            REGISTER_GENERATOR_GUARD();
-            ExpVarData exp_var_data{ register_id, register_id + 1 };
-            exp_list->exp_list_[i]->Accept(this, &exp_var_data);
-        }
-
-        // No more register
-        for (; i < count; ++i)
-        {
-            REGISTER_GENERATOR_GUARD();
-            ExpVarData exp_var_data{ 0, 0 };
-            exp_list->exp_list_[i]->Accept(this, &exp_var_data);
-        }
-
-        // Last expression consume all remain registers
-        register_consumer(register_id + 1);
         REGISTER_GENERATOR_GUARD();
-        ExpVarData exp_var_data{ register_id, end_register };
-        exp_list->exp_list_.back()->Accept(this, &exp_var_data);
+        // Each expression consume one register
+        int count = exp_list->exp_list_.size();
+        for (int i = 0; i < count; ++i)
+        {
+            GenerateRegisterId();
+            REGISTER_GENERATOR_GUARD();
+            exp_list->exp_list_[i]->Accept(this, nullptr);
+        }
     }
 
     void CodeGenerate(SyntaxTree *root, State *state)
