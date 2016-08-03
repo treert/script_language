@@ -1042,8 +1042,9 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(LocalFunctionStatement *l_func_stmt, void *data)
     {
+        InsertName(l_func_stmt->name_.str_, GetNextRegisterId());
         l_func_stmt->func_body_->Accept(this, nullptr);
-        InsertName(l_func_stmt->name_.str_, GenerateRegisterId());
+        GenerateRegisterId();
     }
 
     void CodeGenerateVisitor::Visit(LocalNameListStatement *l_namelist_stmt, void *data)
@@ -1063,17 +1064,18 @@ namespace oms
             try
             {
                 int start_register = GetNextRegisterId();
+                int end_register = start_register + name_list->names_.size();
+                AssertRegisterIdValid(end_register - 1);
                 exp_list->Accept(this, nullptr);
                 if (exp_list->exp_any_)
                 {
-                    instruction = Instruction::ACode(OpType_SetTop,
-                        start_register + name_list->names_.size());
+                    instruction = Instruction::ACode(OpType_SetTop, end_register);
                     function->AddInstruction(instruction, line);
                 }
                 else
                 {
                     FillRemainRegisterNil(start_register + exp_list->exp_list_.size(),
-                        start_register + name_list->names_.size(), line);
+                        end_register, line);
                 }
             }
             catch (const CodeGenerateException &)

@@ -208,8 +208,9 @@ namespace oms
 
     void Lexer::LexNewLine()
     {
+        auto back = current_;
         Next();
-        if ((current_ == '\r' || current_ == '\n') && current_ != current_)
+        if ((current_ == '\r' || current_ == '\n') && current_ != back)
         {
             Next();
         }

@@ -2,6 +2,7 @@
 #include "mlex.h"
 #include "mstate.h"
 #include "mexception.h"
+#include "msyntax_tree.h"
 #include <assert.h>
 
 namespace
