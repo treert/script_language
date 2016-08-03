@@ -12,13 +12,8 @@ namespace oms
 
     void Stack::SetNewTop(Value *top)
     {
-        Value *old = top_;
         top_ = top;
         top_->SetNil();
-
-        // Clear values between new top to old
-        for (; top <= old; ++top)
-            top->SetNil();
     }
 
     void Stack::CloseUpvalueTo(Value *ptr)

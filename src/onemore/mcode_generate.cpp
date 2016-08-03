@@ -549,6 +549,7 @@ namespace oms
     template<typename StatementType>
     void CodeGenerateVisitor::IfStatementGenerateCode(StatementType *if_stmt)
     {
+        REGISTER_GENERATOR_GUARD();
         auto function = GetCurrentFunction();
         int jmp_end_index = 0;
         {
@@ -611,10 +612,12 @@ namespace oms
         load_key();
         auto key_register = GenerateRegisterId();
 
+        auto function = GetCurrentFunction();
+        Instruction instruction;
         if (accessor->semantic_ == SemanticOp_Read)
         {
             // Get table value by key
-            auto instruction = Instruction::ABCCode(OpType_GetTable, table_register,
+            instruction = Instruction::ABCCode(OpType_GetTable, table_register,
                 key_register, start_register);
         }
         else
@@ -625,9 +628,11 @@ namespace oms
             auto value_register = var_value_data->value_register_id_;
 
             // Set table value by key
-            auto instruction = Instruction::ABCCode(OpType_SetTable, table_register,
+            instruction = Instruction::ABCCode(OpType_SetTable, table_register,
                 key_register, value_register);
         }
+        
+        function->AddInstruction(instruction, line);
     }
 
     template<typename FuncCallType, typename CallerArgAdjuster>
@@ -942,6 +947,7 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(FunctionName *func_name, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         assert(!func_name->names_.empty());
         auto func_register = static_cast<FunctionNameData *>(data)->func_register_;
         auto function = GetCurrentFunction();
@@ -1036,8 +1042,8 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(LocalFunctionStatement *l_func_stmt, void *data)
     {
-        InsertName(l_func_stmt->name_.str_, GetNextRegisterId());
         l_func_stmt->func_body_->Accept(this, nullptr);
+        InsertName(l_func_stmt->name_.str_, GenerateRegisterId());
     }
 
     void CodeGenerateVisitor::Visit(LocalNameListStatement *l_namelist_stmt, void *data)
@@ -1083,6 +1089,7 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(AssignmentStatement *assign_stmt, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         auto function = GetCurrentFunction();
         auto line = assign_stmt->line_;
         Instruction instruction;
@@ -1441,6 +1448,7 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(IndexAccessor *accessor, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         AccessTableField(accessor, data, accessor->line_, [=]() {
             accessor->index_->Accept(this, nullptr);
         });
@@ -1448,6 +1456,7 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(MemberAccessor *accessor, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         AccessTableField(accessor, data, accessor->member_.line_, [=]() {
             auto key_register = GetNextRegisterId();
             AssertRegisterIdValid(key_register);
@@ -1463,11 +1472,13 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(NormalFuncCall *func_call, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         FunctionCall(func_call, [](int) { return 0; });
     }
 
     void CodeGenerateVisitor::Visit(MemberFuncCall *func_call, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         FunctionCall(func_call, [=](int caller_register) {
             auto function = GetCurrentFunction();
             // Copy table to arg_register as first argument
@@ -1495,6 +1506,7 @@ namespace oms
 
     void CodeGenerateVisitor::Visit(FuncCallArgs *arg, void *data)
     {
+        REGISTER_GENERATOR_GUARD();
         if (arg->type_ == FuncCallArgs::ExpList)
         {
             if (arg->arg_)
@@ -1516,9 +1528,8 @@ namespace oms
         int count = exp_list->exp_list_.size();
         for (int i = 0; i < count; ++i)
         {
-            GenerateRegisterId();
-            REGISTER_GENERATOR_GUARD();
             exp_list->exp_list_[i]->Accept(this, nullptr);
+            GenerateRegisterId();
         }
     }
 

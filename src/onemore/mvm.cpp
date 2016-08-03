@@ -328,7 +328,7 @@ namespace oms
             int arg_any = Instruction::GetParamC(i);
             if (arg_any)
             {
-                arg_count = state_->stack_.top_ - a;
+                arg_count = state_->stack_.top_ - a - 1;
             }
             return state_->CallFunction(a, arg_count);
         } catch (const CallCFuncException &e)
@@ -417,7 +417,6 @@ namespace oms
             result_count = state_->stack_.top_ - src;
         }
 
-        dst->SetNil();
         while (result_count--)
         {
             *dst++ = *src++;
