@@ -1,17 +1,5 @@
 
-function f1()
-    local x2
-    local function f2()
-        print(x2)
-    end
-    --f2()
-    return f2
-end
-
---f1()
-f1()()
-
---[asdfasd[
+---[asdfasd[
 function tostring(a)
     if type(a) == "string" then
         return '"'..a..'"'

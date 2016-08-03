@@ -360,24 +360,40 @@ namespace oms
                 auto reg = call->register_ + upvalue_info->register_index_;
                 // find upvalue
                 auto& upvalue_list = state_->stack_.upvalue_list_;
-                for (auto iter = upvalue_list.rbegin(); iter != upvalue_list.rend(); ++iter)
+                auto r_iter = upvalue_list.rbegin();
+                for (; r_iter != upvalue_list.rend(); ++r_iter)
                 {
-                    if ((*iter)->GetValue() == reg)
-                    {
-                        upvalue = *iter;
-                        break;
-                    }
-                    if ((*iter)->GetValue() < reg)
+                    if ((*r_iter)->GetValue() <= reg)
                     {
                         break;
                     }
                 }
-                if (nullptr == upvalue)
+                if (r_iter == upvalue_list.rend())
                 {
                     // new upvalue
                     upvalue = state_->NewUpvalue();
                     upvalue->SetValuePtr(reg);
-                    upvalue_list.push_back(upvalue);
+                    upvalue_list.push_front(upvalue);
+                }
+                else if ((*r_iter)->GetValue() < reg)
+                {
+                    // new upvalue
+                    upvalue = state_->NewUpvalue();
+                    upvalue->SetValuePtr(reg);
+                    auto iter = r_iter.base();
+                    if (iter == upvalue_list.end())
+                    {
+                        upvalue_list.push_back(upvalue);
+                    }
+                    else
+                    {
+                        upvalue_list.insert(iter, upvalue);
+                    }
+                }
+                else
+                {
+                    assert((*r_iter)->GetValue() == reg);
+                    upvalue = *r_iter;
                 }
                 new_closure->AddUpvalue(upvalue);
             }
@@ -409,6 +425,10 @@ namespace oms
         auto call = &state_->calls_.back();
         auto src = a;
         auto dst = call->func_;
+
+        // Ret will copy result over register,need close upvalue now
+        state_->stack_.CloseUpvalueTo(dst);
+
         int exp_count = Instruction::GetParamB(i);
         int exp_any = Instruction::GetParamC(i);
         int result_count = exp_count;

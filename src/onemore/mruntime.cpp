@@ -21,10 +21,14 @@ namespace oms
         while (!upvalue_list_.empty())
         {
             auto upvalue = upvalue_list_.back();
-            if (upvalue->GetValue() <= ptr)
+            if (upvalue->GetValue() >= ptr)
             {
                 upvalue->Close();
                 upvalue_list_.pop_back();
+            }
+            else
+            {
+                break;
             }
         }
     }
