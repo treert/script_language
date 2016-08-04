@@ -466,16 +466,11 @@ namespace oms
 
         void FillRemainRegisterNil(int register_id, int end_register, int line)
         {
-            // Fill nil into all remain registers
-            // when end_register != EXP_VALUE_COUNT_ANY
             auto function = GetCurrentFunction();
-            if (end_register != EXP_VALUE_COUNT_ANY)
+            while (register_id < end_register)
             {
-                while (register_id < end_register)
-                {
-                    auto instruction = Instruction::ACode(OpType_LoadNil, register_id++);
-                    function->AddInstruction(instruction, line);
-                }
+                auto instruction = Instruction::ACode(OpType_LoadNil, register_id++);
+                function->AddInstruction(instruction, line);
             }
         }
 

@@ -6,8 +6,6 @@
 
 namespace oms
 {
-#define EXP_VALUE_COUNT_ANY -1
-
     class String;
     class Closure;
     class Upvalue;
