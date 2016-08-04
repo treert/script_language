@@ -99,6 +99,11 @@ public:
         MATCH_AST_TYPE(ast, {})
     }
 
+    virtual void Visit(oms::ContinueStatement *ast, void *)
+    {
+        MATCH_AST_TYPE(ast, {})
+    }
+
     virtual void Visit(oms::DoStatement *ast, void *)
     {
         MATCH_AST_TYPE(ast, {

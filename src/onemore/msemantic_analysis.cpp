@@ -77,6 +77,7 @@ namespace oms
         virtual void Visit(Block *, void *);
         virtual void Visit(ReturnStatement *, void *);
         virtual void Visit(BreakStatement *, void *);
+        virtual void Visit(ContinueStatement *, void *);
         virtual void Visit(DoStatement *, void *);
         virtual void Visit(WhileStatement *, void *);
         virtual void Visit(RepeatStatement *, void *);
@@ -319,6 +320,13 @@ namespace oms
         break_stmt->loop_ = GetLoopAST();
         if (!break_stmt->loop_)
             throw SemanticException("not in any loop", break_stmt->break_);
+    }
+
+    void SemanticAnalysisVisitor::Visit(ContinueStatement *continue_stmt, void *data)
+    {
+        continue_stmt->loop_ = GetLoopAST();
+        if (!continue_stmt->loop_)
+            throw SemanticException("not in any loop", continue_stmt->continue_);
     }
 
     void SemanticAnalysisVisitor::Visit(DoStatement *do_stmt, void *data)

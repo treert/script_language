@@ -126,6 +126,7 @@ namespace oms
         virtual void Visit(Block *, void *);
         virtual void Visit(ReturnStatement *, void *);
         virtual void Visit(BreakStatement *, void *);
+        virtual void Visit(ContinueStatement *, void *);
         virtual void Visit(DoStatement *, void *);
         virtual void Visit(WhileStatement *, void *);
         virtual void Visit(RepeatStatement *, void *);
@@ -738,6 +739,15 @@ namespace oms
         AddLoopJumpInfo(break_stmt->loop_, index, LoopJumpInfo::JumpTail);
     }
 
+    void CodeGenerateVisitor::Visit(ContinueStatement *continue_stmt, void *data)
+    {
+        assert(continue_stmt->loop_);
+        auto function = GetCurrentFunction();
+        auto instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);
+        int index = function->AddInstruction(instruction, continue_stmt->continue_.line_);
+        AddLoopJumpInfo(continue_stmt->loop_, index, LoopJumpInfo::JumpHead);
+    }
+
     void CodeGenerateVisitor::Visit(DoStatement *do_stmt, void *data)
     {
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
@@ -850,12 +860,12 @@ namespace oms
             instruction = Instruction::ABCode(OpType_Move, name_register, var_register);
             function->AddInstruction(instruction, line);
 
-            num_for->block_->Accept(this, nullptr);
-
             // var = var + step
             instruction = Instruction::ABCCode(OpType_Add, var_register,
                 var_register, step_register);
             function->AddInstruction(instruction, line);
+
+            num_for->block_->Accept(this, nullptr);
         }
         // Jump to the begin of the loop
         instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);

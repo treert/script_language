@@ -13,6 +13,7 @@ namespace oms
         virtual void Visit(Block *, void *) = 0;
         virtual void Visit(ReturnStatement *, void *) = 0;
         virtual void Visit(BreakStatement *, void *) = 0;
+        virtual void Visit(ContinueStatement *, void *) = 0;
         virtual void Visit(DoStatement *, void *) = 0;
         virtual void Visit(WhileStatement *, void *) = 0;
         virtual void Visit(RepeatStatement *, void *) = 0;

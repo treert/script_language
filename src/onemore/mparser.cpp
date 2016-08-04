@@ -220,6 +220,10 @@ namespace
                     statement = ParseBreakStatement(); 
                     ++end_state_cnt;
                     break;
+                case Token_Continue:
+                    statement = ParseContinueStatement();
+                    ++end_state_cnt;
+                    break;
                 default:
                     if (IsMainExp(LookAhead()))
                     {
@@ -258,6 +262,12 @@ namespace
         {
             assert(look_ahead_.token_ == Token_Break);
             return std::unique_ptr<SyntaxTree>(new BreakStatement(NextToken()));
+        }
+
+        std::unique_ptr<SyntaxTree> ParseContinueStatement()
+        {
+            assert(look_ahead_.token_ == Token_Continue);
+            return std::unique_ptr<SyntaxTree>(new ContinueStatement(NextToken()));
         }
 
         std::unique_ptr<SyntaxTree> ParseDoStatement()

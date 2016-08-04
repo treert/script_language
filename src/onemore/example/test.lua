@@ -64,12 +64,16 @@ dump({
 
 a  = {}
 for i = 1,3 do
+    if i == 2 then
+        continue
+    end
     a[i] = function() print(i);i = i+1; end  
 end
 a[1]()
 a[1]()
+a[3]()
 a[1]()
-a[2]()
+a[3]()
 
 b = {1,2,3,4}
 

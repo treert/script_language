@@ -95,6 +95,22 @@ namespace oms
         SYNTAX_TREE_ACCEPT_VISITOR_DECL();
     };
 
+    class ContinueStatement : public SyntaxTree
+    {
+    public:
+        TokenDetail continue_;
+
+        // For semantic
+        const SyntaxTree *loop_;
+
+        explicit ContinueStatement(const TokenDetail &c)
+            : continue_(c), loop_(nullptr)
+        {
+        }
+
+        SYNTAX_TREE_ACCEPT_VISITOR_DECL();
+    };
+
     class DoStatement : public SyntaxTree
     {
     public:

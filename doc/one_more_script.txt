@@ -18,6 +18,7 @@ stat ::=  varlist "=" explist |
      "local" namelist ["=" explist] |
      "return" [explist] |
      "break" |
+     "continue" |
      "continue"
 
 namelist ::= Name {"," Name}
