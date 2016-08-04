@@ -1131,7 +1131,7 @@ namespace oms
         int var_count = var_list->var_list_.size();
         auto start_register = GetNextRegisterId();
         auto end_register = start_register + var_count;
-        AssertRegisterIdValid(start_register);
+        AssertRegisterIdValid(end_register-1);
         ResetRegisterIdGenerator(end_register);
 
         // Assign results to each variable

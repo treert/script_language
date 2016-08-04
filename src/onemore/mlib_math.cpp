@@ -47,7 +47,9 @@ namespace math {
 
     MATH_FUNCTION2(Atan2, atan2)
     MATH_FUNCTION2(Fmod, fmod)
+#pragma warning(disable:4244)
     MATH_FUNCTION2(Ldexp, ldexp)
+#pragma warning(default:4244)
     MATH_FUNCTION2(Pow, pow)
 
     int Deg(oms::State *state)
