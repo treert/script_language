@@ -349,14 +349,11 @@ namespace oms
         // Start line
         int line_;
 
-        // For semantic
-        std::size_t var_count_;
-
         AssignmentStatement(std::unique_ptr<SyntaxTree> var_list,
                             std::unique_ptr<SyntaxTree> exp_list,
                             int start_line)
             : var_list_(std::move(var_list)), exp_list_(std::move(exp_list)),
-              line_(start_line), var_count_(0)
+              line_(start_line)
         {
         }
 

@@ -252,13 +252,6 @@ namespace oms
     Guard l([=]() { this->SetLoopAST(loop_ast); },                      \
             [=]() { this->SetLoopAST(old_loop); })
 
-    // For VarList AST
-    struct VarListData
-    {
-        std::size_t var_count_;
-
-        VarListData() : var_count_(0) { }
-    };
 
     // Expression type for semantic
     enum ExpType
@@ -457,10 +450,8 @@ namespace oms
 
     void SemanticAnalysisVisitor::Visit(AssignmentStatement *assign_stmt, void *data)
     {
-        VarListData var_list_data;
-        assign_stmt->var_list_->Accept(this, &var_list_data);
+        assign_stmt->var_list_->Accept(this, nullptr);
         assign_stmt->exp_list_->Accept(this, nullptr);
-        assign_stmt->var_count_ = var_list_data.var_count_;
     }
 
     void SemanticAnalysisVisitor::Visit(VarList *var_list, void *data)
@@ -468,7 +459,6 @@ namespace oms
         ExpVarData exp_var_data{ SemanticOp_Write };
         for (auto &var : var_list->var_list_)
             var->Accept(this, &exp_var_data);
-        static_cast<VarListData *>(data)->var_count_ = var_list->var_list_.size();
     }
 
     void SemanticAnalysisVisitor::Visit(Terminator *term, void *data)
