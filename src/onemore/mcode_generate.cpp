@@ -779,17 +779,24 @@ namespace oms
     void CodeGenerateVisitor::Visit(RepeatStatement *repeat_stmt, void *data)
     {
         CODE_GENERATE_GUARD(EnterBlock, LeaveBlock);
-        LOOP_GUARD(repeat_stmt);
-
         repeat_stmt->block_->Accept(this, nullptr);
+
+        LOOP_GUARD(repeat_stmt);
 
         repeat_stmt->exp_->Accept(this, nullptr);
         auto register_id = GetNextRegisterId();
 
         // Jump to head when exp value is true
         auto function = GetCurrentFunction();
-        auto instruction = Instruction::AsBxCode(OpType_JmpFalse, register_id, 0);
+        auto instruction = Instruction::AsBxCode(OpType_JmpTrue, register_id, 0);
         int index = function->AddInstruction(instruction, repeat_stmt->line_);
+        AddLoopJumpInfo(repeat_stmt, index, LoopJumpInfo::JumpTail);
+
+        repeat_stmt->block_->Accept(this, nullptr);
+
+        // Jump to loop head
+        instruction = Instruction::AsBxCode(OpType_Jmp, 0, 0);
+        index = function->AddInstruction(instruction, repeat_stmt->line_);
         AddLoopJumpInfo(repeat_stmt, index, LoopJumpInfo::JumpHead);
     }
 
