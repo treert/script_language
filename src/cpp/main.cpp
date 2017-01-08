@@ -6,6 +6,7 @@
 #include<vector>
 #include<stdint.h>
 #include<assert.h>
+#include <fcntl.h>
 #ifdef WIN32
 #include <ws2tcpip.h>
 #include <mstcpip.h>
@@ -13,12 +14,13 @@
 #include <winsock2.h>
 #pragma comment(lib,"ws2_32.lib") // 不然链接出错
 #include <windows.h>
-#elif defined(LINUX)
+#else
 #include <sys/socket.h>
 #include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 #endif
 
 // 输出log
@@ -32,6 +34,7 @@ namespace {
         }
     };
 #define LOG LogAddEnd() = std::cout << __LINE__ << " " << "["<<__FUNCTION__<<"] "
+#define LOG_NEW_LINE std::cout << std::endl
 }
 
 static int LastErrorNo()
@@ -69,24 +72,60 @@ static std::string LastErrorString()
 
 namespace NetUtils {
 
+    void SleepSomeSeconds(int seconds)
+    {
+#ifdef WIN32
+        Sleep(seconds * 1000);
+#else
+        sleep(seconds);
+#endif // WIN32
+    }
+
+    // 在mac上没有效果哎，win32下有效
     std::string GetLocalIPAddress()
     {
-        char ip[16] = { 0 };
+        char ip[128] = { 0 };
         addrinfo hints;
-        addrinfo *res = nullptr;
-        sockaddr_in *addr;
-
+        addrinfo *answer = nullptr,*curr = nullptr;
+        
         memset(&hints, 0, sizeof(addrinfo));
         hints.ai_family = AF_INET; /* Allow IPv4 */
         hints.ai_protocol = 0; /* Any protocol */
         hints.ai_socktype = SOCK_STREAM;
 
-        int ret = getaddrinfo("", NULL, &hints, &res);
-        if (ret == 0 && res)
+        // mac上第二个参数传nullptr，报错。
+        int ret = getaddrinfo("", "80", &hints, &answer);
+        if (ret == 0)
         {
-            addr = (sockaddr_in *)res->ai_addr;
-            inet_ntop(AF_INET, &addr->sin_addr, ip, sizeof(ip));
+            for (curr = answer; curr != NULL; curr = curr->ai_next)
+            {
+                if (curr->ai_family == AF_INET)
+                {
+                    sockaddr_in *addr = reinterpret_cast<sockaddr_in *>(curr->ai_addr);
+                    inet_ntop(curr->ai_family, &addr->sin_addr, ip, sizeof(ip));
+                    if (strcmp(ip, "127.0.0.1") == 0)
+                    {
+                        continue;
+                    }
+                }
+                else if (curr->ai_family == AF_INET6)
+                {
+                    sockaddr_in6 *addr = reinterpret_cast<sockaddr_in6 *>(curr->ai_addr);
+                    inet_ntop(curr->ai_family, &addr->sin6_addr, ip, sizeof(ip));
+                    if (strcmp(ip, "::1") == 0)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    LOG << "check it";
+                    continue;
+                }
+                break;
+            }
         }
+        freeaddrinfo(answer);
         return ip;
     }
 
@@ -232,7 +271,7 @@ namespace NetUtils {
 
     static void SetKeepAlive(int socket_id, int idle_time, int interval_time)
     {
-#if WIN32
+#if _WIN32
         struct StTcpKeepalive
         {
             uint32_t onoff;
@@ -250,10 +289,12 @@ namespace NetUtils {
         int keepIdle = idle_time;   // 如果在idle秒内没有任何数据交互,则进行探测. 缺省值:7200(s) 
         int keepInterval = interval_time;   // 探测时发探测包的时间间隔为interval秒. 缺省值:75(s) 
         int keepCount = 2;   // 探测重试的次数. 全部超时则认定连接失效..缺省值:9(次) 
-        setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, (void*)&keepAlive, sizeof(keepAlive));
-        setsockopt(s, SOL_TCP, TCP_KEEPIDLE, (void*)&keepIdle, sizeof(keepIdle));
-        setsockopt(s, SOL_TCP, TCP_KEEPINTVL, (void*)&keepInterval, sizeof(keepInterval));
-        setsockopt(s, SOL_TCP, TCP_KEEPCNT, (void*)&keepCount, sizeof(keepCount));
+        setsockopt(socket_id, SOL_SOCKET, SO_KEEPALIVE, (void*)&keepAlive, sizeof(keepAlive));
+#ifdef __linux__
+        setsockopt(socket_id, IPPROTO_TCP, TCP_KEEPIDLE, (void*)&keepIdle, sizeof(keepIdle));
+#endif
+        setsockopt(socket_id, IPPROTO_TCP, TCP_KEEPINTVL, (void*)&keepInterval, sizeof(keepInterval));
+        setsockopt(socket_id, IPPROTO_TCP, TCP_KEEPCNT, (void*)&keepCount, sizeof(keepCount));
 #endif
     }
 
@@ -269,26 +310,20 @@ namespace NetUtils {
         return true;
 #else
         int flags;
-        if ((flags = fcntl(fd, F_GETFL)) < 0)
+        if ((flags = fcntl(fd, F_GETFL)) == -1)
         {
             LOG << "fcntl get fail";
             return false;
         }
 
-        flags |= O_NONBLOCK; //修改非阻塞标志位
-        if (fcntl(fd, F_SETFL, flags) < 0)
+        flags |= O_NONBLOCK; //设置非阻塞标志位
+        if (fcntl(fd, F_SETFL, flags) == -1)
         {
             LOG << "fcntl set fail";
             return false;
         }
-        return true
+        return true;
 #endif
-    }
-
-    bool SetNoDelay(int socket_id)
-    {
-        (void)socket_id;
-        return false;
     }
 
     bool IsAlive(int socket_id) {
@@ -309,7 +344,7 @@ namespace NetUtils {
         hint.ai_family = AF_UNSPEC;// 也可以用AF_INET或AF_INET6指定ipv4或ipv6
         hint.ai_socktype = sock_type;
 
-        if ((ret = getaddrinfo(hostname_or_ip.c_str(), nullptr, &hint, &answer)) != 0) {
+        if ((ret = getaddrinfo(hostname_or_ip.c_str(), std::to_string(port).c_str(), &hint, &answer)) != 0) {
             LOG << "getaddrinfo fail errno:" << LastErrorNo() << " errstr:" << LastErrorString()
                 << " extra_info:" << gai_strerror(ret);
             return -1;
@@ -363,27 +398,34 @@ namespace NetUtils {
         sockaddr * addr_ptr = bIpv6Flag ? (sockaddr *)&sockaddr_ipv6 : (sockaddr *)&sockaddr_ipv4;
         int addr_len = bIpv6Flag ? sizeof(sockaddr_ipv6) : sizeof(sockaddr_ipv4);
 
-        int sockfd = socket(addr_af, sock_type, 0);
-        if (sockfd < 0) {
+        int socket_id = socket(addr_af, sock_type, 0);
+        if (socket_id < 0) {
             LOG_NET_ERR_INFO;
             return -1;
         }
 
-        if (connect(sockfd, addr_ptr, addr_len) < 0) {
+        if (connect(socket_id, addr_ptr, addr_len) < 0) {
             LOG_NET_ERR_INFO;
-            CloseSocket(sockfd);
+            CloseSocket(socket_id);
             return -1;
         }
 
-        SetNoBlock(sockfd);
+        SetNoBlock(socket_id);
+        
+        // TCP
+        if(sock_type == SOCK_STREAM)
+        {
+            const int on = 1;
+            setsockopt(socket_id, IPPROTO_TCP, TCP_NODELAY, (const char*)&on, sizeof(on));
+        }
 
 #ifndef WIN32 // 信号会引起崩溃
         {
             const int set = 1;
-            setsockopt(sockfd, SOL_SOCKET, SO_NOSIGPIPE, (const void *)&set, sizeof(int));
+            setsockopt(socket_id, SOL_SOCKET, SO_NOSIGPIPE, (const void *)&set, sizeof(set));
         }
 #endif
-        return sockfd;
+        return socket_id;
     }
 
 
@@ -435,6 +477,10 @@ namespace NetUtils {
 
         /* new client */
         int fd = accept(socket_id, (struct sockaddr *)&client, &client_len);
+        if (fd)
+        {
+            SetNoBlock(fd);
+        }
         return fd;
     }
 
@@ -443,7 +489,8 @@ namespace NetUtils {
 
 
 
-// 定义了个简单协议，开头两个字节的长度，| len(2) | data |
+// 定义了个简单报文协议，开头两个字节的长度，| len(2) | data |
+// 主要用于TCP
 class CodeRingBuf {
 public:
     CodeRingBuf()
@@ -581,20 +628,20 @@ public:
     }
     virtual std::string RecvMsg() {
         char buf[1500] = {0};
-        
-        while (RecvOneCode(buf, sizeof(buf)) >= 0);
+        // 一定要读到一组数据才结束
+        while (RecvOneCode(buf, sizeof(buf)) < 0);
         return buf;
     }
 };
 
 class TCPConnect :public NetConnect {
 public:
-    TCPConnect():_socket_id(-1) {}
-    TCPConnect(int socket_id):_socket_id(socket_id){}
+    TCPConnect() :_socket_id(-1), _is_breaked_by_server(false) {}
 
     TCPConnect& operator=(int socket_id)
     {
         _socket_id = socket_id;
+        _is_breaked_by_server = false;
         return *this;
     }
 
@@ -614,6 +661,8 @@ public:
 
     int Connect(const std::string hostname_or_ip, uint16_t port)
     {
+        _send_buf.Clear();
+        _recv_buf.Clear();
         _socket_id = NetUtils::Connect(hostname_or_ip, port, SOCK_STREAM);
         return _socket_id;
     }
@@ -683,7 +732,7 @@ public:
             else if (recv_len == 0)
             {
                 // TCP recv()==0, connect is breaked
-                
+                break;
             }
             else if (recv_len < 0)
             {
@@ -714,6 +763,12 @@ private:
 class UDPConnect :public NetConnect {
 public:
     UDPConnect():_socket_id(-1) {}
+
+    UDPConnect& operator=(int socket_id)
+    {
+        _socket_id = socket_id;
+        return *this;
+    }
     UDPConnect(int socket_id) : _socket_id(socket_id) {}
 
     int GetSocketId()
@@ -762,6 +817,13 @@ class TCPListenConnect {
 public:
     TCPListenConnect():_socket_id(-1){}
 
+    void LogInfo()
+    {
+        LOG << "socket_id:" << _socket_id
+            << " listen on " << NetUtils::GetLocalIP(_socket_id)
+            << ":" << NetUtils::GetLocalPort(_socket_id);
+    }
+
     int GetSocketId()
     {
         return _socket_id;
@@ -785,6 +847,13 @@ class UDPListenConnect {
 public:
     UDPListenConnect():_socket_id(-1){}
 
+    void LogInfo()
+    {
+        LOG << "socket_id:" << _socket_id
+            << " listen on " << NetUtils::GetLocalIP(_socket_id)
+            << ":" << NetUtils::GetLocalPort(_socket_id);
+    }
+
     int GetSocketId()
     {
         return _socket_id;
@@ -796,10 +865,11 @@ public:
         return _socket_id;
     }
 
-    void ReflectALL()
+    // 测试函数，反射多少包才结束，
+    void ReflectALL(int num)
     {
         sockaddr_storage client;
-        int client_len = sizeof(client);
+        socklen_t client_len = sizeof(client);
         char buf[1024];
         int recv_len;
         for (;;)
@@ -808,11 +878,13 @@ public:
             if (recv_len >= 0)
             {
                 sendto(_socket_id, buf, recv_len, 0, (sockaddr*)&client, client_len);
+                --num;
             }
             else
             {
                 // todo(check errno)
-                break;
+                if (num <= 0)
+                    break;
             }
         }
     }
@@ -820,9 +892,6 @@ public:
 private:
     int _socket_id;
 };
-
-
-
 
 
 
@@ -838,14 +907,17 @@ int main() {
     };
 #endif
 
-    auto local_ip = NetUtils::GetLocalIPAddress();
-
-    LOG << "TCP no block";
+    std::string local_ip = "127.0.0.1";
+#ifdef WIN32
+    LOG << "local ip = " << NetUtils::GetLocalIPAddress();
+#endif
+    
+    LOG_NEW_LINE;
+    LOG << "TCP no block test start";
     {
         TCPListenConnect listen_connect;
         listen_connect.Listen(8080);
-        LOG << "listen " << NetUtils::GetLocalIP(listen_connect.GetSocketId())
-            << ":" << NetUtils::GetLocalPort(listen_connect.GetSocketId());
+        listen_connect.LogInfo();
         TCPConnect client_connect;
         client_connect.Connect(local_ip, 8080);
         int id;
@@ -868,70 +940,23 @@ int main() {
         LOG << "client recv: " << client_connect.RecvMsg();
     }
 
-    LOG << "UDP no block";
+    LOG_NEW_LINE;
+    LOG << "UDP no block test start";
     {
         UDPListenConnect listen_connect;
         listen_connect.Listen(8080);
-        LOG << "listen " << NetUtils::GetLocalIP(listen_connect.GetSocketId())
-            << ":" << NetUtils::GetLocalPort(listen_connect.GetSocketId());
+        listen_connect.LogInfo();
         UDPConnect client_connect;
         client_connect.Connect(local_ip, 8080);
 
         client_connect.LogInfo("client");
 
         client_connect.SendMsg("hello");
-        listen_connect.ReflectALL();
+
+        listen_connect.ReflectALL(1);
         LOG << "client reflect: " << client_connect.RecvMsg();
     }
 
-
-
-
-#if SOCK_TYPE==SOCK_STREAM
-    //auto listen_id = ListenOnLocalPort(8088);
-    //auto local_ip = GetLocalIPAddress();
-    //auto client_id = Connect(local_ip.c_str(), 8088);
-    //LOG << "client port:" << GetLocalPort(client_id);
-    //auto server_id = Accept(listen_id);
-    //LOG << "server port:" << GetLocalPort(server_id);
-
-    //LOG << Write(client_id, "hello");
-    //LOG << Write(client_id, "");
-    //LOG << LastErrorNo() << LastErrorString();// send可以发空数据没有错误
-    //LOG << Write(client_id, "world");
-    //LOG << "server read:" << Read(server_id);
-
-
-    //SetKeepAlive(server_id, 10, 1);
-    //LOG << "server read:" << Read(server_id);// 会停止在这儿，等待数据
-
-    //CloseSocket(listen_id);
-    //CloseSocket(client_id);
-    //CloseSocket(server_id);
-#endif
-
-#if SOCK_TYPE==SOCK_DGRAM
-
-    auto server_id = ListenOnLocalPort(8080);
-    LOG << "server port:" << GetLocalPort(server_id);
-    auto local_ip = GetLocalIPAddress();
-    auto client_id = Connect(local_ip.c_str(), 8080);
-    LOG << "client port:" << GetLocalPort(client_id);
-
-    //shutdown(client_id, SD_BOTH);
-    LOG << Write(client_id, "hello");
-    LOG << Write(client_id, "");
-    //LOG << LastErrorNo() << LastErrorString();
-    LOG << Write(client_id, "world");
-
-    LOG << "server read:" << Read(server_id);
-    LOG << "server read:" << Read(server_id);
-    LOG << "server read:" << Read(server_id);
-    LOG << "server read:" << Read(server_id); // 会等待
-
-    CloseSocket(client_id);
-    CloseSocket(server_id);
-#endif
 #ifdef WIN32
     WSACleanup();
 #endif // WIN32
