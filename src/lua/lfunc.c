@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lfunc.c,v 2.12.1.2 2007/12/28 14:58:43 roberto Exp $
 ** Auxiliary functions to manipulate prototypes and closures
 ** See Copyright Notice in lua.h
@@ -40,7 +40,7 @@ Closure *luaF_newLclosure (lua_State *L, int nelems, Table *e) {
   return c;
 }
 
-//om ÐÂ½¨upval ¿ªÊ¼ÊÇcloseµÄ
+//om æ–°å»ºupval å¼€å§‹æ˜¯closeçš„
 UpVal *luaF_newupval (lua_State *L) {
   UpVal *uv = luaM_new(L, UpVal);
   luaC_link(L, obj2gco(uv), LUA_TUPVAL);
@@ -49,8 +49,8 @@ UpVal *luaF_newupval (lua_State *L) {
   return uv;
 }
 
-//om ³õÊ¼»¯±Õ°üÊ±ËÑË÷
-//om£¿Õâ¶ùÓÐ¸´ÓÃ±Õ°üµÄ£¬¿ÉÒÔ½ÚÊ¡µã±Õ°ü½á¹¹Âð£¬»¹ÒªÓÐ¶ÔÑ½µÄluaF_close£¬Ò²¿ÉÒÔ²»ÓÃÑ½
+//om åˆå§‹åŒ–é—­åŒ…æ—¶æœç´¢
+//omï¼Ÿè¿™å„¿æœ‰å¤ç”¨é—­åŒ…çš„ï¼Œå¯ä»¥èŠ‚çœç‚¹é—­åŒ…ç»“æž„å—ï¼Œè¿˜è¦æœ‰å¯¹å‘€çš„luaF_closeï¼Œä¹Ÿå¯ä»¥ä¸ç”¨å‘€
 UpVal *luaF_findupval (lua_State *L, StkId level) {
   global_State *g = G(L);
   GCObject **pp = &L->openupval;
@@ -93,7 +93,7 @@ void luaF_freeupval (lua_State *L, UpVal *uv) {
   luaM_free(L, uv);  /* free upvalue */
 }
 
-//om ¹Ø±Õupval
+//om å…³é—­upval
 void luaF_close (lua_State *L, StkId level) {
   UpVal *uv;
   global_State *g = G(L);

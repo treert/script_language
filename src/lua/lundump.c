@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lundump.c,v 2.7.1.4 2008/04/04 19:51:41 roberto Exp $
 ** load precompiled Lua chunks
 ** See Copyright Notice in lua.h
@@ -62,7 +62,7 @@ static int LoadInt(LoadState* S)
 {
  int x;
  LoadVar(S,x);
- //om£¡Õâ£¿£¡
+ //omï¼è¿™ï¼Ÿï¼
  IF (x<0, "bad integer");
  return x;
 }
@@ -164,7 +164,7 @@ static Proto* LoadFunction(LoadState* S, TString* p)
  Proto* f;
  if (++S->L->nCcalls > LUAI_MAXCCALLS) error(S,"code too deep");
  f=luaF_newproto(S->L);
- //om£¿£¡ÕâÖÖ´úÂëÎªÉ¶°Ñincr_top·ÅÔÚºóÃæ²»ÊÇ¿ÉÄÜ±¨´íÂğ£¿
+ //omï¼Ÿï¼è¿™ç§ä»£ç ä¸ºå•¥æŠŠincr_topæ”¾åœ¨åé¢ä¸æ˜¯å¯èƒ½æŠ¥é”™å—ï¼Ÿ
  setptvalue2s(S->L,S->L->top,f); incr_top(S->L);
  f->source=LoadString(S); if (f->source==NULL) f->source=p;
  f->linedefined=LoadInt(S);
@@ -220,7 +220,7 @@ void luaU_header (char* h)
  h+=sizeof(LUA_SIGNATURE)-1;
  *h++=(char)LUAC_VERSION;
  *h++=(char)LUAC_FORMAT;
- //om ×Ö½ÚĞòÅĞ¶Ï
+ //om å­—èŠ‚åºåˆ¤æ–­
  *h++=(char)*(char*)&x;				/* endianness */
  *h++=(char)sizeof(int);
  *h++=(char)sizeof(size_t);

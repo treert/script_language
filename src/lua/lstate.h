@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lstate.h,v 2.24.1.2 2008/01/03 15:20:39 roberto Exp $
 ** Global State
 ** See Copyright Notice in lua.h
@@ -14,10 +14,10 @@
 #include "lzio.h"
 
 
-//om£¿ ÎªÊ²Ã´²»ÓÃtypedef
+//omï¼Ÿ ä¸ºä»€ä¹ˆä¸ç”¨typedef
 struct lua_longjmp;  /* defined in ldo.c */
 
-//om ÕâĞ©ºê¶¨Òå¸Ğ¾õ»¹ÊÇÍ¦ÂÒµÄ
+//om è¿™äº›å®å®šä¹‰æ„Ÿè§‰è¿˜æ˜¯æŒºä¹±çš„
 /* table of globals */
 #define gt(L)	(&L->l_gt)
 
@@ -51,7 +51,7 @@ typedef struct CallInfo {
   StkId	top;  /* top for this function */
   const Instruction *savedpc;
   int nresults;  /* expected number of results from this function */
-  int tailcalls;  /* number of tail calls lost under this entry */ //om? lost²»¶®
+  int tailcalls;  /* number of tail calls lost under this entry */ //om? lostä¸æ‡‚
 } CallInfo;
 
 
@@ -69,7 +69,7 @@ typedef struct global_State {
   stringtable strt;  /* hash table for strings */
   lua_Alloc frealloc;  /* function to reallocate memory */
   void *ud;         /* auxiliary data to `frealloc' */
-  lu_byte currentwhite;//om À¬»ø»ØÊÕÏà¹Ø£¬¾ßÌå»¹²»Çå³ş
+  lu_byte currentwhite;//om åƒåœ¾å›æ”¶ç›¸å…³ï¼Œå…·ä½“è¿˜ä¸æ¸…æ¥š
   lu_byte gcstate;  /* state of garbage collector */
   int sweepstrgc;  /* position of sweep in `strt' */
   GCObject *rootgc;  /* list of all collectable objects */
@@ -106,9 +106,9 @@ struct lua_State {
   CallInfo *ci;  /* call info for current function */
   const Instruction *savedpc;  /* `savedpc' of current function */
   StkId stack_last;  /* last free slot in the stack */
-  StkId stack;  /* stack base */ //om ²ÎÊıÕ»
+  StkId stack;  /* stack base */ //om å‚æ•°æ ˆ
   CallInfo *end_ci;  /* points after end of ci array*/
-  CallInfo *base_ci;  /* array of CallInfo's */ //om º¯ÊıÊı×é
+  CallInfo *base_ci;  /* array of CallInfo's */ //om å‡½æ•°æ•°ç»„
   int stacksize;
   int size_ci;  /* size of array `base_ci' */
   unsigned short nCcalls;  /* number of nested C calls */

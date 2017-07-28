@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: ldebug.c,v 2.29.1.6 2008/05/08 16:56:26 roberto Exp $
 ** Debug Interface
 ** See Copyright Notice in lua.h
@@ -134,7 +134,7 @@ LUA_API const char *lua_getlocal (lua_State *L, const lua_Debug *ar, int n) {
   return name;
 }
 
-//om£¿µ÷ÊÔÊ±¿ÉÒÔĞŞ¸Ä¾Ö²¿±äÁ¿Öµ£¿
+//omï¼Ÿè°ƒè¯•æ—¶å¯ä»¥ä¿®æ”¹å±€éƒ¨å˜é‡å€¼ï¼Ÿ
 LUA_API const char *lua_setlocal (lua_State *L, const lua_Debug *ar, int n) {
   CallInfo *ci = L->base_ci + ar->i_ci;
   const char *name = findlocal(L, ci, n);
@@ -275,16 +275,16 @@ LUA_API int lua_getinfo (lua_State *L, const char *what, lua_Debug *ar) {
 
 static int precheck (const Proto *pt) {
   check(pt->maxstacksize <= MAXSTACK);
-  //om »á°Ñ¹Ì¶¨²ÎÊıÍùºó¸´ÖÆ£¬ÎªÁË¼æÈİ¿ÉÄÜ»¹»á¼ÓÉÏ¸öarg²ÎÊı¡£
-  //om ´ÓÕâ¶ù´óÖÂ¿É¿´³ö£¬Êµ²Î²»Õ¼ÓÃĞÂµÄ±Õ°üµÄÕ»¿Õ¼ä·İ¶î
+  //om ä¼šæŠŠå›ºå®šå‚æ•°å¾€åå¤åˆ¶ï¼Œä¸ºäº†å…¼å®¹å¯èƒ½è¿˜ä¼šåŠ ä¸Šä¸ªargå‚æ•°ã€‚
+  //om ä»è¿™å„¿å¤§è‡´å¯çœ‹å‡ºï¼Œå®å‚ä¸å ç”¨æ–°çš„é—­åŒ…çš„æ ˆç©ºé—´ä»½é¢
   check(pt->numparams+(pt->is_vararg & VARARG_HASARG) <= pt->maxstacksize);
-  //om ÕâÁ½¸ö¶¼²»Ö§³Ö£¬ÄÇ¶¨ÒåÁË¸ÉÊ²Ã´
+  //om è¿™ä¸¤ä¸ªéƒ½ä¸æ”¯æŒï¼Œé‚£å®šä¹‰äº†å¹²ä»€ä¹ˆ
   check(!(pt->is_vararg & VARARG_NEEDSARG) ||
               (pt->is_vararg & VARARG_HASARG));
-  //om ÕâÃ´¿´sizeupvaluesÊÇÕâ¸ö±Õ°ü×Ô¼º²úÉúµÄ¸öÊı£¬nupsÊÇÊ¹ÓÃµÄ¸öÊı
+  //om è¿™ä¹ˆçœ‹sizeupvaluesæ˜¯è¿™ä¸ªé—­åŒ…è‡ªå·±äº§ç”Ÿçš„ä¸ªæ•°ï¼Œnupsæ˜¯ä½¿ç”¨çš„ä¸ªæ•°
   check(pt->sizeupvalues <= pt->nups);
   check(pt->sizelineinfo == pt->sizecode || pt->sizelineinfo == 0);
-  //om ×îºóÒ»ÌõÖ¸ÁîÊÇret
+  //om æœ€åä¸€æ¡æŒ‡ä»¤æ˜¯ret
   check(pt->sizecode > 0 && GET_OPCODE(pt->code[pt->sizecode-1]) == OP_RETURN);
   return 1;
 }
@@ -292,7 +292,7 @@ static int precheck (const Proto *pt) {
 
 #define checkopenop(pt,pc)	luaG_checkopenop((pt)->code[(pc)+1])
 
-//om Ò»Ğ©Ö¸Áî±È½ÏÌØ±ğ£¬²ÎÊı¸öÊıÓëtopÓĞ¹Ø£¬
+//om ä¸€äº›æŒ‡ä»¤æ¯”è¾ƒç‰¹åˆ«ï¼Œå‚æ•°ä¸ªæ•°ä¸topæœ‰å…³ï¼Œ
 int luaG_checkopenop (Instruction i) {
   switch (GET_OPCODE(i)) {
     case OP_CALL:
@@ -319,8 +319,8 @@ static int checkArgMode (const Proto *pt, int r, enum OpArgMask mode) {
   return 1;
 }
 
-//om º¯ÊıĞ£Ñécode,²¢·µ»Ø×îºóĞŞ¸ÄregµÄÖ¸Áî£¬µ«ÊÇÃ»ÔõÃ´Ã÷°×
-//om Õâ¸öº¯Êı¼ÓVMµÄexecute¼Óopcodes¿ÉÒÔÖªµÀÃ¿ÌõÖ¸ÁîµÄ×÷ÓÃ
+//om å‡½æ•°æ ¡éªŒcode,å¹¶è¿”å›æœ€åä¿®æ”¹regçš„æŒ‡ä»¤ï¼Œä½†æ˜¯æ²¡æ€ä¹ˆæ˜ç™½
+//om è¿™ä¸ªå‡½æ•°åŠ VMçš„executeåŠ opcodeså¯ä»¥çŸ¥é“æ¯æ¡æŒ‡ä»¤çš„ä½œç”¨
 static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
   int pc;
   int last;  /* stores position of last instruction that changed `reg' */
@@ -343,21 +343,21 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         break;
       }
       case iABx: {
-        //om Bx¶¼ÊÇÓÃÀ´Ö´ĞĞ³£Á¿µÄ£¬Ö»ÓĞOP_CLOSUREÓÃÀ´Ë÷ÒıÄÚÇ¶±Õ°ü
+        //om Bxéƒ½æ˜¯ç”¨æ¥æ‰§è¡Œå¸¸é‡çš„ï¼Œåªæœ‰OP_CLOSUREç”¨æ¥ç´¢å¼•å†…åµŒé—­åŒ…
         b = GETARG_Bx(i);
         if (getBMode(op) == OpArgK) check(b < pt->sizek);
         break;
       }
       case iAsBx: {
-        //om sBx¶¼ÊÇÓÃÓÚÌø×ªµÄ
+        //om sBxéƒ½æ˜¯ç”¨äºè·³è½¬çš„
         b = GETARG_sBx(i);
         if (getBMode(op) == OpArgR) {
           int dest = pc+1+b;
           check(0 <= dest && dest < pt->sizecode);
           if (dest > 0) {
             int j;
-            //om setlistµÄÏÂÒ»ÌõÃüÁî¿ÉÄÜÊÇ¸öÊı×ÖC£¬¶ø²»ÊÇÃüÁî
-            //om ¼ì²éÓÃÁËĞ¡¼¼ÇÉ£¬ÒòÎª¿ÉÄÜÊı×ÖCÇ¡ºÃºÍsetList[C=1]ÖµÒ»Ñù
+            //om setlistçš„ä¸‹ä¸€æ¡å‘½ä»¤å¯èƒ½æ˜¯ä¸ªæ•°å­—Cï¼Œè€Œä¸æ˜¯å‘½ä»¤
+            //om æ£€æŸ¥ç”¨äº†å°æŠ€å·§ï¼Œå› ä¸ºå¯èƒ½æ•°å­—Cæ°å¥½å’ŒsetList[C=1]å€¼ä¸€æ ·
             /* check that it does not jump to a setlist count; this
                is tricky, because the count from a previous setlist may
                have the same value of an invalid setlist; so, we must
@@ -374,7 +374,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         break;
       }
     }
-    //om Ö¸Áî»áĞŞ¸Ä¼Ä´æÆ÷
+    //om æŒ‡ä»¤ä¼šä¿®æ”¹å¯„å­˜å™¨
     if (testAMode(op)) {
       if (a == reg) last = pc;  /* change register `a' */
     }
@@ -385,7 +385,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
     switch (op) {
       case OP_LOADBOOL: {
         if (c == 1) {  /* does it jump? */
-          //om Õâ¸öÇé¿ö»áÌø¹ıÏÂÒ»ÌõÖ¸Áî£¬¹ûÈ»OP_SETLIST¿Ó°¡
+          //om è¿™ä¸ªæƒ…å†µä¼šè·³è¿‡ä¸‹ä¸€æ¡æŒ‡ä»¤ï¼Œæœç„¶OP_SETLISTå‘å•Š
           check(pc+2 < pt->sizecode);  /* check its jump */
           check(GET_OPCODE(pt->code[pc+1]) != OP_SETLIST ||
                 GETARG_C(pt->code[pc+1]) != 0);
@@ -469,7 +469,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
           OpCode op1 = GET_OPCODE(pt->code[pc + j]);
           check(op1 == OP_GETUPVAL || op1 == OP_MOVE);
         }
-        //om ?ÎªÉ¶ÒªÓĞÕâ¸öÅĞ¶ÏÄØ
+        //om ?ä¸ºå•¥è¦æœ‰è¿™ä¸ªåˆ¤æ–­å‘¢
         if (reg != NO_REG)  /* tracing? */
           pc += nup;  /* do not 'execute' these pseudo-instructions */
         break;
@@ -499,7 +499,7 @@ int luaG_checkcode (const Proto *pt) {
   return (symbexec(pt, pt->sizecode, NO_REG) != 0);
 }
 
-//om ³£Á¿Ãû
+//om å¸¸é‡å
 static const char *kname (Proto *p, int c) {
   if (ISK(c) && ttisstring(&p->k[INDEXK(c)]))
     return svalue(&p->k[INDEXK(c)]);
@@ -507,7 +507,7 @@ static const char *kname (Proto *p, int c) {
     return "?";
 }
 
-//om »ñÈ¡±äÁ¿Ãû
+//om è·å–å˜é‡å
 static const char *getobjname (lua_State *L, CallInfo *ci, int stackpos,
                                const char **name) {
   if (isLua(ci)) {  /* a Lua function? */
@@ -554,7 +554,7 @@ static const char *getobjname (lua_State *L, CallInfo *ci, int stackpos,
   return NULL;  /* no useful name found */
 }
 
-//om »ñÈ¡º¯ÊıÃû£¬Ãû×ÖÊÇÓÉµ÷ÓÃÕß¾ö¶¨µÄ
+//om è·å–å‡½æ•°åï¼Œåå­—æ˜¯ç”±è°ƒç”¨è€…å†³å®šçš„
 static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name) {
   Instruction i;
   if ((isLua(ci) && ci->tailcalls > 0) || !isLua(ci - 1))
@@ -606,7 +606,7 @@ void luaG_aritherror (lua_State *L, const TValue *p1, const TValue *p2) {
   luaG_typeerror(L, p2, "perform arithmetic on");
 }
 
-//om ÀàĞÍ²»Ö§³Ö±È½Ï
+//om ç±»å‹ä¸æ”¯æŒæ¯”è¾ƒ
 int luaG_ordererror (lua_State *L, const TValue *p1, const TValue *p2) {
   const char *t1 = luaT_typenames[ttype(p1)];
   const char *t2 = luaT_typenames[ttype(p2)];

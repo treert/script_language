@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: ltable.h,v 2.10.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Lua tables (hash)
 ** See Copyright Notice in lua.h
@@ -17,26 +17,26 @@
 
 #define key2tval(n)	(&(n)->i_key.tvk)
 
-//om ÕûÊı¼üÖµ»ñÈ¡Öµ
+//om æ•´æ•°é”®å€¼è·å–å€¼
 LUAI_FUNC const TValue *luaH_getnum (Table *t, int key);
-//om ÕûÊı¼üÖµ»ñÈ¡Ò»¸ö¿ÕÎ»£¬¿ÉÄÜÊÇÔ­À´µÄÖµ
+//om æ•´æ•°é”®å€¼è·å–ä¸€ä¸ªç©ºä½ï¼Œå¯èƒ½æ˜¯åŸæ¥çš„å€¼
 LUAI_FUNC TValue *luaH_setnum (lua_State *L, Table *t, int key);
-//om ×Ö·û´®¼üÖµ
+//om å­—ç¬¦ä¸²é”®å€¼
 LUAI_FUNC const TValue *luaH_getstr (Table *t, TString *key);
 LUAI_FUNC TValue *luaH_setstr (lua_State *L, Table *t, TString *key);
-//om ¶ÔÏó¼üÖµ
+//om å¯¹è±¡é”®å€¼
 LUAI_FUNC const TValue *luaH_get (Table *t, const TValue *key);
 LUAI_FUNC TValue *luaH_set (lua_State *L, Table *t, const TValue *key);
-//om? ¹¹Ôìº¯Êı
+//om? æ„é€ å‡½æ•°
 LUAI_FUNC Table *luaH_new (lua_State *L, int narray, int lnhash);
-//om ¸Ä±äÊı×é´óĞ¡£¬hash²¿·ÖÖØĞÂhashÁËÒ»ÏÂ
+//om æ”¹å˜æ•°ç»„å¤§å°ï¼Œhashéƒ¨åˆ†é‡æ–°hashäº†ä¸€ä¸‹
 LUAI_FUNC void luaH_resizearray (lua_State *L, Table *t, int nasize);
 LUAI_FUNC void luaH_free (lua_State *L, Table *t);
-//om Õâ¸öº¯ÊıºÜÎ£ÏÕ
+//om è¿™ä¸ªå‡½æ•°å¾ˆå±é™©
 LUAI_FUNC int luaH_next (lua_State *L, Table *t, StkId key);
-//om »ñÈ¡Êı×é³¤¶È
-//om Êµ¼ÊËüÖ»ÊÇËæ±ã²éÕÒÒ»¸öÎ»ÖÃ£¬Âú×ãt[n]!=nil and t[n+1] =nil
-//om µ«ÊÇ¸öÑÏ¸ñµÄÊı×éÊ±£¬»ñÈ¡µÄÖµÇ¡ºÃÊÇÊı×é³¤¶È£¬ºÚ¿Æ¼¼¡£
+//om è·å–æ•°ç»„é•¿åº¦
+//om å®é™…å®ƒåªæ˜¯éšä¾¿æŸ¥æ‰¾ä¸€ä¸ªä½ç½®ï¼Œæ»¡è¶³t[n]!=nil and t[n+1] =nil
+//om ä½†æ˜¯ä¸ªä¸¥æ ¼çš„æ•°ç»„æ—¶ï¼Œè·å–çš„å€¼æ°å¥½æ˜¯æ•°ç»„é•¿åº¦ï¼Œé»‘ç§‘æŠ€ã€‚
 LUAI_FUNC int luaH_getn (Table *t);
 
 

@@ -1,4 +1,4 @@
-/*
+Ôªø/*
 ** $Id: lzio.h,v 1.21.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Buffered streams
 ** See Copyright Notice in lua.h
@@ -42,7 +42,7 @@ typedef struct Mbuffer {
 
 #define luaZ_freebuffer(L, buff)	luaZ_resizebuffer(L, buff, 0)
 
-//om newø’º‰
+//om newÁ©∫Èó¥
 LUAI_FUNC char *luaZ_openspace (lua_State *L, Mbuffer *buff, size_t n);
 LUAI_FUNC void luaZ_init (lua_State *L, ZIO *z, lua_Reader reader,
                                         void *data);
@@ -52,7 +52,7 @@ LUAI_FUNC int luaZ_lookahead (ZIO *z);
 
 
 /* --------- Private Part ------------------ */
-//om£°£° áÂ
+//omÔºÅÔºÅ Âõß
 
 struct Zio {
   size_t n;			/* bytes still unread */

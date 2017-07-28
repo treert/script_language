@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lopcodes.c,v 1.37.1.1 2007/12/27 13:02:25 roberto Exp $
 ** See Copyright Notice in lua.h
 */
@@ -57,9 +57,9 @@ const char *const luaP_opnames[NUM_OPCODES+1] = {
 
 
 #define opmode(t,a,b,c,m) (((t)<<7) | ((a)<<6) | ((b)<<4) | ((c)<<2) | (m))
-//om TºÍAÊÇÔÚÕâ¶ùÉèÖÃÏÂ£¬ÍâÃæÓÃÀ´testµÄ
-//om Ö¸Áî»áÉèÖÃRA(i)
-//om ÏÂÒ»ÌõÖ¸ÁîÊÇOP_JMP
+//om Tå’ŒAæ˜¯åœ¨è¿™å„¿è®¾ç½®ä¸‹ï¼Œå¤–é¢ç”¨æ¥testçš„
+//om æŒ‡ä»¤ä¼šè®¾ç½®RA(i)
+//om ä¸‹ä¸€æ¡æŒ‡ä»¤æ˜¯OP_JMP
 const lu_byte luaP_opmodes[NUM_OPCODES] = {
 /*       T  A    B       C     mode		   opcode	*/
   opmode(0, 1, OpArgR, OpArgN, iABC) 		/* OP_MOVE */

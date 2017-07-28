@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lvm.c,v 2.63.1.5 2011/08/17 20:43:11 roberto Exp $
 ** Lua virtual machine
 ** See Copyright Notice in lua.h
@@ -43,7 +43,7 @@ const TValue *luaV_tonumber (const TValue *obj, TValue *n) {
     return NULL;
 }
 
-//om Ö»½ÓÊÜÊı×Ö£¬Õâ¸ö¿ÉÒÔ²»·ÅÔÚVMÀïµÄ
+//om åªæ¥å—æ•°å­—ï¼Œè¿™ä¸ªå¯ä»¥ä¸æ”¾åœ¨VMé‡Œçš„
 int luaV_tostring (lua_State *L, StkId obj) {
   if (!ttisnumber(obj))
     return 0;
@@ -56,7 +56,7 @@ int luaV_tostring (lua_State *L, StkId obj) {
   }
 }
 
-//om µ÷ÊÔ»Øµ÷
+//om è°ƒè¯•å›è°ƒ
 static void traceexec (lua_State *L, const Instruction *pc) {
   lu_byte mask = L->hookmask;
   const Instruction *oldpc = L->savedpc;
@@ -99,7 +99,7 @@ static void callTM (lua_State *L, const TValue *f, const TValue *p1,
   setobj2s(L, L->top+1, p1);  /* 1st argument */
   setobj2s(L, L->top+2, p2);  /* 2nd argument */
   setobj2s(L, L->top+3, p3);  /* 3th argument */
-  //om ÓÖÀ´ÁË£¬Õâ¸ö²»ÊÇÓ¦¸Ã·ÅÉÏÃæÂğ£¿
+  //om åˆæ¥äº†ï¼Œè¿™ä¸ªä¸æ˜¯åº”è¯¥æ”¾ä¸Šé¢å—ï¼Ÿ
   luaD_checkstack(L, 4);
   L->top += 4;
   luaD_call(L, L->top - 4, 0);
@@ -156,14 +156,14 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       return;
     }
     /* else repeat with `tm' */
-    //om Õâ¸öÊÇ²»ÊÇ³ö¹ıbug,
+    //om è¿™ä¸ªæ˜¯ä¸æ˜¯å‡ºè¿‡bug,
     setobj(L, &temp, tm);  /* avoid pointing inside table (may rehash) */
     t = &temp;
   }
   luaG_runerror(L, "loop in settable");
 }
 
-//om Ôª±íÏ¸½Ú
+//om å…ƒè¡¨ç»†èŠ‚
 static int call_binTM (lua_State *L, const TValue *p1, const TValue *p2,
                        StkId res, TMS event) {
   const TValue *tm = luaT_gettmbyobj(L, p1, event);  /* try first operand */
@@ -188,7 +188,7 @@ static const TValue *get_compTM (lua_State *L, Table *mt1, Table *mt2,
   return NULL;
 }
 
-//om ±È½ÏµÄÔª±íÖµÒªÒ»Ñù
+//om æ¯”è¾ƒçš„å…ƒè¡¨å€¼è¦ä¸€æ ·
 static int call_orderTM (lua_State *L, const TValue *p1, const TValue *p2,
                          TMS event) {
   const TValue *tm1 = luaT_gettmbyobj(L, p1, event);
@@ -201,7 +201,7 @@ static int call_orderTM (lua_State *L, const TValue *p1, const TValue *p2,
   return !l_isfalse(L->top);
 }
 
-// ÎªÊ²Ã´ÒªÊ¹ÓÃstrcollÄØ£¬Ö±½ÓforÑ­»·±È½ÏÒ²ĞĞÑ½
+// ä¸ºä»€ä¹ˆè¦ä½¿ç”¨strcollå‘¢ï¼Œç›´æ¥forå¾ªç¯æ¯”è¾ƒä¹Ÿè¡Œå‘€
 static int l_strcmp (const TString *ls, const TString *rs) {
   const char *l = getstr(ls);
   size_t ll = ls->tsv.len;
@@ -356,10 +356,10 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
 	ISK(GETARG_C(i)) ? k+INDEXK(GETARG_C(i)) : base+GETARG_C(i))
 #define KBx(i)	check_exp(getBMode(GET_OPCODE(i)) == OpArgK, k+GETARG_Bx(i))
 
-//om£¿ºóÃæÎªÊ²Ã´¼ÓÉÏyield
+//omï¼Ÿåé¢ä¸ºä»€ä¹ˆåŠ ä¸Šyield
 #define dojump(L,pc,i)	{(pc) += (i); luai_threadyield(L);}
 
-//om Ò»Ğ©µ÷ÓÃ»áÖØĞÂ·ÖÅäÕ»¡£µ÷ÓÃÊ±µÃÏÈ±£´æÏÂÏÖ³¡£¬¾ÍÊÇ¸öÖ´ĞĞµ½ÄÄÒ»ÌõÁË
+//om ä¸€äº›è°ƒç”¨ä¼šé‡æ–°åˆ†é…æ ˆã€‚è°ƒç”¨æ—¶å¾—å…ˆä¿å­˜ä¸‹ç°åœºï¼Œå°±æ˜¯ä¸ªæ‰§è¡Œåˆ°å“ªä¸€æ¡äº†
 #define Protect(x)	{ L->savedpc = pc; {x;}; base = L->base; }
 
 
@@ -375,7 +375,7 @@ static void Arith (lua_State *L, StkId ra, const TValue *rb,
       }
 
 
-//om ÌØ±ğ³¤µÄµ¥Ò»º¯Êı
+//om ç‰¹åˆ«é•¿çš„å•ä¸€å‡½æ•°
 void luaV_execute (lua_State *L, int nexeccalls) {
   LClosure *cl;
   StkId base;
@@ -390,7 +390,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
   /* main loop of interpreter */
   for (;;) {
     const Instruction i = *pc++;
-    StkId ra;//om ¶¨ÒåÔÚÏÂÃæ¸üºÃ°Ñ
+    StkId ra;//om å®šä¹‰åœ¨ä¸‹é¢æ›´å¥½æŠŠ
     if ((L->hookmask & (LUA_MASKLINE | LUA_MASKCOUNT)) &&
         (--L->hookcount == 0 || L->hookmask & LUA_MASKLINE)) {
       traceexec(L, pc);
@@ -398,7 +398,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         L->savedpc = pc - 1;
         return;
       }
-      base = L->base;//om Õâ¸öÊÇ£¿
+      base = L->base;//om è¿™ä¸ªæ˜¯ï¼Ÿ
     }
     /* warning!! several calls may realloc the stack and invalidate `ra' */
     ra = RA(i);
@@ -416,7 +416,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
       }
       case OP_LOADBOOL: {
         setbvalue(ra, GETARG_B(i));
-        //om£¿ ÏÂÃæÕâ¾äÆæ¹ÖÑ½
+        //omï¼Ÿ ä¸‹é¢è¿™å¥å¥‡æ€ªå‘€
         if (GETARG_C(i)) pc++;  /* skip next instruction (if C) */
         continue;
       }
@@ -468,10 +468,10 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         Protect(luaC_checkGC(L));
         continue;
       }
-      //om£¿²»¶®
+      //omï¼Ÿä¸æ‡‚
       case OP_SELF: {
         StkId rb = RB(i);
-        //om£¿±ÜÃâra == rbÂğ
+        //omï¼Ÿé¿å…ra == rbå—
         setobjs2s(L, ra+1, rb);
         Protect(luaV_gettable(L, rb, RKC(i), ra));
         continue;
@@ -500,7 +500,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         arith_op(luai_numpow, TM_POW);
         continue;
       }
-      //om£¿²»¶®
+      //omï¼Ÿä¸æ‡‚
       case OP_UNM: {
         TValue *rb = RB(i);
         if (ttisnumber(rb)) {
@@ -541,7 +541,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         int b = GETARG_B(i);
         int c = GETARG_C(i);
         Protect(luaV_concat(L, c-b+1, c); luaC_checkGC(L));
-        //om Õâ¶ù²»ÓÃraÂğ£¬Õ»¿ÉÄÜÖØĞÂ·ÖÅäÁË
+        //om è¿™å„¿ä¸ç”¨raå—ï¼Œæ ˆå¯èƒ½é‡æ–°åˆ†é…äº†
         setobjs2s(L, RA(i), base+b);
         continue;
       }
@@ -549,8 +549,8 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         dojump(L, pc, GETARG_sBx(i));
         continue;
       }
-      // ÏÂÃæ¼¸¸öÖ¸Áî¶¼ºÍÃèÊöµÄ²»Ò»ÑùÑ½
-      // ÅĞ¶Ï·ÖÖ§µÄÏÂÒ»ÌõÊÇÌø×ªÃüÁî£¬Õâ¶ùÌáÇ°Ö´ĞĞÁË
+      // ä¸‹é¢å‡ ä¸ªæŒ‡ä»¤éƒ½å’Œæè¿°çš„ä¸ä¸€æ ·å‘€
+      // åˆ¤æ–­åˆ†æ”¯çš„ä¸‹ä¸€æ¡æ˜¯è·³è½¬å‘½ä»¤ï¼Œè¿™å„¿æå‰æ‰§è¡Œäº†
       case OP_EQ: {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
@@ -655,13 +655,13 @@ void luaV_execute (lua_State *L, int nexeccalls) {
           return;  /* no: return */
         else {  /* yes: continue its execution */
           if (b) L->top = L->ci->top;
-          //om Ö»ÓĞOP_CALLÃüÁî»áÔö¼ÓËü
+          //om åªæœ‰OP_CALLå‘½ä»¤ä¼šå¢åŠ å®ƒ
           lua_assert(isLua(L->ci));
           lua_assert(GET_OPCODE(*((L->ci)->savedpc - 1)) == OP_CALL);
           goto reentry;
         }
       }
-      //om forÑ­»·£¬ÅĞ¶Ï²¿·Ö
+      //om forå¾ªç¯ï¼Œåˆ¤æ–­éƒ¨åˆ†
       case OP_FORLOOP: {
         lua_Number step = nvalue(ra+2);
         lua_Number idx = luai_numadd(nvalue(ra), step); /* increment index */
@@ -670,12 +670,12 @@ void luaV_execute (lua_State *L, int nexeccalls) {
                                 : luai_numle(limit, idx)) {
           dojump(L, pc, GETARG_sBx(i));  /* jump back */
           setnvalue(ra, idx);  /* update internal index... */
-          //om£¿Õâ¸öÊÇÎªÉ¶
+          //omï¼Ÿè¿™ä¸ªæ˜¯ä¸ºå•¥
           setnvalue(ra+3, idx);  /* ...and external index */
         }
         continue;
       }
-      //om forÑ­»·£¬³õÊ¼»¯²¿·Ö£¬Ò²¿ÉÒÔ²»ÓÃµÄ
+      //om forå¾ªç¯ï¼Œåˆå§‹åŒ–éƒ¨åˆ†ï¼Œä¹Ÿå¯ä»¥ä¸ç”¨çš„
       case OP_FORPREP: {
         const TValue *init = ra;
         const TValue *plimit = ra+1;
@@ -691,14 +691,14 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         dojump(L, pc, GETARG_sBx(i));
         continue;
       }
-      //om for in µü´úÆ÷¡¾Èçpairs¡¿
+      //om for in è¿­ä»£å™¨ã€å¦‚pairsã€‘
       case OP_TFORLOOP: {
         StkId cb = ra + 3;  /* call base */
         setobjs2s(L, cb+2, ra+2);
         setobjs2s(L, cb+1, ra+1);
         setobjs2s(L, cb, ra);
         L->top = cb+3;  /* func. + 2 args (state and index) */
-        //om µü´úÆ÷Ö´ĞĞ ÆäÖĞµÄnext
+        //om è¿­ä»£å™¨æ‰§è¡Œ å…¶ä¸­çš„next
         Protect(luaD_call(L, cb, GETARG_C(i)));
         L->top = L->ci->top;
         cb = RA(i) + 3;  /* previous call may change the stack */
@@ -709,7 +709,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         pc++;
         continue;
       }
-      //om ³õÊ¼»¯Êı×éÊ±£¬¿ìËÙÌî³äÔªËØ
+      //om åˆå§‹åŒ–æ•°ç»„æ—¶ï¼Œå¿«é€Ÿå¡«å……å…ƒç´ 
       case OP_SETLIST: {
         int n = GETARG_B(i);
         int c = GETARG_C(i);
@@ -717,7 +717,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         Table *h;
         if (n == 0) {
           n = cast_int(L->top - ra) - 1;
-          L->top = L->ci->top;//om Õâ¾ä»°ÊÇÉ¶ÒâË¼,topÓÖÃ»ÓĞ±ä»¯
+          L->top = L->ci->top;//om è¿™å¥è¯æ˜¯å•¥æ„æ€,topåˆæ²¡æœ‰å˜åŒ–
         }
         if (c == 0) c = cast_int(*pc++);
         runtime_check(L, ttistable(ra));
@@ -745,8 +745,8 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         ncl = luaF_newLclosure(L, nup, cl->env);
         ncl->l.p = p;
         for (j=0; j<nup; j++, pc++) {
-            //om Õâ¶ùÊÇ²»ÊÇ¿ÉÒÔÀí½â³É¼Ì³ĞÒ»²¿·Ö×æÏÈµÄ
-            //om È»ºó¼ÓÉÏÒ»Ğ©¸¸Ç×µÄ
+            //om è¿™å„¿æ˜¯ä¸æ˜¯å¯ä»¥ç†è§£æˆç»§æ‰¿ä¸€éƒ¨åˆ†ç¥–å…ˆçš„
+            //om ç„¶ååŠ ä¸Šä¸€äº›çˆ¶äº²çš„
           if (GET_OPCODE(*pc) == OP_GETUPVAL)
             ncl->l.upvals[j] = cl->upvals[GETARG_B(*pc)];
           else {
@@ -758,7 +758,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         Protect(luaC_checkGC(L));
         continue;
       }
-      //om ´¦Àíº¯Êı²ÎÊı...µÄ
+      //om å¤„ç†å‡½æ•°å‚æ•°...çš„
       case OP_VARARG: {
         int b = GETARG_B(i) - 1;
         int j;

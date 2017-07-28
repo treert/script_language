@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: print.c,v 1.55a 2006/05/31 13:30:05 lhf Exp $
 ** print bytecodes
 ** See Copyright Notice in lua.h
@@ -42,7 +42,7 @@ static void PrintString(const TString* ts)
    default:	if (isprint((unsigned char)c))
    			putchar(c);
 		else
-            //om ²»ÊÇÓÃ%03o¸üºÃÂð,x%02xÒ²ÐÐÑ½
+            //om ä¸æ˜¯ç”¨%03oæ›´å¥½å—,x%02xä¹Ÿè¡Œå‘€
 			printf("\\%03u",(unsigned char)c);
   }
  }
@@ -162,7 +162,7 @@ static void PrintCode(const Proto* f)
 static void PrintHeader(const Proto* f)
 {
  const char* s=getstr(f->source);
- //om£¿Ëæ±ãÓ²±àÂë£¿
+ //omï¼Ÿéšä¾¿ç¡¬ç¼–ç ï¼Ÿ
  if (*s=='@' || *s=='=')
   s++;
  else if (*s==LUA_SIGNATURE[0])

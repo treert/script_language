@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: ldump.c,v 2.8.1.1 2007/12/27 13:02:25 roberto Exp $
 ** save precompiled Lua chunks
 ** See Copyright Notice in lua.h
@@ -36,7 +36,7 @@ static void DumpBlock(const void* b, size_t size, DumpState* D)
  }
 }
 
-//om£¿Ææ¹ÖÁË£¬Õâ¸ö°Ñ²ÎÊıÀàĞÍ±ä³Échar¸ü·½±ã
+//omï¼Ÿå¥‡æ€ªäº†ï¼Œè¿™ä¸ªæŠŠå‚æ•°ç±»å‹å˜æˆcharæ›´æ–¹ä¾¿
 static void DumpChar(int y, DumpState* D)
 {
  char x=(char)y;
@@ -78,7 +78,7 @@ static void DumpString(const TString* s, DumpState* D)
 
 static void DumpFunction(const Proto* f, const TString* p, DumpState* D);
 
-//om£¡°üº¬ÁËÄÚ²¿±Õ°ü
+//omï¼åŒ…å«äº†å†…éƒ¨é—­åŒ…
 static void DumpConstants(const Proto* f, DumpState* D)
 {
  int i,n=f->sizek;
@@ -107,11 +107,11 @@ static void DumpConstants(const Proto* f, DumpState* D)
  }
  n=f->sizep;
  DumpInt(n,D);
- //om£¿£¡¼òÖ±ÎŞÓï£¬Õâ¸öµØ·½´òÓ¡ÄÚÇ¶º¯Êı
+ //omï¼Ÿï¼ç®€ç›´æ— è¯­ï¼Œè¿™ä¸ªåœ°æ–¹æ‰“å°å†…åµŒå‡½æ•°
  for (i=0; i<n; i++) DumpFunction(f->p[i],f->source,D);
 }
 
-//om£¡°üº¬ÁË¾Ö²¿±äÁ¿¡¢upval
+//omï¼åŒ…å«äº†å±€éƒ¨å˜é‡ã€upval
 static void DumpDebug(const Proto* f, DumpState* D)
 {
  int i,n;
@@ -132,7 +132,7 @@ static void DumpDebug(const Proto* f, DumpState* D)
 
 static void DumpFunction(const Proto* f, const TString* p, DumpState* D)
 {
-//om£¿ÏÂÃæÕâ¸öÊÇÎªÊ²Ã´ÄØ£¬Ò²²»¿ÉÄÜ³öÏÖµİ¹éÑ­»·Ñ½£¬ÄÚÇ¶º¯Êı»¹»áµÈÓÚ×Ô¼ºÂğ£¿£¿
+//omï¼Ÿä¸‹é¢è¿™ä¸ªæ˜¯ä¸ºä»€ä¹ˆå‘¢ï¼Œä¹Ÿä¸å¯èƒ½å‡ºç°é€’å½’å¾ªç¯å‘€ï¼Œå†…åµŒå‡½æ•°è¿˜ä¼šç­‰äºè‡ªå·±å—ï¼Ÿï¼Ÿ
  DumpString((f->source==p || D->strip) ? NULL : f->source,D);
  DumpInt(f->linedefined,D);
  DumpInt(f->lastlinedefined,D);

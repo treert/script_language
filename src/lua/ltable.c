@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: ltable.c,v 2.32.1.2 2007/12/28 15:32:23 roberto Exp $
 ** Lua tables (hash)
 ** See Copyright Notice in lua.h
@@ -133,7 +133,7 @@ static int arrayindex (const TValue *key) {
 ** returns the index of a `key' for table traversals. First goes all
 ** elements in the array part, then elements in the hash part. The
 ** beginning of a traversal is signalled by -1.
-om ÕÒ²»µ½±¨´í»á±£´æµÄ£¬ÌØ±ğ¸øforeachÓÃµÄ£¬µÚÒ»´Î´«µÄnil,Õâ¸ö·µ»Ø-1
+om æ‰¾ä¸åˆ°æŠ¥é”™ä¼šä¿å­˜çš„ï¼Œç‰¹åˆ«ç»™foreachç”¨çš„ï¼Œç¬¬ä¸€æ¬¡ä¼ çš„nil,è¿™ä¸ªè¿”å›-1
 */
 static int findindex (lua_State *L, Table *t, StkId key) {
   int i;
@@ -159,8 +159,8 @@ static int findindex (lua_State *L, Table *t, StkId key) {
   }
 }
 
-//om s:.... key val °ÑÏÂÒ»¸ö¼üÖµ¶ÔÑ¹ÈëÕ»
-//om£¡¿´ÏÂfindindexµÄ×¢ÊÍ£¬Õâ¸öÓÚforeachÓĞ¹Ø
+//om s:.... key val æŠŠä¸‹ä¸€ä¸ªé”®å€¼å¯¹å‹å…¥æ ˆ
+//omï¼çœ‹ä¸‹findindexçš„æ³¨é‡Šï¼Œè¿™ä¸ªäºforeachæœ‰å…³
 int luaH_next (lua_State *L, Table *t, StkId key) {
   int i = findindex(L, t, key);  /* find original element */
   for (i++; i < t->sizearray; i++) {  /* try first array part */
@@ -187,10 +187,10 @@ int luaH_next (lua_State *L, Table *t, StkId key) {
 ** ==============================================================
 */
 
-//om Êı×é¿Õ¼äÀûÓÃÂÊÖÁÉÙ50%
-//om ÓĞÂ©¶´°Ñ£¬ÒªÊÇÕûÊıË÷ÒıÔªËØ¼¯ÖĞÔÚ2^x+y£¬²»ÊÇÉµÁËÂğ
-//om ×ĞÏ¸ÏëÏë£¬Ã»ÓĞÂ©¶´£¬×î¶à·ÖÅä(*narray)*2µÄ´óĞ¡£¬¼üÖµ¹ı´óµÄ»ù±¾ÓÃ²»µ½Êı×éÁË
-//om ÖØµãÊÇ±£Ö¤Êı×é¿Õ¼äÀûÓÃÂÊ
+//om æ•°ç»„ç©ºé—´åˆ©ç”¨ç‡è‡³å°‘50%
+//om æœ‰æ¼æ´æŠŠï¼Œè¦æ˜¯æ•´æ•°ç´¢å¼•å…ƒç´ é›†ä¸­åœ¨2^x+yï¼Œä¸æ˜¯å‚»äº†å—
+//om ä»”ç»†æƒ³æƒ³ï¼Œæ²¡æœ‰æ¼æ´ï¼Œæœ€å¤šåˆ†é…(*narray)*2çš„å¤§å°ï¼Œé”®å€¼è¿‡å¤§çš„åŸºæœ¬ç”¨ä¸åˆ°æ•°ç»„äº†
+//om é‡ç‚¹æ˜¯ä¿è¯æ•°ç»„ç©ºé—´åˆ©ç”¨ç‡
 static int computesizes (int nums[], int *narray) {
   int i;
   int twotoi;  /* 2^i */
@@ -264,7 +264,7 @@ static int numusehash (const Table *t, int *nums, int *pnasize) {
   return totaluse;
 }
 
-//om Ôö³¤Êı×é²¿·Ö£¬grow£¬¾ÉµÄÊı¾İ»á±»±£Áô
+//om å¢é•¿æ•°ç»„éƒ¨åˆ†ï¼Œgrowï¼Œæ—§çš„æ•°æ®ä¼šè¢«ä¿ç•™
 static void setarrayvector (lua_State *L, Table *t, int size) {
   int i;
   luaM_reallocvector(L, t->array, t->sizearray, size, TValue);
@@ -273,8 +273,8 @@ static void setarrayvector (lua_State *L, Table *t, int size) {
   t->sizearray = size;
 }
 
-//om hash±í±»Çå¿ÕÁË°¦
-//om Õâ¸öÊµÏÖÒşº¬ÁË±¶ÔöËã·¨
+//om hashè¡¨è¢«æ¸…ç©ºäº†å”‰
+//om è¿™ä¸ªå®ç°éšå«äº†å€å¢ç®—æ³•
 static void setnodevector (lua_State *L, Table *t, int size) {
   int lsize;
   if (size == 0) {  /* no elements to hash part? */
@@ -296,7 +296,7 @@ static void setnodevector (lua_State *L, Table *t, int size) {
     }
   }
   t->lsizenode = cast_byte(lsize);
-  //om Õâ¸öÖ¸Õë²»¾ÍÊÇ¸öÒ°Ö¸ÕëÁËÂğ¡£Ê¹ÓÃÓÃµÄ-1
+  //om è¿™ä¸ªæŒ‡é’ˆä¸å°±æ˜¯ä¸ªé‡æŒ‡é’ˆäº†å—ã€‚ä½¿ç”¨ç”¨çš„-1
   t->lastfree = gnode(t, size);  /* all positions are free */
 }
 
@@ -385,7 +385,7 @@ void luaH_free (lua_State *L, Table *t) {
   luaM_free(L, t);
 }
 
-//om ÕÒ¸ö¿ÕÎ»
+//om æ‰¾ä¸ªç©ºä½
 static Node *getfreepos (Table *t) {
   while (t->lastfree-- > t->node) {
     if (ttisnil(gkey(t->lastfree)))
@@ -430,7 +430,7 @@ static TValue *newkey (lua_State *L, Table *t, const TValue *key) {
     }
   }
   gkey(mp)->value = key->value; gkey(mp)->tt = key->tt;
-  //om£¿£¿²»¶®¸ÉÉ¶µÄ£¬ÓëÀ¬»ø»ØÊÕÓĞ¹Ø£¬´ó¸ÅÊÇ±ê¼ÇÏÂ¡£
+  //omï¼Ÿï¼Ÿä¸æ‡‚å¹²å•¥çš„ï¼Œä¸åƒåœ¾å›æ”¶æœ‰å…³ï¼Œå¤§æ¦‚æ˜¯æ ‡è®°ä¸‹ã€‚
   luaC_barriert(L, t, key);
   lua_assert(ttisnil(gval(mp)));
   return gval(mp);
@@ -484,7 +484,7 @@ const TValue *luaH_get (Table *t, const TValue *key) {
       lua_number2int(k, n);
       if (luai_numeq(cast_num(k), nvalue(key))) /* index is int? */
         return luaH_getnum(t, k);  /* use specialized version */
-      /* else go through */ //om ‡å
+      /* else go through */ //om å›§
     }
     default: {
       Node *n = mainposition(t, key);
@@ -498,7 +498,7 @@ const TValue *luaH_get (Table *t, const TValue *key) {
   }
 }
 
-//om key²»ÄÜÎªnilºÍNAN
+//om keyä¸èƒ½ä¸ºnilå’ŒNAN
 TValue *luaH_set (lua_State *L, Table *t, const TValue *key) {
   const TValue *p = luaH_get(t, key);
   t->flags = 0;
@@ -564,7 +564,7 @@ static int unbound_search (Table *t, unsigned int j) {
 /*
 ** Try to find a boundary in table `t'. A `boundary' is an integer index
 ** such that t[i] is non-nil and t[i+1] is nil (and 0 if t[1] is nil).
-om£¡ Õâ¸öÊµÏÖ£¬¹îÒì
+omï¼ è¿™ä¸ªå®ç°ï¼Œè¯¡å¼‚
 */
 int luaH_getn (Table *t) {
   unsigned int j = t->sizearray;

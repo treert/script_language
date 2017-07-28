@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: llex.c,v 2.20.1.2 2009/11/23 14:58:22 roberto Exp $
 ** Lexical Analyzer
 ** See Copyright Notice in lua.h
@@ -198,7 +198,7 @@ static void read_numeral (LexState *ls, SemInfo *seminfo) {
   } while (isdigit(ls->current) || ls->current == '.');
   if (check_next(ls, "Ee"))  /* `E'? */
     check_next(ls, "+-");  /* optional exponent sign */
-  //om£¿Õâ¸ö'_'ÊÇÊ²Ã´»ØÊÂ£¬²»¶Ô°Ñ
+  //omï¼Ÿè¿™ä¸ª'_'æ˜¯ä»€ä¹ˆå›äº‹ï¼Œä¸å¯¹æŠŠ
   while (isalnum(ls->current) || ls->current == '_')
     save_and_next(ls);
   save(ls, '\0');
@@ -223,7 +223,7 @@ static int skip_sep (LexState *ls) {
 
 static void read_long_string (LexState *ls, SemInfo *seminfo, int sep) {
   int cont = 0;
-  (void)(cont);  /* avoid warnings when `cont' is not used */ //om ÕâÒ²ĞĞ
+  (void)(cont);  /* avoid warnings when `cont' is not used */ //om è¿™ä¹Ÿè¡Œ
   save_and_next(ls);  /* skip 2nd `[' */
   if (currIsNewline(ls))  /* string starts with a newline? */
     inclinenumber(ls);  /* skip it */
@@ -285,7 +285,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
         continue;  /* to avoid warnings */
       case '\n':
       case '\r':
-          //om Õâ¸ö²»Ö§³Ö»»ĞĞµÄ
+          //om è¿™ä¸ªä¸æ”¯æŒæ¢è¡Œçš„
         luaX_lexerror(ls, "unfinished string", TK_STRING);
         continue;  /* to avoid warnings */
       case '\\': {

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: ldebug.h,v 2.3.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Auxiliary functions from Debug Interface module
 ** See Copyright Notice in lua.h
@@ -10,7 +10,7 @@
 
 #include "lstate.h"
 
-//om Ç°Ò»ÌõÖ´ĞĞµÄÖ¸Áîindex
+//om å‰ä¸€æ¡æ‰§è¡Œçš„æŒ‡ä»¤index
 #define pcRel(pc, p)	(cast(int, (pc) - (p)->code) - 1)
 
 #define getline(f,pc)	(((f)->lineinfo) ? (f)->lineinfo[pc] : 0)
@@ -28,8 +28,8 @@ LUAI_FUNC int luaG_ordererror (lua_State *L, const TValue *p1,
 
 LUAI_FUNC void luaG_runerror (lua_State *L, const char *fmt, ...);
 
-//om Õ»¶¥ÊÇ³ö´íĞÅÏ¢,Èç¹ûÓĞ´íÎó´¦Àíº¯Êı¾Íµ÷ÓÃ
-//om ×îÖÕµ÷ÓÃluaD_throw
+//om æ ˆé¡¶æ˜¯å‡ºé”™ä¿¡æ¯,å¦‚æœæœ‰é”™è¯¯å¤„ç†å‡½æ•°å°±è°ƒç”¨
+//om æœ€ç»ˆè°ƒç”¨luaD_throw
 LUAI_FUNC void luaG_errormsg (lua_State *L);
 
 LUAI_FUNC int luaG_checkcode (const Proto *pt);

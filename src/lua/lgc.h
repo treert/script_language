@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lgc.h,v 2.15.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Garbage Collector
 ** See Copyright Notice in lua.h
@@ -67,7 +67,7 @@
 #define isgray(x)	(!isblack(x) && !iswhite(x))
 
 #define otherwhite(g)	(g->currentwhite ^ WHITEBITS)
-//om Ð£ÑéÏÂÒ»ÂÖÑÕÉ«
+//om æ ¡éªŒä¸‹ä¸€è½®é¢œè‰²
 #define isdead(g,v)	((v)->gch.marked & otherwhite(g) & WHITEBITS)
 
 #define changewhite(x)	((x)->gch.marked ^= WHITEBITS)
@@ -77,7 +77,7 @@
 
 #define luaC_white(g)	cast(lu_byte, (g)->currentwhite & WHITEBITS)
 
-//om ÄÚ´æ³¬¹ýãÐÖµ
+//om å†…å­˜è¶…è¿‡é˜ˆå€¼
 #define luaC_checkGC(L) { \
   condhardstacktests(luaD_reallocstack(L, L->stacksize - EXTRA_STACK - 1)); \
   if (G(L)->totalbytes >= G(L)->GCthreshold) \

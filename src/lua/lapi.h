@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lapi.h,v 2.2.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Auxiliary functions from Lua API
 ** See Copyright Notice in lua.h
@@ -10,7 +10,7 @@
 
 #include "lobject.h"
 
-//om Õâ¸öÍ·ÎÄ¼şÊ®¸öÊ²Ã´ÒâË¼£¬¼æÈİ¿¼ÂÇµÄÂğ
+//om è¿™ä¸ªå¤´æ–‡ä»¶åä¸ªä»€ä¹ˆæ„æ€ï¼Œå…¼å®¹è€ƒè™‘çš„å—
 LUAI_FUNC void luaA_pushobject (lua_State *L, const TValue *o);
 
 #endif

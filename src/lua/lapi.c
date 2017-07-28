@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lapi.c,v 2.55.1.5 2008/07/04 18:41:18 roberto Exp $
 ** Lua API
 ** See Copyright Notice in lua.h
@@ -47,7 +47,7 @@ const char lua_ident[] =
 
 //om ret = L->base + idx - 1    idx > 0
 //om ret = L->top + idx         LUA_REGISTRYINDEX < idx < 0
-//om ret = È«¾Ö±í¡¢±Õ°üÖµµÈ     idx <= LUA_REGISTRYINDEX
+//om ret = å…¨å±€è¡¨ã€é—­åŒ…å€¼ç­‰     idx <= LUA_REGISTRYINDEX
 static TValue *index2adr (lua_State *L, int idx) {
   if (idx > 0) {
     TValue *o = L->base + (idx - 1);
@@ -201,7 +201,7 @@ LUA_API void lua_insert (lua_State *L, int idx) {
   lua_unlock(L);
 }
 
-// s[idx] = s[top-1] idxÊÇÌØÊâÖµÊ±ÒªÌØÊâÅĞ¶Ï
+// s[idx] = s[top-1] idxæ˜¯ç‰¹æ®Šå€¼æ—¶è¦ç‰¹æ®Šåˆ¤æ–­
 LUA_API void lua_replace (lua_State *L, int idx) {
   StkId o;
   lua_lock(L);
@@ -226,7 +226,7 @@ LUA_API void lua_replace (lua_State *L, int idx) {
   lua_unlock(L);
 }
 
-//om ¸´ÖÆs[idx] => s[top]
+//om å¤åˆ¶s[idx] => s[top]
 LUA_API void lua_pushvalue (lua_State *L, int idx) {
   lua_lock(L);
   setobj2s(L, L->top, index2adr(L, idx));
@@ -289,7 +289,7 @@ LUA_API int lua_rawequal (lua_State *L, int index1, int index2) {
 LUA_API int lua_equal (lua_State *L, int index1, int index2) {
   StkId o1, o2;
   int i;
-  lua_lock(L);  /* may call tag method */ //om userdataºÍtableÀàĞÍ»áÍ¨¹ıÔª±í±È½Ï
+  lua_lock(L);  /* may call tag method */ //om userdataå’Œtableç±»å‹ä¼šé€šè¿‡å…ƒè¡¨æ¯”è¾ƒ
   o1 = index2adr(L, index1);
   o2 = index2adr(L, index2);
   i = (o1 == luaO_nilobject || o2 == luaO_nilobject) ? 0 : equalobj(L, o1, o2);
@@ -352,7 +352,7 @@ LUA_API const char *lua_tolstring (lua_State *L, int idx, size_t *len) {
       return NULL;
     }
     luaC_checkGC(L);
-    //om ÕâÊ±ÎªÁË´¦ÀíbugÂğ
+    //om è¿™æ—¶ä¸ºäº†å¤„ç†bugå—
     o = index2adr(L, idx);  /* previous call may reallocate the stack */
     lua_unlock(L);
   }
@@ -388,7 +388,7 @@ LUA_API lua_CFunction lua_tocfunction (lua_State *L, int idx) {
 LUA_API void *lua_touserdata (lua_State *L, int idx) {
   StkId o = index2adr(L, idx);
   switch (ttype(o)) {
-    case LUA_TUSERDATA: return (rawuvalue(o) + 1);//om ³£¼ûµÄÄÚ´æÊ¹ÓÃ¼¼ÇÉ
+    case LUA_TUSERDATA: return (rawuvalue(o) + 1);//om å¸¸è§çš„å†…å­˜ä½¿ç”¨æŠ€å·§
     case LUA_TLIGHTUSERDATA: return pvalue(o);
     default: return NULL;
   }
@@ -557,7 +557,7 @@ LUA_API void lua_getfield (lua_State *L, int idx, const char *k) {
   lua_unlock(L);
 }
 
-//om ºÍlua_gettableÒ»Ñù£¬µ«ÊÇ²»²éÑ¯Ôª±í£¬ÒÔÏÂraw¶¼ÊÇÕâÀàµÄ
+//om å’Œlua_gettableä¸€æ ·ï¼Œä½†æ˜¯ä¸æŸ¥è¯¢å…ƒè¡¨ï¼Œä»¥ä¸‹rawéƒ½æ˜¯è¿™ç±»çš„
 LUA_API void lua_rawget (lua_State *L, int idx) {
   StkId t;
   lua_lock(L);
@@ -782,10 +782,10 @@ LUA_API int lua_setfenv (lua_State *L, int idx) {
 LUA_API void lua_call (lua_State *L, int nargs, int nresults) {
   StkId func;
   lua_lock(L);
-  api_checknelems(L, nargs+1);// om ¼Ó1ÊÇÒòÎªÕ»ÀïÃæ²ÎÊıÏÂÃæ»¹ÓĞ¸öº¯Êıfunc
-  checkresults(L, nargs, nresults);// om¿´¿´º¯ÊıÕ»ÄÜ²»ÄÜ·ÅÈëÈ«²¿·µ»ØÖµ
-  func = L->top - (nargs+1);// om£¡ ÏÖÔÚL->base²»¶ÔÓ¦Ö´ĞĞ»·¾³
-  luaD_call(L, func, nresults);// om£¡L->base»áÔÚÕâ¸öº¯ÊıÖØĞÂÉèÖÃ
+  api_checknelems(L, nargs+1);// om åŠ 1æ˜¯å› ä¸ºæ ˆé‡Œé¢å‚æ•°ä¸‹é¢è¿˜æœ‰ä¸ªå‡½æ•°func
+  checkresults(L, nargs, nresults);// omçœ‹çœ‹å‡½æ•°æ ˆèƒ½ä¸èƒ½æ”¾å…¥å…¨éƒ¨è¿”å›å€¼
+  func = L->top - (nargs+1);// omï¼ ç°åœ¨L->baseä¸å¯¹åº”æ‰§è¡Œç¯å¢ƒ
+  luaD_call(L, func, nresults);// omï¼L->baseä¼šåœ¨è¿™ä¸ªå‡½æ•°é‡æ–°è®¾ç½®
   adjustresults(L, nresults);
   lua_unlock(L);
 }

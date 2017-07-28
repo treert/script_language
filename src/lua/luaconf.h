@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: luaconf.h,v 1.82.1.7 2008/02/11 16:25:08 roberto Exp $
 ** Configuration file for Lua
 ** See Copyright Notice in lua.h
@@ -363,7 +363,7 @@
 ** CHANGE it to undefined as soon as you replace to 'luaL_register'
 ** your uses of 'luaL_openlib'
 */
-//om Ææ¹Ö ¸ù±¾¾ÍÃ»ÓĞluaL_openlibÕâ¸öº¯ÊıÑ½£¬Õâ¶ù¿ªÆôÓ¦¸Ã±¨´íµÄ
+//om å¥‡æ€ª æ ¹æœ¬å°±æ²¡æœ‰luaL_openlibè¿™ä¸ªå‡½æ•°å‘€ï¼Œè¿™å„¿å¼€å¯åº”è¯¥æŠ¥é”™çš„
 //#define LUA_COMPAT_OPENLIB
 
 
@@ -466,7 +466,7 @@
 @@ LUAI_MAXCCALLS is the maximum depth for nested C calls (short) and
 @* syntactical nested non-terminals in a program.
 */
-//om ×î´óµİ¹éÉî¶È,Õë¶ÔCµÄ
+//om æœ€å¤§é€’å½’æ·±åº¦,é’ˆå¯¹Cçš„
 #define LUAI_MAXCCALLS		200
 
 
@@ -542,7 +542,7 @@
 #define luai_numeq(a,b)		((a)==(b))
 #define luai_numlt(a,b)		((a)<(b))
 #define luai_numle(a,b)		((a)<=(b))
-//om Ô­À´ÊÇÕâÑùÅĞ¶ÏNaN
+//om åŸæ¥æ˜¯è¿™æ ·åˆ¤æ–­NaN
 #define luai_numisnan(a)	(!luai_numeq((a), (a)))
 #endif
 
@@ -554,7 +554,7 @@
 ** int (with any rounding method and without throwing errors) in your
 ** system. In Pentium machines, a naive typecast from double to int
 ** in C is extremely slow, so any alternative is worth trying.
-om ÕâÖÖÓÅ»¯ÖÁÓÚÂğ
+om è¿™ç§ä¼˜åŒ–è‡³äºå—
 */
 
 /* On a Pentium, resort to a trick */
@@ -595,7 +595,7 @@ union luai_Cast { double l_d; long l_l; };
 ** instance, if your system supports long doubles and they must be
 ** aligned in 16-byte boundaries, then you should add long double in the
 ** union.) Probably you do not need to change this.
-om£¿ ²»Ê¹ÓÃ»áÓ°ÏìÕıÈ·ĞÔ
+omï¼Ÿ ä¸ä½¿ç”¨ä¼šå½±å“æ­£ç¡®æ€§
 */
 #define LUAI_USER_ALIGNMENT_T	union { double u; void *s; long l; }
 
@@ -724,7 +724,7 @@ om£¿ ²»Ê¹ÓÃ»áÓ°ÏìÕıÈ·ĞÔ
 @@ luai_userstate* allow user-specific actions on threads.
 ** CHANGE them if you defined LUAI_EXTRASPACE and need to do something
 ** extra when a thread is created/deleted/resumed/yielded.
-om state´´½¨¡¢¹Ø±Õ¡¢ÔİÍ£¡¢¼ÌĞøÊÂ¼ş»Øµ÷
+om stateåˆ›å»ºã€å…³é—­ã€æš‚åœã€ç»§ç»­äº‹ä»¶å›è°ƒ
 */
 #define luai_userstateopen(L)		((void)L)
 #define luai_userstateclose(L)		((void)L)

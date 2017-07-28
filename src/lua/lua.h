@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lua.h,v 1.218.1.7 2012/01/13 20:36:20 roberto Exp $
 ** Lua - An Extensible Extension Language
 ** Lua.org, PUC-Rio, Brazil (http://www.lua.org)
@@ -31,15 +31,15 @@
 
 
 /*
-** pseudo-indices   index2adrÊ¹ÓÃ
+** pseudo-indices   index2adrä½¿ç”¨
 */
-//om ×¢²á±í
+//om æ³¨å†Œè¡¨
 #define LUA_REGISTRYINDEX	(-10000)
-//om µ±Ç°º¯ÊıµÄ»·¾³±í
+//om å½“å‰å‡½æ•°çš„ç¯å¢ƒè¡¨
 #define LUA_ENVIRONINDEX	(-10001)
-//om È«¾Ö±í
+//om å…¨å±€è¡¨
 #define LUA_GLOBALSINDEX	(-10002)
-//om ±Õ°üÖµ
+//om é—­åŒ…å€¼
 #define lua_upvalueindex(i)	(LUA_GLOBALSINDEX-(i))
 
 
@@ -52,13 +52,13 @@
 
 
 typedef struct lua_State lua_State;
-//om luaµÄÀ©Õ¹º¯Êı¶¼ÊÇÕâÑùµÄ
+//om luaçš„æ‰©å±•å‡½æ•°éƒ½æ˜¯è¿™æ ·çš„
 typedef int (*lua_CFunction) (lua_State *L);
 
 
 /*
 ** functions that read/write blocks when loading/dumping Lua chunks
-om Ö»¸ø±àÒë²¿·ÖÓÃµÄÂğ
+om åªç»™ç¼–è¯‘éƒ¨åˆ†ç”¨çš„å—
 */
 typedef const char * (*lua_Reader) (lua_State *L, void *ud, size_t *sz);
 
@@ -67,7 +67,7 @@ typedef int (*lua_Writer) (lua_State *L, const void* p, size_t sz, void* ud);
 
 /*
 ** prototype for memory-allocation functions
-om Õâ¸öº¯Êı±ØĞëÓĞreallocµÄ¹¦ÄÜ£¬¾ÍÊÇËµÖØĞÂ·ÖÅä¿Õ¼äÊ±µÃ¸´ÖÆÄÚÈİ
+om è¿™ä¸ªå‡½æ•°å¿…é¡»æœ‰reallocçš„åŠŸèƒ½ï¼Œå°±æ˜¯è¯´é‡æ–°åˆ†é…ç©ºé—´æ—¶å¾—å¤åˆ¶å†…å®¹
 */
 typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
 
@@ -129,13 +129,13 @@ LUA_API void  (lua_settop) (lua_State *L, int idx);
 LUA_API void  (lua_pushvalue) (lua_State *L, int idx);
 //om top-1
 LUA_API void  (lua_remove) (lua_State *L, int idx);
-//om top²»±ä
+//om topä¸å˜
 LUA_API void  (lua_insert) (lua_State *L, int idx);
 //om top-1
 LUA_API void  (lua_replace) (lua_State *L, int idx);
 //om state statck
 LUA_API int   (lua_checkstack) (lua_State *L, int sz);
-//om Ğ­³Ì¼ä´«µİ²ÎÊı
+//om åç¨‹é—´ä¼ é€’å‚æ•°
 LUA_API void  (lua_xmove) (lua_State *from, lua_State *to, int n);
 
 
@@ -265,7 +265,7 @@ LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 #define lua_pop(L,n)		lua_settop(L, -(n)-1)
 
 #define lua_newtable(L)		lua_createtable(L, 0, 0)
-//om Õâ¸önÊÇ¸ö×Ö·û´®
+//om è¿™ä¸ªnæ˜¯ä¸ªå­—ç¬¦ä¸²
 #define lua_register(L,n,f) (lua_pushcfunction(L, (f)), lua_setglobal(L, (n)))
 
 #define lua_pushcfunction(L,f)	lua_pushcclosure(L, (f), 0)
@@ -306,7 +306,7 @@ LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 
 
 /* hack */
-//om ²»Ã÷°×ÓĞÉ¶ÓÃ to->nCalls = from->nCalls
+//om ä¸æ˜ç™½æœ‰å•¥ç”¨ to->nCalls = from->nCalls
 LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
 
 
@@ -354,8 +354,8 @@ LUA_API lua_Hook lua_gethook (lua_State *L);
 LUA_API int lua_gethookmask (lua_State *L);
 LUA_API int lua_gethookcount (lua_State *L);
 
-//om ‡å ÉÏÃæÓĞ¸ö¼òµ¥ÉùÃ÷£¬Õâ¶ùÓĞ¸ö¶¨Òå£¬ÊÇ¸öÊ²Ã´ÒâË¼
-//om doÀïÃæÓĞÓÃµ½Õâ¸ö½á¹¹
+//om å›§ ä¸Šé¢æœ‰ä¸ªç®€å•å£°æ˜ï¼Œè¿™å„¿æœ‰ä¸ªå®šä¹‰ï¼Œæ˜¯ä¸ªä»€ä¹ˆæ„æ€
+//om doé‡Œé¢æœ‰ç”¨åˆ°è¿™ä¸ªç»“æ„
 struct lua_Debug {
   int event;
   const char *name;	/* (n) */

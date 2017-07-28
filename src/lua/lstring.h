@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** $Id: lstring.h,v 1.43.1.1 2007/12/27 13:02:25 roberto Exp $
 ** String table (keep all strings handled by Lua)
 ** See Copyright Notice in lua.h
@@ -18,7 +18,7 @@
 #define sizeudata(u)	(sizeof(union Udata)+(u)->len)
 
 #define luaS_new(L, s)	(luaS_newlstr(L, s, strlen(s)))
-//om `"" s`ʲô�ڿƼ���ȥ��Ҳ����ѽ��ûʲô�ð�
+//om `"" s`什么黑科技，去掉也可以呀，没什么用唉
 #define luaS_newliteral(L, s)	(luaS_newlstr(L,"" s, \
                                  (sizeof(s)/sizeof(char))-1))
 

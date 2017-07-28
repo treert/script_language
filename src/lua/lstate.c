@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lstate.c,v 2.36.1.2 2008/01/03 15:20:39 roberto Exp $
 ** Global State
 ** See Copyright Notice in lua.h
@@ -80,7 +80,7 @@ static void f_luaopen (lua_State *L, void *ud) {
   g->GCthreshold = 4*g->totalbytes;
 }
 
-//om ÖØÖÃstate
+//om é‡ç½®state
 static void preinit_state (lua_State *L, global_State *g) {
   G(L) = g;
   L->stack = NULL;

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lopcodes.h,v 1.125.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Opcodes for Lua virtual machine
 ** See Copyright Notice in lua.h
@@ -43,7 +43,7 @@ enum OpMode {iABC, iABx, iAsBx};  /* basic instruction format */
 
 #define POS_OP		0
 #define POS_A		(POS_OP + SIZE_OP)
-//om£¿ÎªÉ¶CÔÚBÇ°Ãæ
+//omï¼Ÿä¸ºå•¥Cåœ¨Bå‰é¢
 #define POS_C		(POS_A + SIZE_A)
 #define POS_B		(POS_C + SIZE_C)
 #define POS_Bx		POS_C
@@ -53,8 +53,8 @@ enum OpMode {iABC, iABx, iAsBx};  /* basic instruction format */
 ** limits for opcode arguments.
 ** we use (signed) int to manipulate most arguments,
 ** so they must fit in LUAI_BITSINT-1 bits (-1 for sign)
-om ÄÑµÀËµ»¹Ö§³ÖÖ¸Áî³¬¹ı32bit£¬ºóÃæµÄMAX_INT²»¹ÜÔõÃ´ÑùÒ²ÊÇ´íµÄÑ½
-om Èç¹û»úÆ÷×Ö³¤Îª16bit,Ö¸ÁîÓÃµÄunsigned longÀàĞÍ
+om éš¾é“è¯´è¿˜æ”¯æŒæŒ‡ä»¤è¶…è¿‡32bitï¼Œåé¢çš„MAX_INTä¸ç®¡æ€ä¹ˆæ ·ä¹Ÿæ˜¯é”™çš„å‘€
+om å¦‚æœæœºå™¨å­—é•¿ä¸º16bit,æŒ‡ä»¤ç”¨çš„unsigned longç±»å‹
 */
 #if SIZE_Bx < LUAI_BITSINT-1
 #define MAXARG_Bx        ((1<<SIZE_Bx)-1)
@@ -118,7 +118,7 @@ om Èç¹û»úÆ÷×Ö³¤Îª16bit,Ö¸ÁîÓÃµÄunsigned longÀàĞÍ
 ** Macros to operate RK indices
 */
 
-//om£¿²»Ã÷°×£¬ÎªÉ¶ÓÃ¸ö×¨ÃÅµÄbitÎ»Çø·Ö
+//omï¼Ÿä¸æ˜ç™½ï¼Œä¸ºå•¥ç”¨ä¸ªä¸“é—¨çš„bitä½åŒºåˆ†
 /* this bit 1 means constant (0 means register) */
 #define BITRK		(1 << (SIZE_B - 1))
 
@@ -264,9 +264,9 @@ LUAI_DATA const lu_byte luaP_opmodes[NUM_OPCODES];
 
 LUAI_DATA const char *const luaP_opnames[NUM_OPCODES+1];  /* opcode names */
 
-//om ¸ÉÊ²Ã´ÓÃµÄ£¿
-//om SETLISTºÃÏñÊÇ³õÊ¼»¯Êı×éÓÃµÄ
-//om ³õÊ¼»¯Êı×éÊ±£¬ÒÔ50¸öÎªÒ»×é½øĞĞ¸³Öµ¡£Õâ¸öÖµ²»ÄÜ´óÓÚ255£¬Õ»¿Õ¼ä²»¹»¡£
+//om å¹²ä»€ä¹ˆç”¨çš„ï¼Ÿ
+//om SETLISTå¥½åƒæ˜¯åˆå§‹åŒ–æ•°ç»„ç”¨çš„
+//om åˆå§‹åŒ–æ•°ç»„æ—¶ï¼Œä»¥50ä¸ªä¸ºä¸€ç»„è¿›è¡Œèµ‹å€¼ã€‚è¿™ä¸ªå€¼ä¸èƒ½å¤§äº255ï¼Œæ ˆç©ºé—´ä¸å¤Ÿã€‚
 /* number of list items to accumulate before a SETLIST instruction */
 #define LFIELDS_PER_FLUSH	50
 

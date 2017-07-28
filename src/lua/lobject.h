@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lobject.h,v 2.20.1.2 2008/08/06 13:29:48 roberto Exp $
 ** Type definitions for Lua objects
 ** See Copyright Notice in lua.h
@@ -157,8 +157,8 @@ typedef struct lua_TValue {
 
 
 
-//om ¸´ÖÆ¶ÔÏó£¬È¡ÃûcopyObj²»ÊÇ¸üºÃ
-//om£¿²»»áÓĞÄÚ´æĞ¹Â©Ê²Ã´Âğ
+//om å¤åˆ¶å¯¹è±¡ï¼Œå–åcopyObjä¸æ˜¯æ›´å¥½
+//omï¼Ÿä¸ä¼šæœ‰å†…å­˜æ³„æ¼ä»€ä¹ˆå—
 #define setobj(L,obj1,obj2) \
   { const TValue *o2=(obj2); TValue *o1=(obj1); \
     o1->value = o2->value; o1->tt=o2->tt; \
@@ -168,7 +168,7 @@ typedef struct lua_TValue {
 /*
 ** different types of sets, according to destination
 */
-//om Ê²Ã´¹í ¶¼Ó³ÉäµÄÍ¬Ò»¸ösetobj
+//om ä»€ä¹ˆé¬¼ éƒ½æ˜ å°„çš„åŒä¸€ä¸ªsetobj
 /* from stack to (same) stack */
 #define setobjs2s	setobj
 /* to stack (not from same stack) */
@@ -186,11 +186,11 @@ typedef struct lua_TValue {
 
 #define setttype(obj, tt) (ttype(obj) = (tt))
 
-//om£¡×íÁË£¬Õâ¸öÎªÉ¶·ÅÕâ¶ùÑ½
+//omï¼é†‰äº†ï¼Œè¿™ä¸ªä¸ºå•¥æ”¾è¿™å„¿å‘€
 #define iscollectable(o)	(ttype(o) >= LUA_TSTRING)
 
 
-//om Õ»ÀïµÄ¶¼ÊÇTValue*
+//om æ ˆé‡Œçš„éƒ½æ˜¯TValue*
 typedef TValue *StkId;  /* index to stack elements */
 
 
@@ -201,7 +201,7 @@ typedef union TString {
   L_Umaxalign dummy;  /* ensures maximum alignment for strings */
   struct {
     CommonHeader;
-    lu_byte reserved;//om luaµÄÓï·¨¹Ø¼ü×Ö£¬ÓĞÊ²Ã´ÓÃ£¿£¿
+    lu_byte reserved;//om luaçš„è¯­æ³•å…³é”®å­—ï¼Œæœ‰ä»€ä¹ˆç”¨ï¼Ÿï¼Ÿ
     unsigned int hash;
     size_t len;
   } tsv;
@@ -238,7 +238,7 @@ typedef struct Proto {
   struct LocVar *locvars;  /* information about local variables */
   TString **upvalues;  /* upvalue names */
   TString  *source;
-  int sizeupvalues;//om Õâ¸öĞ¡ÓÚnups
+  int sizeupvalues;//om è¿™ä¸ªå°äºnups
   int sizek;  /* size of `k' */
   int sizecode;
   int sizelineinfo;
@@ -259,9 +259,9 @@ typedef struct Proto {
 #define VARARG_ISVARARG		2
 #define VARARG_NEEDSARG		4
 
-//om ÎªÊ²Ã´²»·ÅÔÚProtoÖ®Ç°¶¨Òå
+//om ä¸ºä»€ä¹ˆä¸æ”¾åœ¨Protoä¹‹å‰å®šä¹‰
 typedef struct LocVar {
-  TString *varname;//om£¡¾Ö²¿±äÁ¿ÕæµÄ°ÑÃû×Ö¶¼¼ÇÏÂÀ´£¿£¿
+  TString *varname;//omï¼å±€éƒ¨å˜é‡çœŸçš„æŠŠåå­—éƒ½è®°ä¸‹æ¥ï¼Ÿï¼Ÿ
   int startpc;  /* first point where variable is active */
   int endpc;    /* first point where variable is dead */
 } LocVar;
@@ -271,11 +271,11 @@ typedef struct LocVar {
 /*
 ** Upvalues
 */
-//om£¿Õâ¸ö½á¹¹ÎªÉ¶Ã»×öÄÚ´æ¶ÔÆëµÄ´¦Àí
+//omï¼Ÿè¿™ä¸ªç»“æ„ä¸ºå•¥æ²¡åšå†…å­˜å¯¹é½çš„å¤„ç†
 typedef struct UpVal {
   CommonHeader;
   TValue *v;  /* points to stack or to its own value */
-  union {//om ²»Ã÷½á¹¹
+  union {//om ä¸æ˜ç»“æ„
     TValue value;  /* the value (when closed) */
     struct {  /* double linked list (when open) */
       struct UpVal *prev;
@@ -286,7 +286,7 @@ typedef struct UpVal {
 
 
 /*
-** Closures ±Õ°ü
+** Closures é—­åŒ…
 */
 
 #define ClosureHeader \

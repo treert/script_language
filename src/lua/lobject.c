@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lobject.c,v 2.22.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Some generic functions over Lua objects
 ** See Copyright Notice in lua.h
@@ -50,7 +50,7 @@ int luaO_fb2int (int x) {
   else return ((x & 7)+8) << (e - 1);
 }
 
-//om ÕâÃ´×·ÇóÐÔÄÜÂð
+//om è¿™ä¹ˆè¿½æ±‚æ€§èƒ½å—
 int luaO_log2 (unsigned int x) {
   static const lu_byte log_2[256] = {
     0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -91,7 +91,7 @@ int luaO_str2d (const char *s, lua_Number *result) {
   char *endptr;
   *result = lua_str2number(s, &endptr);
   if (endptr == s) return 0;  /* conversion failed */
-  //om£¿ Õâ¸ö²»ÐèÒª°Ñ£¬ÉÏÃæµÄ²»ÊÇ¿ÉÒÔ´¦ÀíÕâÖÖÇé¿öÂð
+  //omï¼Ÿ è¿™ä¸ªä¸éœ€è¦æŠŠï¼Œä¸Šé¢çš„ä¸æ˜¯å¯ä»¥å¤„ç†è¿™ç§æƒ…å†µå—
   if (*endptr == 'x' || *endptr == 'X')  /* maybe an hexadecimal constant? */
     *result = cast_num(strtoul(s, &endptr, 16));
   if (*endptr == '\0') return 1;  /* most common case */
@@ -179,7 +179,7 @@ const char *luaO_pushfstring (lua_State *L, const char *fmt, ...) {
   return msg;
 }
 
-//om£¿²»Ì«Ã÷°×µÄº¯Êý£¬»ñÈ¡protoÔ´´úÂëµÄ±êÊ¶£¬ÀàËÆÎÄ¼þÃûÉ¶µÄ
+//omï¼Ÿä¸å¤ªæ˜Žç™½çš„å‡½æ•°ï¼ŒèŽ·å–protoæºä»£ç çš„æ ‡è¯†ï¼Œç±»ä¼¼æ–‡ä»¶åå•¥çš„
 void luaO_chunkid (char *out, const char *source, size_t bufflen) {
   if (*source == '=') {
     strncpy(out, source+1, bufflen);  /* remove first char */
@@ -191,7 +191,7 @@ void luaO_chunkid (char *out, const char *source, size_t bufflen) {
       source++;  /* skip the `@' */
       bufflen -= sizeof(" '...' ");
       l = strlen(source);
-      strcpy(out, "");//om Ö±½Óout[0]='\0'²»¾ÍºÃÁË
+      strcpy(out, "");//om ç›´æŽ¥out[0]='\0'ä¸å°±å¥½äº†
       if (l > bufflen) {
         source += (l-bufflen);  /* get last part of file name */
         strcat(out, "...");

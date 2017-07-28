@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: ldo.c,v 2.38.1.4 2012/01/18 02:27:10 roberto Exp $
 ** Stack and Call structure of Lua
 ** See Copyright Notice in lua.h
@@ -103,7 +103,7 @@ void luaD_throw (lua_State *L, int errcode) {
       lua_unlock(L);
       G(L)->panic(L);
     }
-    //om Õâ¶ùÇ¿ÖÆÖÕÖ¹ÁË³ÌÐòÒ²
+    //om è¿™å„¿å¼ºåˆ¶ç»ˆæ­¢äº†ç¨‹åºä¹Ÿ
     exit(EXIT_FAILURE);
   }
 }
@@ -138,7 +138,7 @@ static void correctstack (lua_State *L, TValue *oldstack) {
   L->base = (L->base - oldstack) + L->stack;
 }
 
-//om Ïß³ÌµÄÕ»
+//om çº¿ç¨‹çš„æ ˆ
 void luaD_reallocstack (lua_State *L, int newsize) {
   TValue *oldstack = L->stack;
   int realsize = newsize + 1 + EXTRA_STACK;
@@ -160,7 +160,7 @@ void luaD_reallocCI (lua_State *L, int newsize) {
 
 
 void luaD_growstack (lua_State *L, int n) {
-  if (n <= L->stacksize)  /* double size is enough? */ //om Õâ¸ö×¢ÊÍÃ»ÓÐÒâÒå
+  if (n <= L->stacksize)  /* double size is enough? */ //om è¿™ä¸ªæ³¨é‡Šæ²¡æœ‰æ„ä¹‰
     luaD_reallocstack(L, 2*L->stacksize);
   else
     luaD_reallocstack(L, L->stacksize + n);
@@ -205,7 +205,7 @@ void luaD_callhook (lua_State *L, int event, int line) {
   }
 }
 
-// Îª±ä²ÎÊýº¯Êýµ÷Õû
+// ä¸ºå˜å‚æ•°å‡½æ•°è°ƒæ•´
 static StkId adjust_varargs (lua_State *L, Proto *p, int actual) {
   int i;
   int nfixargs = p->numparams;
@@ -241,7 +241,7 @@ static StkId adjust_varargs (lua_State *L, Proto *p, int actual) {
   return base;
 }
 
-//om ´ÓÔª±íÀïÕÒ__call
+//om ä»Žå…ƒè¡¨é‡Œæ‰¾__call
 static StkId tryfuncTM (lua_State *L, StkId func) {
   const TValue *tm = luaT_gettmbyobj(L, func, TM_CALL);
   StkId p;
@@ -329,7 +329,7 @@ int luaD_precall (lua_State *L, StkId func, int nresults) {
   }
 }
 
-//om Õâ¶ùÓÐ´¦ÀíÎ²µ÷ÓÃ
+//om è¿™å„¿æœ‰å¤„ç†å°¾è°ƒç”¨
 static StkId callrethooks (lua_State *L, StkId firstResult) {
   ptrdiff_t fr = savestack(L, firstResult);  /* next call may change stack */
   luaD_callhook(L, LUA_HOOKRET, -1);
@@ -340,7 +340,7 @@ static StkId callrethooks (lua_State *L, StkId firstResult) {
   return restorestack(L, fr);
 }
 
-//om µ÷ÓÃ½áÊø£¬·µ»ØÖµÌî³ä...
+//om è°ƒç”¨ç»“æŸï¼Œè¿”å›žå€¼å¡«å……...
 int luaD_poscall (lua_State *L, StkId firstResult) {
   StkId res;
   int wanted, i;
@@ -373,7 +373,7 @@ void luaD_call (lua_State *L, StkId func, int nResults) {
     if (L->nCcalls == LUAI_MAXCCALLS)
       luaG_runerror(L, "C stack overflow");
     else if (L->nCcalls >= (LUAI_MAXCCALLS + (LUAI_MAXCCALLS>>3)))
-      luaD_throw(L, LUA_ERRERR);  /* error while handing stack error *///om£¿Ê²Ã´ºÚ¿Æ¼¼
+      luaD_throw(L, LUA_ERRERR);  /* error while handing stack error *///omï¼Ÿä»€ä¹ˆé»‘ç§‘æŠ€
   }
   if (luaD_precall(L, func, nResults) == PCRLUA)  /* is a Lua function? */
     luaV_execute(L, 1);  /* call it */

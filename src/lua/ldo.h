@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: ldo.h,v 2.7.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Stack and Call structure of Lua
 ** See Copyright Notice in lua.h
@@ -21,7 +21,7 @@
 
 #define incr_top(L) {luaD_checkstack(L,1); L->top++;}
 
-//om Õâ¸öÃû×Ö£¡£¡
+//om è¿™ä¸ªåå­—ï¼ï¼
 #define savestack(L,p)		((char *)(p) - (char *)L->stack)
 #define restorestack(L,n)	((TValue *)((char *)L->stack + (n)))
 

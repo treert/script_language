@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 ** $Id: lgc.c,v 2.38.1.2 2011/03/18 18:05:38 roberto Exp $
 ** Garbage Collector
 ** See Copyright Notice in lua.h
@@ -123,7 +123,7 @@ static void marktmu (global_State *g) {
   }
 }
 
-//om ½«ÓÐgc·½·¨µÄuData·Åµ½tmudataÀï³ÉÎªÑ­»·Á´±í
+//om å°†æœ‰gcæ–¹æ³•çš„uDataæ”¾åˆ°tmudataé‡Œæˆä¸ºå¾ªçŽ¯é“¾è¡¨
 /* move `dead' udata that need finalization to list `tmudata' */
 size_t luaC_separateudata (lua_State *L, int all) {
   global_State *g = G(L);
@@ -237,7 +237,7 @@ static void traverseclosure (global_State *g, Closure *cl) {
   }
 }
 
-//om ÅÐ¶ÏËõ¼õÒ»°ë¿Õ¼ä
+//om åˆ¤æ–­ç¼©å‡ä¸€åŠç©ºé—´
 static void checkstacksizes (lua_State *L, StkId max) {
   int ci_used = cast_int(L->ci - L->base_ci);  /* number of `ci' in use */
   int s_used = cast_int(max - L->stack);  /* part of stack in use */
@@ -441,7 +441,7 @@ static void checkSizes (lua_State *L) {
   }
 }
 
-//om »ØÊÕuserdata
+//om å›žæ”¶userdata
 static void GCTM (lua_State *L) {
   global_State *g = G(L);
   GCObject *o = g->tmudata->gch.next;  /* get first element */
@@ -681,7 +681,7 @@ void luaC_barrierback (lua_State *L, Table *t) {
   g->grayagain = o;
 }
 
-//om ³õÊ¼»¯GCobjectµÄcommonHeader
+//om åˆå§‹åŒ–GCobjectçš„commonHeader
 void luaC_link (lua_State *L, GCObject *o, lu_byte tt) {
   global_State *g = G(L);
   o->gch.next = g->rootgc;
