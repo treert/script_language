@@ -48,5 +48,8 @@
     <None Include="..\..\src\test\my.lua">
       <Filter>lua</Filter>
     </None>
+    <None Include="..\..\src\test\test.lua">
+      <Filter>lua</Filter>
+    </None>
   </ItemGroup>
 </Project>

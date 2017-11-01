@@ -104,6 +104,7 @@
   <ItemGroup>
     <None Include="..\..\src\test\hello.pkg" />
     <None Include="..\..\src\test\my.lua" />
+    <None Include="..\..\src\test\test.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
