@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include "y.tab.h"
 %}
+
+%option noyywrap
+%option yylineno
+
 number [0-9]+ 
 %%
 {number}           	yylval=atoi(yytext);  return NUMBER;

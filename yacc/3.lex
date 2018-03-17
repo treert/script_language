@@ -1,6 +1,10 @@
 %{
 #include <stdio.h>
 %}
+
+%option noyywrap
+%option yylineno
+
 %%
 [a-zA-Z][a-zA-Z0-9]*    printf("word ");
 [a-zA-Z0-9\/.-]+        printf("filename ");

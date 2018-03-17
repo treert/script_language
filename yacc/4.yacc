@@ -6,9 +6,6 @@ void yyerror(const char *str){
     fprintf(stderr,"error:%s line:%d\n",str,yylineno);
 }
 
-int yywrap(){
-    return 1;
-}
 main()
 {
     yyparse();
