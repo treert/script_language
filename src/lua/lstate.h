@@ -69,7 +69,7 @@ typedef struct global_State {
   stringtable strt;  /* hash table for strings */
   lua_Alloc frealloc;  /* function to reallocate memory */
   void *ud;         /* auxiliary data to `frealloc' */
-  lu_byte currentwhite;//om 垃圾回收相关，具体还不清楚
+  lu_byte currentwhite;//om? 里面关于gc的有3个bit，2*white+1*black，没看懂，理解上只要一个white bit就行了呀，灰色都不需要bit，挂gray list不就好了。
   lu_byte gcstate;  /* state of garbage collector */
   int sweepstrgc;  /* position of sweep in `strt' */
   GCObject *rootgc;  /* list of all collectable objects */

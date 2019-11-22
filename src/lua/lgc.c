@@ -667,7 +667,7 @@ void luaC_barrierf (lua_State *L, GCObject *o, GCObject *v) {
   if (g->gcstate == GCSpropagate)
     reallymarkobject(g, v);  /* restore invariant */
   else  /* don't mind */
-    makewhite(g, o);  /* mark as white just to avoid other barriers */
+    makewhite(g, o);  /* mark as white just to avoid other barriers */ // om? o 现在就是白的呀！
 }
 
 
@@ -676,7 +676,7 @@ void luaC_barrierback (lua_State *L, Table *t) {
   GCObject *o = obj2gco(t);
   lua_assert(isblack(o) && !isdead(g, o));
   lua_assert(g->gcstate != GCSfinalize && g->gcstate != GCSpause);
-  black2gray(o);  /* make table gray (again) */
+  black2gray(o);  /* make table gray (again) */ // om? 表 已经遍历完了，似乎不需要吧，把接口改下，做个table write barrier 不就好了？
   t->gclist = g->grayagain;
   g->grayagain = o;
 }
