@@ -542,7 +542,9 @@ static void atomic (lua_State *L) {
   propagateall(g);
   udsize = luaC_separateudata(L, 0);  /* separate userdata to be finalized */
   marktmu(g);  /* mark `preserved' userdata */
-  udsize += propagateall(g);  /* remark, to propagate `preserveness' */ // om! 需要gc的对象需要额外激活一次，这次不清理。
+  // om! 需要gc的userdata激活下其引用的lua对象。
+  // gc回调函数调用的时候mark-sweep全部结束了，应该是为了保持调用环境的完整。
+  udsize += propagateall(g);  /* remark, to propagate `preserveness' */
   cleartable(g->weak);  /* remove collected objects from weak tables */
   /* flip current white */
   g->currentwhite = cast_byte(otherwhite(g));
