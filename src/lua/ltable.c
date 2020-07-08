@@ -430,7 +430,9 @@ static TValue *newkey (lua_State *L, Table *t, const TValue *key) {
     }
   }
   gkey(mp)->value = key->value; gkey(mp)->tt = key->tt;
-  //om？？不懂干啥的，与垃圾回收有关，大概是标记下。
+  // om! 只有新建key时，才需要写屏障。如果t是黑色的，标记成灰色，在gc最后统一扫描一次。
+  // golang里栈也是类似处理的。不同的是在栈上新建对象时也不barrier，而是直接把所有栈强制当成是灰色的。
+  // 可以看propagatemark 里对thread的处理。
   luaC_barriert(L, t, key);
   lua_assert(ttisnil(gval(mp)));
   return gval(mp);

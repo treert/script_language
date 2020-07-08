@@ -283,7 +283,7 @@ static l_mem propagatemark (global_State *g) {
       Table *h = gco2h(o);
       g->gray = h->gclist;
       if (traversetable(g, h))  /* table is weak? */
-        black2gray(o);  /* keep it gray */
+        black2gray(o);  /* keep it gray */ // om! 保持灰色的，避免因为黑色触发barrier进入grayagain，虚表是单独处理的
       return sizeof(Table) + sizeof(TValue) * h->sizearray +
                              sizeof(Node) * sizenode(h);
     }
@@ -297,8 +297,8 @@ static l_mem propagatemark (global_State *g) {
     case LUA_TTHREAD: {
       lua_State *th = gco2th(o);
       g->gray = th->gclist;
-      th->gclist = g->grayagain;
-      g->grayagain = o;
+      th->gclist = g->grayagain;// om! 是因为thread的stack会继续运行修改，所以最后再重新扫描一遍。
+      g->grayagain = o;         // 这样扫描的最后需要STW做下扫描，对应这儿的atomic函数。golang1.7 之前据说就是这么处理的。
       black2gray(o);
       traversestack(g, th);
       return sizeof(lua_State) + sizeof(TValue) * th->stacksize +
@@ -542,7 +542,7 @@ static void atomic (lua_State *L) {
   propagateall(g);
   udsize = luaC_separateudata(L, 0);  /* separate userdata to be finalized */
   marktmu(g);  /* mark `preserved' userdata */
-  udsize += propagateall(g);  /* remark, to propagate `preserveness' */
+  udsize += propagateall(g);  /* remark, to propagate `preserveness' */ // om! 需要gc的对象需要额外激活一次，这次不清理。
   cleartable(g->weak);  /* remove collected objects from weak tables */
   /* flip current white */
   g->currentwhite = cast_byte(otherwhite(g));
@@ -657,7 +657,7 @@ void luaC_fullgc (lua_State *L) {
   setthreshold(g);
 }
 
-
+// om 强三色条件，避免出现黑色引用白色
 void luaC_barrierf (lua_State *L, GCObject *o, GCObject *v) {
   global_State *g = G(L);
   lua_assert(isblack(o) && iswhite(v) && !isdead(g, v) && !isdead(g, o));
@@ -667,16 +667,18 @@ void luaC_barrierf (lua_State *L, GCObject *o, GCObject *v) {
   if (g->gcstate == GCSpropagate)
     reallymarkobject(g, v);  /* restore invariant */
   else  /* don't mind */
-    makewhite(g, o);  /* mark as white just to avoid other barriers */ // om? o 现在就是白的呀！
+    makewhite(g, o);  /* mark as white just to avoid other barriers */ // om 不会出问题吗？
 }
 
-
+// om! gc过程中，写table，如果table是黑色的，重新标记成灰色，准备重新扫描。
+// 这样做的好处是，修改table的key时，不需要barrier，只有新建key时才需要。
+// 不只是为了提升性能，也是为了编码方便的缘故。因为table的值项是通用的*TValue
 void luaC_barrierback (lua_State *L, Table *t) {
   global_State *g = G(L);
   GCObject *o = obj2gco(t);
   lua_assert(isblack(o) && !isdead(g, o));
   lua_assert(g->gcstate != GCSfinalize && g->gcstate != GCSpause);
-  black2gray(o);  /* make table gray (again) */ // om? 表 已经遍历完了，似乎不需要吧，把接口改下，做个table write barrier 不就好了？
+  black2gray(o);  /* make table gray (again) */
   t->gclist = g->grayagain;
   g->grayagain = o;
 }

@@ -83,11 +83,12 @@ typedef struct lua_TValue {
 #define ttisfunction(o)	(ttype(o) == LUA_TFUNCTION)
 #define ttisboolean(o)	(ttype(o) == LUA_TBOOLEAN)
 #define ttisuserdata(o)	(ttype(o) == LUA_TUSERDATA)
+#define ttisint64(0) (((o)->tt) == )
 #define ttisthread(o)	(ttype(o) == LUA_TTHREAD)
 #define ttislightuserdata(o)	(ttype(o) == LUA_TLIGHTUSERDATA)
 
 /* Macros to access values */
-#define ttype(o)	((o)->tt)
+#define ttype(o)	((o)->tt & LUA_TNONE)
 #define gcvalue(o)	check_exp(iscollectable(o), (o)->value.gc)
 #define pvalue(o)	check_exp(ttislightuserdata(o), (o)->value.p)
 #define nvalue(o)	check_exp(ttisnumber(o), (o)->value.n)
@@ -132,7 +133,7 @@ typedef struct lua_TValue {
 
 #define setuvalue(L,obj,x) \
   { TValue *i_o=(obj); \
-    i_o->value.gc=cast(GCObject *, (x)); i_o->tt=LUA_TUSERDATA; \
+    i_o->value.gc=cast(GCObject *, (x)); i_o->tt=LUA_TUSERDATA & 0x80; \
     checkliveness(G(L),i_o); }
 
 #define setthvalue(L,obj,x) \
@@ -271,11 +272,10 @@ typedef struct LocVar {
 /*
 ** Upvalues
 */
-//om？这个结构为啥没做内存对齐的处理
 typedef struct UpVal {
   CommonHeader;
   TValue *v;  /* points to stack or to its own value */
-  union {//om 不明结构
+  union {
     TValue value;  /* the value (when closed) */
     struct {  /* double linked list (when open) */
       struct UpVal *prev;
