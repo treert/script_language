@@ -296,7 +296,7 @@ static void setnodevector (lua_State *L, Table *t, int size) {
     }
   }
   t->lsizenode = cast_byte(lsize);
-  //om 这个指针不就是个野指针了吗。使用用的-1
+  //om 算是个野指针吧。指向的是最后一个元素后面一个位置。
   t->lastfree = gnode(t, size);  /* all positions are free */
 }
 
